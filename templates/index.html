@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <script src="/static/js/script.js"></script>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+  
+    <title>Video Streaming Demonstration</title>
+  </head>
+  <body>
+    <!-- jwc o  <h1>Video Streaming Demonstration</h1> -->
+    <h1>RoboQuest VLab Portal</h1>
+    <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1>
+    <!-- jwc y  <img src="{{ url_for('video_feed') }}"> -->
+
+    <!-- jwc y <div id="hud" class="touchpad" onclick="toggle_hud()"><div class="label">HUD</div></div> -->
+    
+    <!-- jwc y <div id="l100" class="controlpad speed_100" onclick="motor_l(100)">&nbsp;</div> -->
+
+    <div id="mainscreen">
+      <div id="leftbar">
+<!--  jwc o       
+        <div id="l100" class="controlpad speed_100" onclick="motor_l(100)">&nbsp;</div>
+        <div id="l60" class="controlpad speed_60" onclick="motor_l(60)">&nbsp;</div>
+        <div id="l30" class="controlpad speed_30" onclick="motor_l(30)">&nbsp;</div>
+        <div id="l0" class="controlpad speed_0" onclick="motor_l(0)">&nbsp;</div>
+        <div id="l-30" class="controlpad speed_30" onclick="motor_l(-30)">&nbsp;</div>
+        <div id="l-60" class="controlpad speed_60" onclick="motor_l(-60)">&nbsp;</div>
+        <div id="l-100" class="controlpad speed_100" onclick="motor_l(-100)">&nbsp;</div>
+ -->     
+        <div id="l100" class="controlpad speed_100" onclick="motor_l(100)"><div class="label">Motor-L: +100%</div></div>
+        <div id="l60" class="controlpad speed_60" onclick="motor_l(67)"><div class="label">Motor-L: + 67%</div></div>
+        <div id="l30" class="controlpad speed_30" onclick="motor_l(33)"><div class="label">Motor-L: + 33%</div></div>
+        <div id="l0" class="controlpad speed_0" onclick="motor_l(0)"><div class="label">Motor-L:   0%</div></div>
+        <div id="l-30" class="controlpad speed_30" onclick="motor_l(-33)"><div class="label">Motor-L: - 33%</div></div>
+        <div id="l-60" class="controlpad speed_60" onclick="motor_l(-67)"><div class="label">Motor-L: - 67%</div></div>
+        <div id="l-100" class="controlpad speed_100" onclick="motor_l(-100)"><div class="label">Motor-L: -100%</div></div>
+
+      </div>
+      <div id="stop" onclick="brake()"><div class="label">Stop!</div></div>
+      <div id="middle">
+        <!-- jwc o <img src="{{ url_for('video_feed') }}"> -->
+        <!-- jwc y <img style="transform:rotate(180deg);" src="{{ url_for('video_feed') }}"> -->
+        <!-- <img src="{{ url_for('video_feed') }}"> -->
+        <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
+
+        <div id="videowrapper" onclick="brake()">
+          <!-- jwc y <img src="{{ url_for('video_feed') }}"> -->
+          <!-- jwc video stream -->
+          <!-- jwc ?  Seems to cause wide gap, not reliable: <div id="video"> <img src="{{ url_for('video_feed') }}"> </div> -->
+          
+          <div id="overlay">
+            <div id="status"></div>
+            <div id="sensors"></div>
+          </div>
+        </div>
+        <div id="buttonbar">	
+          <!-- jwc o <div id="blue" class="touchpad" onclick="touchpad(1)"><div class="label">1</div></div> -->
+          <div id="blue" class="touchpad" onclick="touchpad(1)"><div class="label">Servo-01-Pan -</div></div>
+          <!-- jwc o <div id="yellow" class="touchpad" onclick="touchpad(2)"><div class="label">2</div></div> -->
+          <div id="yellow" class="touchpad" onclick="touchpad(2)"><div class="label">Servo-01-Pan +</div></div>
+          <!-- jwc o <div id="red" class="touchpad" onclick="touchpad(3)"><div class="label">3</div></div> -->
+          <div id="red" class="touchpad" onclick="touchpad(3)"><div class="label">Motors Online/Offline</div></div>
+          <!-- jwc o <div id="green" class="touchpad" onclick="touchpad(4)"><div class="label">4</div></div> -->
+          <div id="green" class="touchpad" onclick="touchpad(4)"><div class="label">Servo-02-Tilt -</div></div>
+          <!-- jwc Add new Cell -->
+          <div id="yellow" class="touchpad" onclick="touchpad(5)"><div class="label">Servo-02-Tilt +</div></div>
+          <div id="hud" class="touchpad" onclick="toggle_hud()"><div class="label">HUD</div></div>
+        </div>	
+      </div>
+      <div id="rightbar">
+<!--    jwc o
+        <div id="r100" class="controlpad speed_100" onclick="motor_r(100)">&nbsp;</div>
+        <div id="r60" class="controlpad speed_60" onclick="motor_r(60)">&nbsp;</div>
+        <div id="r30" class="controlpad speed_30" onclick="motor_r(30)">&nbsp;</div>
+        <div id="r0" class="controlpad speed_0" onclick="motor_r(0)">&nbsp;</div>
+        <div id="r-30" class="controlpad speed_30" onclick="motor_r(-30)">&nbsp;</div>
+        <div id="r-60" class="controlpad speed_60" onclick="motor_r(-60)">&nbsp;</div>
+        <div id="r-100" class="controlpad speed_100" onclick="motor_r(-100)">&nbsp;</div>
+ -->
+        <div id="r100" class="controlpad speed_100" onclick="motor_r(100)"><div class="label">Motor-R: +100%</div></div>
+        <div id="r60" class="controlpad speed_60" onclick="motor_r(67)"><div class="label">Motor-R: + 67%</div></div>
+        <div id="r30" class="controlpad speed_30" onclick="motor_r(33)"><div class="label">Motor-R: + 33%</div></div>
+        <div id="r0" class="controlpad speed_0" onclick="motor_r(0)"><div class="label">Motor-R:   0%</div></div>
+        <div id="r-30" class="controlpad speed_30" onclick="motor_r(-33)"><div class="label">Motor-R: - 33%</div></div>
+        <div id="r-60" class="controlpad speed_60" onclick="motor_r(-67)"><div class="label">Motor-R: - 67%</div></div>
+        <div id="r-100" class="controlpad speed_100" onclick="motor_r(-100)"><div class="label">Motor-R: -100%</div></div>
+
+       </div>
+    </div>
+
+  </body>
+</html>
