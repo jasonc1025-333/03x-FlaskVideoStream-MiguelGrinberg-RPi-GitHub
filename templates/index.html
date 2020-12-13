@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    
+
+
+    <title>RpiRover1</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel='stylesheet' href='static/css/style_From_RpiRover1_DayDevelops.css'>
+
+
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <script src="/static/js/script.js"></script>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
@@ -11,7 +18,7 @@
   <body>
     <!-- jwc o  <h1>Video Streaming Demonstration</h1> -->
     <h1>RoboQuest VLab Portal</h1>
-    <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1>
+    <!-- <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1> -->
     <!-- jwc y  <img src="{{ url_for('video_feed') }}"> -->
 
     <!-- jwc y <div id="hud" class="touchpad" onclick="toggle_hud()"><div class="label">HUD</div></div> -->
@@ -19,6 +26,62 @@
     <!-- jwc y <div id="l100" class="controlpad speed_100" onclick="motor_l(100)">&nbsp;</div> -->
 
     <div id="mainscreen">
+
+      <div class='row' id='top-row'>
+
+        <div class='col-6' >
+            <!-- cam -->
+            <div id='cam-wrapper'>
+
+                <!--AAA TYJ this works :)+-->
+                <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
+
+                <!--jwc <canvas' seems to corrupt 'img' <canvas>
+                  <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
+                </canvas> -->
+
+            </div>
+        </div>
+
+        <div class='col-2' id='speed-col'>
+          <!-- Speed slider -->
+          <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
+        </div>
+
+        <div class='col-2'>
+            <!-- left motor trim -->
+            <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
+            <p id='lmtrim-val' class='text-center'>0</p>
+            <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
+        </div>
+        <div class='col-2'>
+            <!-- right motor trim -->
+            <i id='rmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
+            <p id='rmtrim-val' class='text-center'>0</p>
+            <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
+        </div>
+      </div>
+      
+      <div class='row' id='bottom-row'>
+        <div class='col-6 text-center'>
+            <!-- cam yaw -->
+            <i id='cam-left' class='d-inline fas fa-angle-left fa-3x' onclick="turnCam({'direction':'L'})"></i>
+            <span id='cam-text'>Camera</span>
+            <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>
+        </div>
+        <div class='col-4'>
+            <!-- robot heading -->
+            <input id='heading-input' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
+        </div>
+        <div class='col-2 p-0'>
+          <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='powerOff()'>
+              OFF
+          </button>
+      </div>
+
+      </div>
+
+        
       <div id="leftbar">
 <!--  jwc o       
         <div id="l100" class="controlpad speed_100" onclick="motor_l(100)">&nbsp;</div>
@@ -39,6 +102,24 @@
 
       </div>
       <div id="stop" onclick="brake()"><div class="label">Stop!</div></div>
+
+
+      <!-- <div id="middle"> -->
+        <!-- jwc o <img src="{{ url_for('video_feed') }}"> -->
+        <!-- jwc y <img style="transform:rotate(180deg);" src="{{ url_for('video_feed') }}"> -->
+        <!-- <img src="{{ url_for('video_feed') }}"> -->
+        <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
+
+        <!-- <div id="videowrapper" onclick="brake()">
+          <div id="overlay">
+            <div id="status"></div>
+            <div id="sensors"></div>
+          </div>
+        </div> -->
+
+      <!-- </div> -->
+
+
       <div id="middle">
         <!-- jwc o <img src="{{ url_for('video_feed') }}"> -->
         <!-- jwc y <img style="transform:rotate(180deg);" src="{{ url_for('video_feed') }}"> -->
@@ -89,6 +170,14 @@
 
        </div>
     </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script> -->
+    <script src='static/js/controller_From_RpiRover1_DayDevelops.js'></script>
+
 
   </body>
 </html>
