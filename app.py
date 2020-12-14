@@ -140,7 +140,7 @@ log.setLevel(logging.INFO)
 
 
 # jwc ~/01-Jwc/2020-1205-0640-RpiRover1-DayDevelops/RpiRover1-master/
-# jwc 'sys.path.append('db') does work, depsite 'lint' not understnad
+# jwc 'sys.path.append('db') does work, depsite 'lint' not understand for 'import'
 sys.path.append('db')
 import robotProperties_Db_Cl_File
 
