@@ -38,6 +38,11 @@ watchdog_Cycles_Now = 20
 timeout_Cycles_MAX = 10
 left_motor = 0
 right_motor = 0
+# jwc 
+# 
+left_motor_trim = 0
+right_motor_trim = 0
+
 servo_01_Pan_Degrees = 90
 servo_02_Tilt_Degrees = 90
 servo_03_Degrees = 0

@@ -58,10 +58,10 @@ function controllerOff() {
 function updateMotorSpeeds() {
 	// read value of both sliders and send to server
 	console.log('speed: '+$("#speed-input").val()+'    heading: '+$("#heading-input").val())
-	data = {
-		'speed':$('#speed-input').val(),
-		'heading':$('#heading-input').val()
-	}
+	///jwc o data = {
+	///jwc o 	'speed':$('#speed-input').val(),
+	///jwc o 	'heading':$('#heading-input').val()
+	///jwc o }
 	///jwc o ERROR socket.emit('speedInput',data);
 
 	// jwc n
@@ -74,8 +74,12 @@ function updateMotorSpeeds() {
 }
 
 function changeTrim(data) {
-	socket.emit('updateTrim',{'L':data.L, 'R':data.R});
-	console.log('asking server to update trim');
+	///jwc o socket.emit('updateTrim',{'L':data.L, 'R':data.R});
+	var motorTrim_url = "/motorTrim?l=" + data.L + '&r=' + data.R;
+    request.open("GET", motorTrim_url, true);
+    request.send(null);
+	
+	console.log('### DEBUG: asking server to update motorTrim');
 }
 
 function turnCam(data) {

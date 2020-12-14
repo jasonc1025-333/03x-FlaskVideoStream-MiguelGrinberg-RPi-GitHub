@@ -141,6 +141,10 @@ function updateHUD(e) {
         button_status('yellow', response.y);
         button_status('red', response.c);
         button_status('green', response.g);
+
+        $('#lmtrim-val').html(response.lt);
+		$('#rmtrim-val').html(response.rt);
+
         // jwc: reset 'linkCheck' timeout since currently processing heartbeat, which is good
         //
         clearTimeout(linkCheck);

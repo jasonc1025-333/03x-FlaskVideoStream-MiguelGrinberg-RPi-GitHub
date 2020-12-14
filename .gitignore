@@ -2,3 +2,6 @@ test-02.jpg
 test.jpg
 app.py.save
 
+__pycache__/app.cpython-37.pyc
+__pycache__/config.cpython-37.pyc
+__pycache__/Logs.cpython-37.pyc

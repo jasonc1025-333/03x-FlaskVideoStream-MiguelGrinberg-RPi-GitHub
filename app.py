@@ -9,6 +9,7 @@
 # jwc           Add 'robohat.init()'
 # jwc           Make sure 'servod' copied in from 'RoboHat' dir
 # jwc           Using 'robohat's' servo cause pan to jitter/cool and tilt to get hot
+# jwc 2020-1213 Port in '~/01-Jwc/2020-1205-0640-RpiRover1-DayDevelops/RpiRover1-master' for Slider Ux, db directory
 
 from importlib import import_module
 import os
@@ -122,10 +123,12 @@ minPW=(1.0-myCorrection)/1000
 # import camera driver
 if os.environ.get('CAMERA'):
     Camera = import_module('camera_' + os.environ['CAMERA']).Camera
+    print("*** DEBUG: Camera: camera_" + os.environ['CAMERA'])
 else:
     ##jwc o from camera import Camera
     # Default to most sophisticated tech
     from camera_opencv import Camera
+    print("*** DEBUG: Camera: camera_opencv")
 
 # Raspberry Pi camera module (requires picamera package)
 # from camera_pi import Camera
@@ -134,6 +137,20 @@ import logging
 log = logging.getLogger('werkzeug')
 ##jwc o log.setLevel(logging.ERROR)
 log.setLevel(logging.INFO)
+
+
+# jwc ~/01-Jwc/2020-1205-0640-RpiRover1-DayDevelops/RpiRover1-master/
+# jwc 'sys.path.append('db') does work, depsite 'lint' not understnad
+sys.path.append('db')
+import robotProperties_Db_Cl_File
+
+DB = robotProperties_Db_Cl_File.robotProperties_Db_Cl()
+trims = DB.getTrimValues()
+print("*** DEBUG: DB: " + json.dumps( trims ))
+cfg.left_motor_trim = trims['L']
+cfg.right_motor_trim = trims['R']
+print ("*** DEBUG: DB: cfg.left_motor_trim: " + str( cfg.left_motor_trim ) + ", cfg.right_motor_trim: " + str( cfg.right_motor_trim ))
+
 
 ##jwc yo app = Flask(__name__)
 
@@ -437,6 +454,24 @@ def motor():
     return 'ok'
 
 
+# URL for motor control - format: /motor?l=[speed]&r=[speed]
+@app.route('/motorTrim')
+def motorTrim():
+    left = request.args.get('l')
+    right = request.args.get('r')
+
+    print("*** *** DEBUG: motorTrim() Pre : left: " + str(left) + " right: " + str(right))
+
+    cfg.left_motor_trim += int( left )
+    cfg.right_motor_trim += int( right )
+
+    DB.updateTrimValues(cfg.left_motor_trim, cfg.right_motor_trim)
+
+    print("*** *** DEBUG: motorTrim() Post: left: " + str(cfg.left_motor_trim) + " right: " + str(cfg.right_motor_trim))
+
+    return 'ok'
+
+
 """ jwc o
  # URL for joystick input - format: /joystick?x=[x-axis]&y=[y-axis]
 @app.route('/joystick')
@@ -489,6 +524,11 @@ def heartbeat():
     ##jwc o output['l'] = motor_1.throttle
     output['r'] = cfg.right_motor
     ##jwc o output['r'] = motor_2.throttle
+
+    # jwc 
+    # 
+    output['lt'] = cfg.left_motor_trim
+    output['rt'] = cfg.right_motor_trim
 
     output['s1'] = cfg.servo_01_Pan_Degrees
     output['s2'] = cfg.servo_02_Tilt_Degrees
