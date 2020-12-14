@@ -2,3 +2,5 @@ test-02.jpg
 test.jpg
 app.py.save
 .vscode/.ropeproject/objectdb
+
+__pycache__/
