@@ -66,7 +66,7 @@ function updateMotorSpeeds() {
 
 	// jwc n
 	//
-	var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val();
+	var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#heading-input').val();
     request.open("GET", motor_url, true);
     request.send(null);
 	console.log('speed: '+$("#speed-input").val()+'    heading: '+$("#heading-input").val())
