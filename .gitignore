@@ -5,3 +5,7 @@ app.py.save
 __pycache__/app.cpython-37.pyc
 __pycache__/config.cpython-37.pyc
 __pycache__/Logs.cpython-37.pyc
+db/__pycache__/Logs.cpython-37.pyc
+__pycache__/config.cpython-37.pyc
+__pycache__/app.cpython-37.pyc
+.vscode/.ropeproject/objectdb
