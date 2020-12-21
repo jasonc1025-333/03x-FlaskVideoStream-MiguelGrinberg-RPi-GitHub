@@ -4,3 +4,4 @@ app.py.save
 .vscode/.ropeproject/objectdb
 
 __pycache__/
+db/data/robotProperties.json

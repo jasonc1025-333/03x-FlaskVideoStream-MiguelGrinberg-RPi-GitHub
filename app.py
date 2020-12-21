@@ -123,12 +123,12 @@ minPW=(1.0-myCorrection)/1000
 # import camera driver
 if os.environ.get('CAMERA'):
     Camera = import_module('camera_' + os.environ['CAMERA']).Camera
-    print("*** DEBUG: Camera: camera_" + os.environ['CAMERA'])
+    print("*** DEBUG: Camera-01: camera_" + os.environ['CAMERA'])
 else:
     ##jwc o from camera import Camera
     # Default to most sophisticated tech
     from camera_opencv import Camera
-    print("*** DEBUG: Camera: camera_opencv")
+    print("*** DEBUG: Camera-02: camera_opencv")
 
 # Raspberry Pi camera module (requires picamera package)
 # from camera_pi import Camera
