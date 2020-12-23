@@ -79,7 +79,8 @@
     margin-left: 0%;
     /* jwc keep hud low enough for servos access */
     /* jwc o top: 70%; */
-    top: 50%;
+    /* jwc o top: 50%; */
+    top: 25%;
 
     position: absolute;
     z-index:100;
