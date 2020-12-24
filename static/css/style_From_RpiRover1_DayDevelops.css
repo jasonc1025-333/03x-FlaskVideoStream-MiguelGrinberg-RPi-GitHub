@@ -49,6 +49,9 @@ body, html {
 	margin:auto;
 	margin-top:100px;
 }
+.horizontal-icons-with-textlabel {
+	margin-left: 30%;  /* to provide centering */
+}
 #connected {
 	display:none;
 }
@@ -56,9 +59,15 @@ body, html {
 	/*jwc O  height:75%; */
 	height:50%;
 }
+#middle-row {
+	/*jwc o  height:25%; */
+	/* height:10%; */
+	height:7.5%;
+	padding-top:10px
+}
 #bottom-row {
 	/*jwc o  height:25%; */
-	height:50%;
+	height:25%;
 	padding-top:10px
 }
 #speed-input {
@@ -70,7 +79,7 @@ body, html {
 	height:80%;
 	transform:scaleX(2);
 	/* jwc */
-	margin-top:10%;
+	/*jwc causes 'Action' column to be higher:  margin-top:10%; */
 
 }
 #heading-input {
@@ -83,19 +92,28 @@ body, html {
 	/* float:right; */
 	float:none;
 }
+/* jwc Not seem to work.  Use 'class' version */
+#heading-input-value {
+	margin-top:0.5rem;
+}
+.heading-input-value {
+	margin-top:0.5rem;
+}
 #cam-wrapper {
 	background-color:#ffffff21;
     height:100%;
 }
 #rmtrim-val, #lmtrim-val {
-	margin: 10px 0px 10px 0px;
+	/* remove margin top & bottom to reduce row height to fit window */
+	/* margin: 10px 0px 10px 0px; */ 
+	margin: 0;
 }
 #power-off-btn {
 	width:100%;
 	/*jwc o  height:80%; */
-	height:50%;
+	height:60%;
 	position:relative;
-	top:5px;
+	/* top:5px; */
 }
 #cam-text {
 	position:relative;

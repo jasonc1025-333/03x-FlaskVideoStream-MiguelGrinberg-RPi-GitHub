@@ -93,54 +93,79 @@ function updateHUD(e) {
         video = response.v;
         framerate = response.f;
         
+        // jwc multiple-spacing gets reduced to one-space, so use '.' for column justification
         // jwc o status = "STS-PiLot Status<br>Link: online<br>Videolink: ";
-        status = "*** HUD: Primary ***<br>Link: online<br>Videolink: ";
-    
+        // status  = "*** HUD: Primary ***";
+        status  = "";
+        status += "<br>Battery V: ---";
+        status += "<br>Battery %: ---";
+
+        status += "<br>";
+        status += "<br>Web-Link..: online";    
+        status += "<br>Video-Link: ";
         if (framerate > 0) {
 		    status += (Math.ceil(1000 / framerate) + " FPS");
 	    } else {
         	status += video;
         }
         
+        status += "<br>";
         status += "<br>Motor-L: ";
         status += response.l;
         status += "<br>Motor-R: ";
         status += response.r;
 
-        status += "<br>servo_01_Pan_Degrees: ";
-        status += response.s1;
-        status += "<br>servo_02_Tilt_Degree: ";
-        status += response.s2;
+        status += "<br>";
+        status += "<br>Motor-L-AntiDrift: ";
+        status += response.lt;
+        status += "<br>Motor-R-AntiDrift: ";
+        status += response.rt;
 
-        status += "<br>servo_03_Degrees: ";
-        status += response.s3;
-        status += "<br>servo_04_Degree: ";
-        status += response.s4;
 
 
         // jwc o sensors = "*** Sensors ***<br>Digital 1: ";
-        sensors = "*** HUD: Secondary ***<br>Digital 1: ";
-        sensors += response.i1;
-        sensors += "<br>Digital 2: ";
-        sensors += response.i2;
-        sensors += "<br>Digital 3: ";
-        sensors += response.i3;
-        sensors += "<br>Digital 4: ";
-        sensors += response.i4;
-        sensors += "<br>Analog 1: ";
-        sensors += response.a1;
-        sensors += "<br>Analog 2: ";
-        sensors += response.a2;
-        sensors += "<br>Analog 3: ";
-        sensors += response.a3;
-        sensors += "<br>Analog 4: ";
-        sensors += response.a4;
+        // sensors = "*** HUD: Secondary ***<br>Digital 1: ";
+        sensors  = "";
+        sensors += "<br>Cam_Servo_01_Pan_Degrees.: ";
+        sensors += response.s1;
+        sensors += "<br>Cam_Servo_02_Tilt_Degrees: ";
+        sensors += response.s2;
+
+        sensors += "<br>";
+        sensors += "<br>Arm_Servo_03_Degrees: ";
+        sensors += response.s3;
+        sensors += "<br>Arm_Servo_04_Degrees: ";
+        sensors += response.s4;
+
+        //jwc not needed yet:
+        //
+        // sensors += "<br>Digital 1: ";
+        // sensors += response.i1;
+        // sensors += "<br>Digital 2: ";
+        // sensors += response.i2;
+        // sensors += "<br>Digital 3: ";
+        // sensors += response.i3;
+        // sensors += "<br>Digital 4: ";
+        // sensors += response.i4;
+
+        //jwc not needed yet
+        //
+        // sensors += "<br>";
+        // sensors += "<br>Analog 1: ";
+        // sensors += response.a1;
+        // sensors += "<br>Analog 2: ";
+        // sensors += response.a2;
+        // sensors += "<br>Analog 3: ";
+        // sensors += response.a3;
+        // sensors += "<br>Analog 4: ";
+        // sensors += response.a4;
+
         document.getElementById("status").innerHTML = status;
         document.getElementById("sensors").innerHTML = sensors;
-        button_status('blue', response.b);
-        button_status('yellow', response.y);
-        button_status('red', response.c);
-        button_status('green', response.g);
+        // button_status('blue', response.b);
+        // button_status('yellow', response.y);
+        // button_status('red', response.c);
+        // button_status('green', response.g);
 
         $('#lmtrim-val').html(response.lt);
         $('#rmtrim-val').html(response.rt);

@@ -97,20 +97,22 @@
     
     #status {
     top: 0;
-    float: left;
-    text-align: left;
+    /* float: left; */
+    /* text-align: left; */
     /* jwc o padding: 5px; */
-    padding: 20px;
+    /* padding: 20px; */
+    padding: 0 20px 0 20px;
     /* jwc o width: 40%; */
-    width: 50%;
+    /* width: 50%; */
     }
     
     #sensors {
     top: 0;
-    float: right;
+    /* float: right; */
     /* jwc o text-align: right; */
     /* jwc o padding: 5px; */
-    padding: 20px;
+    /* padding: 20px; */
+    padding: 0 20px 0 20px;
     /* jwc o width: 40%; */
     }
     

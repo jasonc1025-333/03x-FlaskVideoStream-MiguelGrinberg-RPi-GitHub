@@ -29,8 +29,8 @@
 
       <div class='row' id='top-row'>
 
-        <!-- <div class='col-6' > -->
-        <div class='col-6' >
+        <!-- col-4: max-width: 33.33% > -->
+        <div class='col-4' >
             <!-- cam -->
             <div id='cam-wrapper'>
 
@@ -45,8 +45,9 @@
             </div>
         </div>
 
-        <div class='col-2' id='speed-col'>
-          <h3 id='col-header-01'>Driver</h3>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-3' id='speed-col'>
+          <h2 id='col-header-01'>Driver</h2>
 
           <!-- Speed slider -->
           <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
@@ -54,16 +55,19 @@
 
         </div>
 
-        <div class='col-2'>
-          <h3 id='col-header-01'>Cam</h3>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-3' id='speed-col'>
+          <h2 id='col-header-01'>Cam</h2>
           
           <!-- Speed slider -->
           <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
           <p id='speed-input-val' class='text-center'>0</p>
 
           </div>
-        <div class='col-2'>
-          <h3 id='col-header-01'>Action</h3>
+
+        <!-- col-2: max-width: 16.67% > -->
+        <div class='col-2' id='speed-col'>
+          <h2 id='col-header-01'>Action</h2>
 
           <!-- Speed slider -->
           <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
@@ -72,52 +76,82 @@
         </div>
       </div>
       
-      <div class='row' id='bottom-row'>
-        <!-- <div class='col-6 text-center'> -->
-        <div class='col-6 text-center'>
-          <h3 id='col-header-01'>Live Video Stream</h3>
+      <div class='row' id='middle-row'>
+        <!-- col-4: max-width: 33.33% > -->
+        <div class='col-4 text-center' >
+          <h3 id='col-header-01'>AI Video Detect</h3>
         </div>
-        <div class='col-2'>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-3' id='speed-col'>
           <!-- robot heading -->
           <input id='heading-input' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
-          <p id='heading-input-val' class='text-center'>0</p>
+          <p id='heading-input-val' class='text-center heading-input-value'>0</p>
         </div>
-        <div class='col-2'>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-3' id='speed-col'>
           <!-- robot heading -->
           <input id='heading-input' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
-          <p id='heading-input-val' class='text-center'>0</p>
+          <p id='heading-input-val' class='text-center heading-input-value'>0</p>
         </div>
-
-        <div class='col-2 p-0'>
-          <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='powerOff()'>
-              STOP
+        <!-- col-2: max-width: 16.67% > -->
+        <!--jwc 'p-0' not seem needed  <div class='col-2 p-0'> -->
+        <div class='col-2'>
+            <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='powerOff()'>
+              HALT ALL
           </button>
         </div>
 
       </div>
 
 
+      <div class='row' id='bottom-row'>
+        <!-- col-4: max-width: 33.33% > -->
+        <!-- <div class='col-4 text-center'> -->
+        <div class='col-4'>
+          <h2 id='col-header-01'>Primary I/O</h2>
+          <div id="status"></div>
+        </div>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-3' id='speed-col'>
+          <h2 id='col-header-01'>Secondary I/O</h2>
+          <div id="sensors"></div>
+        </div>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-3' id='speed-col'>
+          <h2 id='col-header-01'>Anti-Drift Persistent</h2>
+
+          <!-- left motor trim -->
+          <h3 id='col-header-01'>Motor-L</h3>
+          <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
+          <p id='lmtrim-val' class='text-center'>0</p>
+          <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
+
+          <!-- right motor trim -->
+          <h3 id='col-header-01'>Motor-R</h3>
+          <i id='rmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
+          <p id='rmtrim-val' class='text-center'>0</p>
+          <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
+
+        </div>
+        <!-- col-2: max-width: 16.67% > -->
+        <!-- <div class='col-2 p-0'> -->
+        <div class='col-2'>
+            <!-- cam yaw -->
+          <h2 id='col-header-01'>Reserved</h2>
+          <i id='cam-left' class='ted-inline fas fa-angle-left fa-3x horizontal-icons-with-textlabel' onclick="turnCam({'direction':'L'})"></i>
+          <span id='cam-text'>-</span>
+          <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>
+        </div>
+        
+        
+
+       </div>
+
     </div>
 
-      <div>
-        <!-- left motor trim -->
-        <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
-        <p id='lmtrim-val' class='text-center'>0</p>
-        <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
- 
-        <!-- right motor trim -->
-        <i id='rmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
-        <p id='rmtrim-val' class='text-center'>0</p>
-        <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
-
-        <!-- cam yaw -->
-        <i id='cam-left' class='d-inline fas fa-angle-left fa-3x' onclick="turnCam({'direction':'L'})"></i>
-        <span id='cam-text'>Camera</span>
-        <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>
-      </div>
 
     
-      <div id="leftbar">
+      <!--jwc o <div id="leftbar"> -->
  
 <!--  jwc o       
         <div id="l100" class="controlpad speed_100" onclick="motor_l(100)">&nbsp;</div>
@@ -128,16 +162,16 @@
         <div id="l-60" class="controlpad speed_60" onclick="motor_l(-60)">&nbsp;</div>
         <div id="l-100" class="controlpad speed_100" onclick="motor_l(-100)">&nbsp;</div>
  -->     
-        <div id="l100" class="controlpad speed_100" onclick="motor_l(100)"><div class="label">Motor-L: +100%</div></div>
+<!--         <div id="l100" class="controlpad speed_100" onclick="motor_l(100)"><div class="label">Motor-L: +100%</div></div>
         <div id="l60" class="controlpad speed_60" onclick="motor_l(67)"><div class="label">Motor-L: + 67%</div></div>
         <div id="l30" class="controlpad speed_30" onclick="motor_l(33)"><div class="label">Motor-L: + 33%</div></div>
         <div id="l0" class="controlpad speed_0" onclick="motor_l(0)"><div class="label">Motor-L:   0%</div></div>
         <div id="l-30" class="controlpad speed_30" onclick="motor_l(-33)"><div class="label">Motor-L: - 33%</div></div>
         <div id="l-60" class="controlpad speed_60" onclick="motor_l(-67)"><div class="label">Motor-L: - 67%</div></div>
         <div id="l-100" class="controlpad speed_100" onclick="motor_l(-100)"><div class="label">Motor-L: -100%</div></div>
-
-      </div>
-      <div id="stop" onclick="brake()"><div class="label">Stop!</div></div>
+ -->
+      <!--id="leftbar" </div> -->
+      <!-- <div id="stop" onclick="brake()"><div class="label">Stop!</div></div> -->
 
 
       <!-- <div id="middle"> -->
@@ -153,7 +187,7 @@
           </div>
         </div> -->
 
-      <!-- </div> -->
+      <!--id="middle" </div> -->
 
 
       <div id="middle">
@@ -172,21 +206,24 @@
             <div id="sensors"></div>
           </div>
         </div>
-        <div id="buttonbar">	
+ 
+        <!-- <div id="buttonbar">	 -->
           <!-- jwc o <div id="blue" class="touchpad" onclick="touchpad(1)"><div class="label">1</div></div> -->
-          <div id="blue" class="touchpad" onclick="touchpad(1)"><div class="label">Servo-01-Pan -</div></div>
+          <!-- <div id="blue" class="touchpad" onclick="touchpad(1)"><div class="label">Servo-01-Pan -</div></div> -->
           <!-- jwc o <div id="yellow" class="touchpad" onclick="touchpad(2)"><div class="label">2</div></div> -->
-          <div id="yellow" class="touchpad" onclick="touchpad(2)"><div class="label">Servo-01-Pan +</div></div>
+          <!-- <div id="yellow" class="touchpad" onclick="touchpad(2)"><div class="label">Servo-01-Pan +</div></div> -->
           <!-- jwc o <div id="red" class="touchpad" onclick="touchpad(3)"><div class="label">3</div></div> -->
-          <div id="red" class="touchpad" onclick="touchpad(3)"><div class="label">Motors Online/Offline</div></div>
+          <!-- <div id="red" class="touchpad" onclick="touchpad(3)"><div class="label">Motors Online/Offline</div></div> -->
           <!-- jwc o <div id="green" class="touchpad" onclick="touchpad(4)"><div class="label">4</div></div> -->
-          <div id="green" class="touchpad" onclick="touchpad(4)"><div class="label">Servo-02-Tilt -</div></div>
+          <!-- <div id="green" class="touchpad" onclick="touchpad(4)"><div class="label">Servo-02-Tilt -</div></div> -->
           <!-- jwc Add new Cell -->
-          <div id="yellow" class="touchpad" onclick="touchpad(5)"><div class="label">Servo-02-Tilt +</div></div>
-          <div id="hud" class="touchpad" onclick="toggle_hud()"><div class="label">HUD</div></div>
-        </div>	
+          <!-- <div id="yellow" class="touchpad" onclick="touchpad(5)"><div class="label">Servo-02-Tilt +</div></div> -->
+          <!-- <div id="hud" class="touchpad" onclick="toggle_hud()"><div class="label">HUD</div></div> -->
+        <!-- </div>	 -->
+
       </div>
-      <div id="rightbar">
+    
+      <!-- <div id="rightbar"> -->
 <!--    jwc o
         <div id="r100" class="controlpad speed_100" onclick="motor_r(100)">&nbsp;</div>
         <div id="r60" class="controlpad speed_60" onclick="motor_r(60)">&nbsp;</div>
@@ -196,16 +233,18 @@
         <div id="r-60" class="controlpad speed_60" onclick="motor_r(-60)">&nbsp;</div>
         <div id="r-100" class="controlpad speed_100" onclick="motor_r(-100)">&nbsp;</div>
  -->
-        <div id="r100" class="controlpad speed_100" onclick="motor_r(100)"><div class="label">Motor-R: +100%</div></div>
+<!--         <div id="r100" class="controlpad speed_100" onclick="motor_r(100)"><div class="label">Motor-R: +100%</div></div>
         <div id="r60" class="controlpad speed_60" onclick="motor_r(67)"><div class="label">Motor-R: + 67%</div></div>
         <div id="r30" class="controlpad speed_30" onclick="motor_r(33)"><div class="label">Motor-R: + 33%</div></div>
         <div id="r0" class="controlpad speed_0" onclick="motor_r(0)"><div class="label">Motor-R:   0%</div></div>
         <div id="r-30" class="controlpad speed_30" onclick="motor_r(-33)"><div class="label">Motor-R: - 33%</div></div>
         <div id="r-60" class="controlpad speed_60" onclick="motor_r(-67)"><div class="label">Motor-R: - 67%</div></div>
         <div id="r-100" class="controlpad speed_100" onclick="motor_r(-100)"><div class="label">Motor-R: -100%</div></div>
+ -->
+       <!--id="rightbar" </div>  -->
 
-       </div>
-    </div>
+
+    <!--EXTRA </div> -->
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
