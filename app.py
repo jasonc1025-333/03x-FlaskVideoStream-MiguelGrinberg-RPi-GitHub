@@ -549,6 +549,43 @@ def motor():
     ##jwc yn print("*** DEBUG: motor: l" + str((left_Int/100) * 250) + " r" + str((right_Int/100) * 250))
     return 'ok'
 
+@app.route('/update_Servo_Fn')
+def update_Servo_Fn():
+    cam_Tilt_Degrees_SliderInput_Int = int(request.args.get('cam_Tilt_Degrees_SliderInput'))
+    servo_ChannelNum_Int = int(request.args.get('servo_ChannelNum_Int_In'))
+        
+    print("*** DEBUG: /update_Servo_Fn: " + str(cam_Tilt_Degrees_SliderInput_Int) + " " + str(servo_ChannelNum_Int))
+
+    if servo_ChannelNum_Int == 0:
+
+        ##jwc n AttributeError: servo_01_Pan = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositiionGet_Fn()
+        ##jwc n cfg.servo_01_Pan_Degrees = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositionGet_Fn()
+
+        ##jwc o  cfg.servo_01_Pan_Degrees = cfg.servo_01_Pan_Degrees - 10
+        if cam_Pan_Degrees_SliderInput_Int < 0: 
+            cam_Pan_Degrees_SliderInput_Int = 0
+        if cam_Pan_Degrees_SliderInput_Int > 180: 
+            cam_Pan_Degrees_SliderInput_Int = 180
+        cfg.servo_01_Pan_Degrees = cam_Pan_Degrees_SliderInput_Int
+        AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
+        print("*** DEBUG: S1: servo: pan: " + str(cfg.servo_01_Pan_Degrees))
+        
+    elif servo_ChannelNum_Int == 1:
+
+        ##jwc n AttributeError: servo_01_Pan = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositiionGet_Fn()
+        ##jwc n cfg.servo_01_Pan_Degrees = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositionGet_Fn()
+
+        ##jwc o  cfg.servo_01_Pan_Degrees = cfg.servo_01_Pan_Degrees - 10
+        if cam_Tilt_Degrees_SliderInput_Int < 0: 
+            cam_Tilt_Degrees_SliderInput_Int = 0
+        if cam_Tilt_Degrees_SliderInput_Int > 180: 
+            cam_Tilt_Degrees_SliderInput_Int = 180
+        cfg.servo_01_Pan_Degrees = cam_Tilt_Degrees_SliderInput_Int
+        AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
+        print("*** DEBUG: S2: servo: tilt: " + str(cfg.servo_02_Tilt_Degrees))
+
+    return 'ok'
+
 
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
 @app.route('/motorTrim')
@@ -732,7 +769,14 @@ if __name__ == '__main__':
 
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
-    app.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False)
+    #jwc y app.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False)
+    # jwc TYJ following works with local debugging, though cam may not work
+    # jwc o, obsolete since now will use external-VSCode-debugger and not Flask-debugger: app.run(host=args["address"], port=args["port"], debug=False, threaded=True, use_reloader=False)
+    ## jwc Seems that Flask-dedug now fix and not this 'passthrough_errosrs' workaround: 'passthrough_errors=True' since need errors to bubble up to ext VSCode-debugger
+    ##jwc y app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
+    ##jwc y app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=False)
+    app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
+
 
 
 

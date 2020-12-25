@@ -70,7 +70,7 @@ body, html {
 	height:25%;
 	padding-top:10px
 }
-#speed-input {
+#speed-input, #cam_Tilt_Degrees_SliderInput {
 	/*jwc o try to center\ margin-left:15px; */
 	/* margin-left:97%; */
 	/*jwc o  margin-left:75%; */
@@ -135,6 +135,10 @@ input[type=range][orient=vertical]
     padding: 0 5px;
 }
 #speed-input::-webkit-slider-runnable-track  {
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	background-image: linear-gradient(green,yellow,red,yellow,green);
+}
+#cam_Tilt_Degrees_SliderInput::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
 	background-image: linear-gradient(green,yellow,red,yellow,green);
 }

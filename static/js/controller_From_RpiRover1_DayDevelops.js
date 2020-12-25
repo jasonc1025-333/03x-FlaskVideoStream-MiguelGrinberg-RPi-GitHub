@@ -56,20 +56,24 @@ function controllerOff() {
 
 
 function updateMotorSpeeds() {
-	// read value of both sliders and send to server
-	console.log('speed: '+$("#speed-input").val()+'    heading: '+$("#heading-input").val())
-	///jwc o data = {
-	///jwc o 	'speed':$('#speed-input').val(),
-	///jwc o 	'heading':$('#heading-input').val()
-	///jwc o }
-	///jwc o ERROR socket.emit('speedInput',data);
-
 	// jwc n
 	//
-	var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#heading-input').val();
-    request.open("GET", motor_url, true);
+	//jwc o  var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#heading-input').val();
+	//jwc o var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val();
+	var url_Str = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val();
+    request.open("GET", url_Str, true);
     request.send(null);
-	console.log('speed: '+$("#speed-input").val()+'    heading: '+$("#heading-input").val())
+	// console.log('speed: '+$("#speed-input").val()+'    heading: '+$("#heading-input").val());
+	// console.log("/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val());
+	console.log('*** url: ' + url_Str)
+
+}
+
+function update_Servo_Fn(servo_ChannelNum_Int_In) {
+	var url_Str = "/update_Servo_Fn?servo_ChannelNum_Int_In=" + servo_ChannelNum_Int_In.toString() + '&cam_Tilt_Degrees_SliderInput=' + $('#cam_Tilt_Degrees_SliderInput').val();
+    request.open("GET", url_Str, true);
+    request.send(null);
+	console.log('*** url: ' + url_Str)
 
 }
 

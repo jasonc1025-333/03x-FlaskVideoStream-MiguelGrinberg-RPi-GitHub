@@ -49,25 +49,25 @@
         <div class='col-3' id='speed-col'>
           <h2 id='col-header-01'>Driver</h2>
 
-          <!-- Speed slider -->
+          <!-- fwd_rev slider -->
           <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
           <p id='speed-input-val' class='text-center'>0</p>
 
         </div>
 
         <!-- col-3: max-width: 25.00% > -->
-        <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01'>Cam</h2>
+        <div class='col-3' id='turn-col'>
+          <h2 id='col-header-01'>Camera</h2>
           
-          <!-- Speed slider -->
-          <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
-          <p id='speed-input-val' class='text-center'>0</p>
+          <!-- cam_tilt slider -->
+          <input id='cam_Tilt_Degrees_SliderInput' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='update_Servo_Fn(1)'>
+          <p id='turn-input-val' class='text-center'>0</p>
 
-          </div>
+        </div>
 
         <!-- col-2: max-width: 16.67% > -->
         <div class='col-2' id='speed-col'>
-          <h2 id='col-header-01'>Action</h2>
+          <h2 id='col-header-01'>Action-Arm</h2>
 
           <!-- Speed slider -->
           <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>

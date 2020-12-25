@@ -15,9 +15,12 @@
                 "FLASK_DEBUG": "0"
             },
             "args": [
+                // Need the following for VSCode-debug w/ Local-Browser (though Remote-Browser not work).
+                //
                 "run",
-                "--no-debugger"
-            ],
+                "--no-debugger",
+                "--no-reload"
+                ],
             "jinja": true
         }
     ]
