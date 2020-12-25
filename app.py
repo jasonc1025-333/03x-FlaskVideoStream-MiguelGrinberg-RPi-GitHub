@@ -580,8 +580,8 @@ def update_Servo_Fn():
             cam_Tilt_Degrees_SliderInput_Int = 0
         if cam_Tilt_Degrees_SliderInput_Int > 180: 
             cam_Tilt_Degrees_SliderInput_Int = 180
-        cfg.servo_01_Pan_Degrees = cam_Tilt_Degrees_SliderInput_Int
-        AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
+        cfg.servo_02_Tilt_Degrees = cam_Tilt_Degrees_SliderInput_Int
+        AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
         print("*** DEBUG: S2: servo: tilt: " + str(cfg.servo_02_Tilt_Degrees))
 
     return 'ok'
