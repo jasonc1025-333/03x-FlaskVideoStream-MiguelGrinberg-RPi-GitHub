@@ -67,9 +67,10 @@ def init():
 
     # Servos
     #
-    global servos_Cam, servo_Cam_01_Pan_Id, servo_Cam_02_Tilt_Id
-    servo_Cam_01_Pan_Id = 0
-    servo_Cam_02_Tilt_Id = 1
+    global servos_Cam, servo_Cam_01_Pan_ChannelNum, servo_Cam_02_Tilt_ChannelNum, servo_Arm_03_ChannelNum
+    servo_Cam_01_Pan_ChannelNum = 0
+    servo_Cam_02_Tilt_ChannelNum = 1
+    servo_Arm_03_ChannelNum = 2
     # Initialize Constructor
     ##jwc o test = pi_servo_hat.PiServoHat()
     ##jwc direct power, test = pi_servo_hat.PiServoHat(0x48)
@@ -93,18 +94,21 @@ def motorRight_Fn(speed_In):
     myMotor.set_drive(R_MTR,FWD,speed_In)
 
 def servo_Cam_01_Pan_Fn(degrees_In):
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, degrees_In, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, degrees_In, 180)
 
 def servo_Cam_02_Tilt_Fn(degrees_In):
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, degrees_In, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, degrees_In, 180)
+
+def servo_Arm_03_Fn(degrees_In):
+    servos_Cam.move_servo_position(servo_Arm_03_ChannelNum, degrees_In, 180)
 
 # jwc Returns unusual value.  Do not use for now.
 def servo_Cam_01_Pan_PositionGet_Fn():
-    return servos_Cam.get_servo_position(servo_Cam_01_Pan_Id)
+    return servos_Cam.get_servo_position(servo_Cam_01_Pan_ChannelNum)
 
 # jwc Returns unusual value.  Do not use for now.
 def servo_Cam_02_Tilt_PositionGet_Fn():
-    return servos_Cam.get_servo_position(servo_Cam_02_Tilt_Id)
+    return servos_Cam.get_servo_position(servo_Cam_02_Tilt_ChannelNum)
 
 
 def runExample():
@@ -138,18 +142,18 @@ def runTest():
     # Test Run
     #########################################
     # Moves servo channel 0, position to 90 degrees (1ms), swing max 180
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, 0, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, 0, 180)
     time.sleep(3)
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, 90, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, 90, 180)
     time.sleep(3)
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, 180, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, 180, 180)
     time.sleep(3)
     # Moves servo channel 1, position to 90 degrees (1ms), swing max 180
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, 0, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, 0, 180)
     time.sleep(3)
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, 90, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, 90, 180)
     time.sleep(3)
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, 180, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, 180, 180)
     time.sleep(3)
 
     # Zero Motor Speeds
@@ -182,18 +186,25 @@ def runTest_Quick():
     # Test Run
     #########################################
     # Moves servo channel 0, position to 90 degrees (1ms), swing max 180
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, 0, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, 0, 180)
     time.sleep(1)
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, 90, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, 90, 180)
     time.sleep(1)
-    servos_Cam.move_servo_position(servo_Cam_01_Pan_Id, 180, 180)
+    servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, 180, 180)
     time.sleep(1)
     # Moves servo channel 1, position to 90 degrees (1ms), swing max 180
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, 0, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, 0, 180)
     time.sleep(1)
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, 90, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, 90, 180)
     time.sleep(1)
-    servos_Cam.move_servo_position(servo_Cam_02_Tilt_Id, 180, 180)
+    servos_Cam.move_servo_position(servo_Cam_02_Tilt_ChannelNum, 180, 180)
+    time.sleep(1)
+    # Moves servo channel 2, position to 90 degrees (1ms), swing max 180
+    servos_Cam.move_servo_position(servo_Arm_03_ChannelNum, 0, 180)
+    time.sleep(1)
+    servos_Cam.move_servo_position(servo_Arm_03_ChannelNum, 90, 180)
+    time.sleep(1)
+    servos_Cam.move_servo_position(servo_Arm_03_ChannelNum, 180, 180)
     time.sleep(1)
 
     myMotor.enable()

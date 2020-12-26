@@ -46,6 +46,8 @@ AutoPHat_SparkFun_Driver.runTest_Quick()
 AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
 AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
 
+AutoPHat_SparkFun_Driver.servo_Arm_03_Fn( cfg.servo_03_Degrees )
+
 ##jwc o # make two variables for the motors to make code shorter to type
 ##jwc o # Right-Side
 ##jwc o motor_1 = crickit.dc_motor_1
@@ -456,6 +458,7 @@ def motor():
             print("motor-left: " + str(servoPwm_PositionMax) + " " + str(left_normalized))
     return 'ok'
  """
+
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
 @app.route('/motor')
 def motor():
@@ -476,31 +479,16 @@ def motor():
             ##jwc o hw.motor_two_speed(cfg.left_motor)
             ##jwc o left_normalized = (left / 100 )
             if left_Int >= 0:
-                ##jwc n robohat.motorLeft_Plus_Fn(left_Absolute)
-                ##jwc y robohat.motorLeft_Plus_Fn(left_Absolute)
                 ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
                 AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
                 ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
 
-                # Sample Test Servo
-                ##TODO jwc jittery:  servo.min()
-                ##TODO jwc jitter: servo.ChangeDutyCycle(servoPwm_PositionMax)
-                ##jwc 'crickit' y servo_02.ChangeDutyCycle(servoPwm_PositionMax)
-                ##jwc y servo.max()
-                ##jwc y AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( 0 )
                 print("*** DEBUG: L1: motor: L " + str((left_Int/100) * 250))
             elif left_Int < 0:
-                ##jwc y robohat.motorLeft_Minus_Fn(left_Absolute)
                 ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
                 AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
                 ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
 
-                # Sample Test Servo
-                ##TODO jwc jittery: servo.max()
-                ##TODO jwc jitter: servo.ChangeDutyCycle(servoPwm_PositionMin)
-                ##jwc 'crickit' y servo_02.ChangeDutyCycle(servoPwm_PositionMin)
-                ##jwc y servo.min()
-                ##jwc y AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( 180 )
                 print("*** DEBUG: L2: motor: L " + str((left_Int/100) * 250))
             else:
                 print("*** Error: Invalid Value: left_Int: ", left_Int)
@@ -515,30 +503,16 @@ def motor():
             ##jwc o hw.motor_one_speed(cfg.right_motor)
             ##jwc o right_normalized = (right / 100 )
             if right_Int >= 0:
-                ##jwc y robohat.motorRight_Plus_Fn(right_Absolute)
                 ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
                 AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
                 ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
 
-                # Sample Test Servo
-                ##TODO jwc jittery: servo_02.min()
-                ##TODO jwc jitter: servo.ChangeDutyCycle(servoPwm_PositionMax)
-                ##jwc 'crickit' y servo_02.ChangeDutyCycle(servoPwm_PositionMax)
-                ##jwc y servo_02.max()
-                ##jwc y AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( 0 )
                 print("*** DEBUG: R1: motor: R " + str((right_Int/100) * 250))
             elif right_Int < 0:
-                ##jwc y robohat.motorRight_Plus_Fn(right_Absolute)
                 ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
                 AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
                 ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
 
-                # Sample Test Servo
-                ##TODO jwc jittery: servo_02.max()
-                ##TODO jwc jittery: servo.ChangeDutyCycle(servoPwm_PositionMin)
-                ##jwc 'crickit' y servo_02.ChangeDutyCycle(servoPwm_PositionMin)
-                ##jwc y servo_02.max()
-                ##jwc y AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( 180 )
                 print("*** DEBUG: R2: motor: R " + str((right_Int/100) * 250))
             else:
                 print("*** Error: Invalid Value: right_Int: ", right_Int)
@@ -549,41 +523,111 @@ def motor():
     ##jwc yn print("*** DEBUG: motor: l" + str((left_Int/100) * 250) + " r" + str((right_Int/100) * 250))
     return 'ok'
 
-@app.route('/update_Servo_Fn')
-def update_Servo_Fn():
-    cam_Tilt_Degrees_SliderInput_Int = int(request.args.get('cam_Tilt_Degrees_SliderInput'))
-    servo_ChannelNum_Int = int(request.args.get('servo_ChannelNum_Int_In'))
-        
-    print("*** DEBUG: /update_Servo_Fn: " + str(cam_Tilt_Degrees_SliderInput_Int) + " " + str(servo_ChannelNum_Int))
+# URL for motor control - format: /motor?l=[speed]&r=[speed]
+@app.route('/motor_for_turn')
+def motor_for_turn():
+    left = request.args.get('l')
+    right = request.args.get('r')
 
-    if servo_ChannelNum_Int == 0:
+    print("*** *** DEBUG: left: " + str(left) + " right: " + str(right))
 
-        ##jwc n AttributeError: servo_01_Pan = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositiionGet_Fn()
-        ##jwc n cfg.servo_01_Pan_Degrees = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositionGet_Fn()
+    left_normalized = 0
+    right_normalized = 0
 
-        ##jwc o  cfg.servo_01_Pan_Degrees = cfg.servo_01_Pan_Degrees - 10
-        if cam_Pan_Degrees_SliderInput_Int < 0: 
-            cam_Pan_Degrees_SliderInput_Int = 0
-        if cam_Pan_Degrees_SliderInput_Int > 180: 
-            cam_Pan_Degrees_SliderInput_Int = 180
-        cfg.servo_01_Pan_Degrees = cam_Pan_Degrees_SliderInput_Int
-        AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
-        print("*** DEBUG: S1: servo: pan: " + str(cfg.servo_01_Pan_Degrees))
-        
-    elif servo_ChannelNum_Int == 1:
+    if left and not cfg.chocks:
+        left_Int = int(left)
+        cfg.left_motor = left_Int
+        left_Absolute = abs( left_Int )
+        if left_Int >= -100 and left_Int <= 100:
+            ##jwc yo cfg.left_motor = left
+            ##jwc o hw.motor_two_speed(cfg.left_motor)
+            ##jwc o left_normalized = (left / 100 )
+            if left_Int >= 0:
+                ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
+                AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
+                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
 
-        ##jwc n AttributeError: servo_01_Pan = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositiionGet_Fn()
-        ##jwc n cfg.servo_01_Pan_Degrees = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositionGet_Fn()
+                print("*** DEBUG: L1: motor: L " + str((left_Int/100) * 250))
+            elif left_Int < 0:
+                ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
+                AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
+                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
 
-        ##jwc o  cfg.servo_01_Pan_Degrees = cfg.servo_01_Pan_Degrees - 10
-        if cam_Tilt_Degrees_SliderInput_Int < 0: 
-            cam_Tilt_Degrees_SliderInput_Int = 0
-        if cam_Tilt_Degrees_SliderInput_Int > 180: 
-            cam_Tilt_Degrees_SliderInput_Int = 180
-        cfg.servo_02_Tilt_Degrees = cam_Tilt_Degrees_SliderInput_Int
-        AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
-        print("*** DEBUG: S2: servo: tilt: " + str(cfg.servo_02_Tilt_Degrees))
+                print("*** DEBUG: L2: motor: L " + str((left_Int/100) * 250))
+            else:
+                print("*** Error: Invalid Value: left_Int: ", left_Int)
+            ##jwc o motor_1.throttle = left_normalized
 
+    if right and not cfg.chocks:
+        right_Int = int(right)
+        # Since turning, need to invert sign of 'right'
+        right_Int = -1 * right_Int
+        cfg.right_motor = right_Int
+        right_Absolute = abs( right_Int )
+        if right_Int >= -100 and right_Int <= 100:
+            ##jwc o cfg.right_motor = right
+            ##jwc o hw.motor_one_speed(cfg.right_motor)
+            ##jwc o right_normalized = (right / 100 )
+            if right_Int >= 0:
+                ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
+                AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
+                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
+
+                print("*** DEBUG: R1: motor: R " + str((right_Int/100) * 250))
+            elif right_Int < 0:
+                ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
+                AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
+                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
+
+                print("*** DEBUG: R2: motor: R " + str((right_Int/100) * 250))
+            else:
+                print("*** Error: Invalid Value: right_Int: ", right_Int)
+            ##jwc o motor_2.throttle = right_normalized
+
+    ##jwc y print("*** DEBUG: motor: l" + str(left_normalized) + " r" + str(right_normalized))
+    ##jwc y print("*** DEBUG: motor: l" + str(left_Int) + " r" + str(right_Int)
+    ##jwc yn print("*** DEBUG: motor: l" + str((left_Int/100) * 250) + " r" + str((right_Int/100) * 250))
+    return 'ok'
+
+
+@app.route('/servo_Cam_01_Pan_Degrees_FrontEnd_Fn')
+def servo_Cam_01_Pan_Degrees_FrontEnd_Fn():
+    servoDegreesInt = int(request.args.get('servo_Cam_01_Pan_Degrees_FrontEnd_Id'))
+
+    if servoDegreesInt < 0: 
+        servoDegreesInt = 0
+    elif servoDegreesInt > 180: 
+        servoDegreesInt = 180
+    cfg.servo_01_Pan_Degrees = servoDegreesInt
+    AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )    
+    print("*** DEBUG: /servo_Cam_01_Pan_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
+    return 'ok'
+
+
+@app.route('/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn')
+def servo_Cam_02_Tilt_Degrees_FrontEnd_Fn():
+    servoDegreesInt = int(request.args.get('servo_Cam_02_Tilt_Degrees_FrontEnd_Id'))
+
+    if servoDegreesInt < 0: 
+        servoDegreesInt = 0
+    elif servoDegreesInt > 180: 
+        servoDegreesInt = 180
+    cfg.servo_02_Tilt_Degrees = servoDegreesInt
+    AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
+    print("*** DEBUG: /servo_Cam_02_Tilt_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
+    return 'ok'
+
+@app.route('/servo_Arm_03_Degrees_FrontEnd_Fn')
+def servo_Arm_03_Degrees_FrontEnd_Fn():
+    servoDegreesInt = int(request.args.get('servo_Arm_03_Degrees_FrontEnd_Id'))
+
+    if servoDegreesInt < 0: 
+        servoDegreesInt = 0
+    elif servoDegreesInt > 180: 
+        servoDegreesInt = 180
+    cfg.servo_03_Degrees = servoDegreesInt
+    AutoPHat_SparkFun_Driver.servo_Arm_03_Fn( cfg.servo_03_Degrees )
+    print("*** DEBUG: /servo_Arm_03_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
     return 'ok'
 
 

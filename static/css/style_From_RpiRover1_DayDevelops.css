@@ -62,31 +62,36 @@ body, html {
 #middle-row {
 	/*jwc o  height:25%; */
 	/* height:10%; */
-	height:7.5%;
-	padding-top:10px
+	/* height:7.5%; */
+	height:15%;
+	/* padding-top:10px */
+	padding-top:50px  /* Needed for Linux */
 }
 #bottom-row {
 	/*jwc o  height:25%; */
 	height:25%;
 	padding-top:10px
 }
-#speed-input, #cam_Tilt_Degrees_SliderInput {
+#dcMotors_FwdOrRev_Power_FrontEnd_Id, 
+#servo_Cam_02_Tilt_Degrees_FrontEnd_Id, 
+#servo_Arm_03_Degrees_FrontEnd_Id {
 	/*jwc o try to center\ margin-left:15px; */
 	/* margin-left:97%; */
 	/*jwc o  margin-left:75%; */
 	margin-left:50%;
 	/* height:100%; */
 	height:80%;
-	transform:scaleX(2);
+	/* transform:scaleX(2); */
+	transform:scaleX(5);
 	/* jwc */
 	/*jwc causes 'Action' column to be higher:  margin-top:10%; */
 
 }
-#heading-input {
+#dcMotors_Turn_Power_FrontEnd_Id {
 	/* width:100%; */
 	/* width:75%; */
 	width:100%;
-	transform:scaleY(2);
+	transform:scaleY(5);
 	margin-top:15px;
 	/* margin-right:15px; */
 	/* float:right; */
@@ -94,10 +99,12 @@ body, html {
 }
 /* jwc Not seem to work.  Use 'class' version */
 #heading-input-value {
-	margin-top:0.5rem;
+	/* margin-top:0.5rem; */
+	margin-top:3.5rem;
 }
 .heading-input-value {
-	margin-top:0.5rem;
+	/* margin-top:0.5rem; */
+	margin-top:3.5rem;
 }
 #cam-wrapper {
 	background-color:#ffffff21;
@@ -134,15 +141,23 @@ input[type=range][orient=vertical]
     height: 175px;
     padding: 0 5px;
 }
-#speed-input::-webkit-slider-runnable-track  {
+#dcMotors_FwdOrRev_Power_FrontEnd_Id::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
-	background-image: linear-gradient(green,yellow,red,yellow,green);
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	background-image: linear-gradient(rgb(0, 0, 32),rgb(127, 255, 127),rgb(0, 32, 0));
 }
-#cam_Tilt_Degrees_SliderInput::-webkit-slider-runnable-track  {
+#servo_Cam_02_Tilt_Degrees_FrontEnd_Id::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
-	background-image: linear-gradient(green,yellow,red,yellow,green);
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	background-image: linear-gradient(rgb(0, 0, 32),rgb(127, 255, 255),rgb(0, 0, 32));
 }
-#heading-input::-webkit-slider-runnable-track  {
+#servo_Arm_03_Degrees_FrontEnd_Id::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
-	background-image: linear-gradient(to right,green,yellow,red,yellow,green);
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	background-image: linear-gradient(rgb(32, 32, 0),rgb(255, 225, 127),rgb(32, 32, 0));
+}
+#dcMotors_Turn_Power_FrontEnd_Id::-webkit-slider-runnable-track  {
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	/* jwc o background-image: linear-gradient(to right,green,yellow,red,yellow,green); */
+	background-image: linear-gradient(to right,rgb(0, 0, 32),rgb(127, 255, 127),rgb(0, 32, 0));
 }

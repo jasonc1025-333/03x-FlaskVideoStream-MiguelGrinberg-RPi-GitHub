@@ -170,8 +170,10 @@ function updateHUD(e) {
         $('#lmtrim-val').html(response.lt);
         $('#rmtrim-val').html(response.rt);
         $('#speed-input-val').html(response.l);
-        $('#heading-input-val').html(response.r);
+        $('#heading-input-val').html(response.l);
 
+        $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id').html(response.s2);
+        $('#servo_Arm_03_Degrees_FrontEnd_Response_Id').html(response.s3);
 
         // jwc: reset 'linkCheck' timeout since currently processing heartbeat, which is good
         //

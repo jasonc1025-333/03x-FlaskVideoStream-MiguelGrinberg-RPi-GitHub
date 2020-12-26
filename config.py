@@ -43,8 +43,10 @@ right_motor = 0
 left_motor_trim = 0
 right_motor_trim = 0
 
+# default to 90 degrees
+#
 servo_01_Pan_Degrees = 90
 servo_02_Tilt_Degrees = 90
-servo_03_Degrees = 0
-servo_04_Degrees = 0
+servo_03_Degrees = 90
+servo_04_Degrees = 90
 temp = 0

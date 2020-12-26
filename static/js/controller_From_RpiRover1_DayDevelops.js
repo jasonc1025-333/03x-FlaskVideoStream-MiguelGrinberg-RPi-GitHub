@@ -56,25 +56,29 @@ function controllerOff() {
 
 
 function updateMotorSpeeds() {
-	// jwc n
-	//
-	//jwc o  var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#heading-input').val();
-	//jwc o var motor_url = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val();
-	var url_Str = "/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val();
+	var url_Str = "/motor?l=" + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
     request.send(null);
-	// console.log('speed: '+$("#speed-input").val()+'    heading: '+$("#heading-input").val());
-	// console.log("/motor?l=" + $('#speed-input').val() + '&r=' + $('#speed-input').val());
 	console.log('*** url: ' + url_Str)
-
+}
+function updateMotorSpeeds_ForTurn_Fn() {
+	var url_Str = "/motor_for_turn?l=" + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
+    request.open("GET", url_Str, true);
+    request.send(null);
+	console.log('*** url: ' + url_Str)
+}
+function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
+	var url_Str = '/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn?servo_Cam_02_Tilt_Degrees_FrontEnd_Id=' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
+    request.open('GET', url_Str, true);
+    request.send(null);
+	console.log('*** url: ' + url_Str)
 }
 
-function update_Servo_Fn(servo_ChannelNum_Int_In) {
-	var url_Str = "/update_Servo_Fn?servo_ChannelNum_Int_In=" + servo_ChannelNum_Int_In.toString() + '&cam_Tilt_Degrees_SliderInput=' + $('#cam_Tilt_Degrees_SliderInput').val();
-    request.open("GET", url_Str, true);
+function servo_Arm_03_Degrees_FrontEnd_Fn() {
+	var url_Str = '/servo_Arm_03_Degrees_FrontEnd_Fn?servo_Arm_03_Degrees_FrontEnd_Id=' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
+    request.open('GET', url_Str, true);
     request.send(null);
 	console.log('*** url: ' + url_Str)
-
 }
 
 function changeTrim(data) {

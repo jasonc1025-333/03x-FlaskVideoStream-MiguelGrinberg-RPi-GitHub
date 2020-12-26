@@ -36,7 +36,8 @@
 
                 <!--AAA TYJ this works :)+-->
                 <!--jwc o <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
-                <img style="transform:rotate(0deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
+                <!--jwc y  <img style="transform:rotate(0deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
+                <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
 
                 <!--jwc <canvas' seems to corrupt 'img' <canvas>
                   <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
@@ -49,8 +50,8 @@
         <div class='col-3' id='speed-col'>
           <h2 id='col-header-01'>Driver</h2>
 
-          <!-- fwd_rev slider -->
-          <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
+          <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
+          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
           <p id='speed-input-val' class='text-center'>0</p>
 
         </div>
@@ -59,9 +60,9 @@
         <div class='col-3' id='turn-col'>
           <h2 id='col-header-01'>Camera</h2>
           
-          <!-- cam_tilt slider -->
-          <input id='cam_Tilt_Degrees_SliderInput' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='update_Servo_Fn(1)'>
-          <p id='turn-input-val' class='text-center'>0</p>
+          <!-- servo_Cam_02_Tilt_Degrees_FrontEnd_Id slider -->
+          <input id='servo_Cam_02_Tilt_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Cam_02_Tilt_Degrees_FrontEnd_Fn()'>
+          <p id='servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id' class='text-center'>0</p>
 
         </div>
 
@@ -69,9 +70,9 @@
         <div class='col-2' id='speed-col'>
           <h2 id='col-header-01'>Action-Arm</h2>
 
-          <!-- Speed slider -->
-          <input id='speed-input' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
-          <p id='speed-input-val' class='text-center'>0</p>
+          <!-- servo_Arm_03_Degrees_FrontEnd_Id slider -->
+          <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'>
+          <p id='servo_Arm_03_Degrees_FrontEnd_Response_Id' class='text-center'>0</p>
 
         </div>
       </div>
@@ -83,14 +84,16 @@
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <!-- robot heading -->
-          <input id='heading-input' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
+
+          <!-- dcMotors_Turn_Power_FrontEnd_Id slider -->
+          <input id='dcMotors_Turn_Power_FrontEnd_Id' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'>
           <p id='heading-input-val' class='text-center heading-input-value'>0</p>
+
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <!-- robot heading -->
-          <input id='heading-input' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
+          <!-- dcMotors_Turn_Power_FrontEnd_Id slider -->
+          <input id='dcMotors_Turn_Power_FrontEnd_Id' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
           <p id='heading-input-val' class='text-center heading-input-value'>0</p>
         </div>
         <!-- col-2: max-width: 16.67% > -->
