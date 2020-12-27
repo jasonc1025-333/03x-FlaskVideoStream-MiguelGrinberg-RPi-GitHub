@@ -165,14 +165,26 @@ def detect_motion(frameCount):
 		# convert the frame to grayscale, and blur it
 		frame = vs.read()
 		frame = imutils.resize(frame, width=400)
+		# jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
+		##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)
 		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		gray = cv2.GaussianBlur(gray, (7, 7), 0)
+		
+		# jwc Frame is originally right-side up, yet timestamp-print is upside down
+		#     So, flip upside down before timestamp-print, then re-flip after
+		frame = imutils.rotate(frame, 180)
 
 		# grab the current timestamp and draw it on the frame
 		timestamp = datetime.datetime.now()
+		# cv2.putText(frame, timestamp.strftime(
+		# 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+		# 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 		cv2.putText(frame, timestamp.strftime(
 			"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+		frame = imutils.rotate(frame, 180)
 
 		# if the total number of frames has reached a sufficient
 		# number to construct a reasonable background model, then

@@ -55,17 +55,52 @@ function controllerOff() {
 }
 
 
+function sleep(milliseconds) {
+	const date = Date.now();
+	let currentDate = null;
+	do {
+	  currentDate = Date.now();
+	} while (currentDate - date < milliseconds);
+  }
+  
+
 function updateMotorSpeeds() {
 	var url_Str = "/motor?l=" + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
     request.send(null);
 	console.log('*** url: ' + url_Str)
+	// If Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	if ($('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val()==0) {
+		for (i=0; i<3; i++) { 
+			request.open("GET", url_Str, true);
+			request.send(null);
+			console.log('*** *** ' + i + ' url: ' + url_Str);
+			//jwc n  await new Promise(r => setTimeout(r, 2000));
+			//y  sleep(2000);
+			//n  sleep(1);
+			//y seems msec, TYJ server end receives at least one loop  sleep(10);
+			//y 3 loops  sleep(100);
+			//y 3 TYJ seems most reliable 2-3 (90% 3) loops  sleep(50);
+			//n 1-3 not reliable 3  sleep(25);
+			sleep(50);
+		}
+	}
 }
 function updateMotorSpeeds_ForTurn_Fn() {
 	var url_Str = "/motor_for_turn?l=" + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
     request.send(null);
 	console.log('*** url: ' + url_Str)
+	// If Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	if ($('#dcMotors_Turn_Power_FrontEnd_Id').val()==0) {
+		for (i=0; i<3; i++) { 
+			request.open("GET", url_Str, true);
+			request.send(null);
+			console.log('*** *** ' + i + ' url: ' + url_Str);
+			sleep(50);
+		}
+	}
+
 }
 function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn?servo_Cam_02_Tilt_Degrees_FrontEnd_Id=' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
