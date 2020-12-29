@@ -121,6 +121,21 @@ minPW=(1.0-myCorrection)/1000
 ##jwc 'crickit' servo_02.start(servoPwm_PositionMid) # start it at 50% - should be servoPwm_PositionMid of servo
 ##jwc 'crickit' #p.ChangeDutyCycle(100)
 
+##jwc o 
+##
+## Raspberry Pi camera module (requires picamera package)
+## from camera_pi import Camera
+
+# import camera driver
+if os.environ.get('CAMERA'):
+    Camera = import_module('camera_' + os.environ['CAMERA']).Camera
+    print("*** DEBUG: Camera-01: camera_" + os.environ['CAMERA'])
+else:
+    ##jwc o from camera import Camera
+    # Default to most sophisticated tech
+    from camera_opencv import Camera
+    print("*** DEBUG: Camera-02: camera_opencv")
+
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #
@@ -224,7 +239,7 @@ def generate():
 			if outputFrame is None:
 				continue
 
-			# encode the frame in JPEG format
+			# encode the frame in JPEG format: 'im(age) encode' = 'imencode'
 			(flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
 
 			# ensure the frame was successfully encoded
@@ -235,19 +250,6 @@ def generate():
 		yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
 			bytearray(encodedImage) + b'\r\n')
 
-
-# import camera driver
-if os.environ.get('CAMERA'):
-    Camera = import_module('camera_' + os.environ['CAMERA']).Camera
-    print("*** DEBUG: Camera-01: camera_" + os.environ['CAMERA'])
-else:
-    ##jwc o from camera import Camera
-    # Default to most sophisticated tech
-    from camera_opencv import Camera
-    print("*** DEBUG: Camera-02: camera_opencv")
-
-# Raspberry Pi camera module (requires picamera package)
-# from camera_pi import Camera
 
 import logging
 log = logging.getLogger('werkzeug')
