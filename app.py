@@ -136,7 +136,6 @@ else:
     from camera_opencv import Camera
     print("*** DEBUG: Camera-02: camera_opencv")
 
-
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #
 ##jwc o from pyimagesearch.motion_detection import SingleMotionDetector
@@ -796,7 +795,6 @@ if __name__ == '__main__':
     t.start()
 
 
-
     ##jwc o app.run(host='0.0.0.0', debug=False, threaded=True)
     ##
     ##jwc n app.run(host='192.168.1.80', debug=False, threaded=True)
@@ -814,7 +812,6 @@ if __name__ == '__main__':
 
     # jwc: Does 'debug=False' prevents two instances of 'main()'
     # jwc: TYJ camera seems to work now, via 'run: start debugging', esp. after rpi reboot
-
 
     ##jwc yo app.run(host='0.0.0.0', threaded=True)
     ## y app.run(host='0.0.0.0', debug=True, threaded=True)
@@ -834,9 +831,6 @@ if __name__ == '__main__':
     ##jwc y app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
     ##jwc y app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=False)
     app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
-
-
-
 
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
