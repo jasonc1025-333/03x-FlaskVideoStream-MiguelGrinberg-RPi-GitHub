@@ -10,6 +10,11 @@
 # jwc           Make sure 'servod' copied in from 'RoboHat' dir
 # jwc           Using 'robohat's' servo cause pan to jitter/cool and tilt to get hot
 # jwc 2020-1213 Port in '~/01-Jwc/2020-1205-0640-RpiRover1-DayDevelops/RpiRover1-master' for Slider Ux, db directory
+# jwc 2020-1223 AiCam Gen 2.0: StreamVideoToWebBrowser-AdrianRosebrock
+#               * KEYESTUDIO Fisheye Wide Angle Lens 5MP 1080p OV5647 Sensor Module Supports Night Vision: 130-degrees
+#               * Smraza 4 Camera Module 5 Megapixels 1080p OV5647 Sensor Adjustable Focus Wide Angle Fish-Eye Camera: 160-degrees
+# jwc 2020-1230 AiCam Gen 2.1: 11j-OpenCv-DetectArucoMarkers-FreeBlog/opencv-detect-aruco 
+
 
 from importlib import import_module
 import os
@@ -121,10 +126,26 @@ minPW=(1.0-myCorrection)/1000
 ##jwc 'crickit' servo_02.start(servoPwm_PositionMid) # start it at 50% - should be servoPwm_PositionMid of servo
 ##jwc 'crickit' #p.ChangeDutyCycle(100)
 
+##jwc o AiCam Gen 1
 ##jwc o 
-##
-## Raspberry Pi camera module (requires picamera package)
-## from camera_pi import Camera
+##jwc o  Raspberry Pi camera module (requires picamera package)
+##jwc o  from camera_pi import Camera
+##jwc o 
+##jwc o def gen(camera):
+##jwc o     """Video streaming generator function."""
+##jwc o     while True:
+##jwc o         frame = camera.get_frame()
+##jwc o         yield (b'--frame\r\n'
+##jwc o                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+##jwc o          
+##jwc o @app.route('/video_feed')
+##jwc o def video_feed():
+##jwc o     """Video streaming route. Put this in the src attribute of an img tag."""
+##jwc o     return Response(gen(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+# AiCam Gen 2.0
+#
 
 # import camera driver
 if os.environ.get('CAMERA'):
@@ -148,6 +169,37 @@ import imutils
 import time
 import cv2
 
+
+##jwc 2.1 
+##
+# define names of each possible ArUco tag OpenCV supports
+ARUCO_DICT = {
+    "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
+    "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
+    "DICT_4X4_250": cv2.aruco.DICT_4X4_250,
+    "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
+    "DICT_5X5_50": cv2.aruco.DICT_5X5_50,
+    "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
+    "DICT_5X5_250": cv2.aruco.DICT_5X5_250,
+    "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
+    "DICT_6X6_50": cv2.aruco.DICT_6X6_50,
+    "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
+    "DICT_6X6_250": cv2.aruco.DICT_6X6_250,
+    "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
+    "DICT_7X7_50": cv2.aruco.DICT_7X7_50,
+    "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
+    "DICT_7X7_250": cv2.aruco.DICT_7X7_250,
+    "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
+    "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
+    "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
+    "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
+    "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
+    "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11
+}
+
+##jwc 2.0
+##
+
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs
 # are viewing tthe stream)
@@ -160,94 +212,219 @@ lock = threading.Lock()
 # initialize the video stream and allow the camera sensor to
 # warmup
 #vs = VideoStream(usePiCamera=1).start()
+print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
+
 def detect_motion(frameCount):
-	# grab global references to the video stream, output frame, and
-	# lock variables
-	global vs, outputFrame, lock
+    # grab global references to the video stream, output frame, and
+    # lock variables
+    global vs, outputFrame, lock
 
-	# initialize the motion detector and the total number of frames
-	# read thus far
-	md = SingleMotionDetector(accumWeight=0.1)
-	total = 0
+    # initialize the motion detector and the total number of frames
+    # read thus far
+    md = SingleMotionDetector(accumWeight=0.1)
+    total = 0
 
-	# loop over frames from the video stream
-	while True:
-		# read the next frame from the video stream, resize it,
-		# convert the frame to grayscale, and blur it
-		frame = vs.read()
-		frame = imutils.resize(frame, width=400)
-		# jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
-		##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)
-		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-		gray = cv2.GaussianBlur(gray, (7, 7), 0)
-		
-		# jwc Frame is originally right-side up, yet timestamp-print is upside down
-		#     So, flip upside down before timestamp-print, then re-flip after
-		frame = imutils.rotate(frame, 180)
-
-		# grab the current timestamp and draw it on the frame
-		timestamp = datetime.datetime.now()
-		# cv2.putText(frame, timestamp.strftime(
-		# 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-		# 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-		cv2.putText(frame, timestamp.strftime(
-			"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-			cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+    # loop over frames from the video stream
+    while True:
+        # read the next frame from the video stream, resize it,
+        # convert the frame to grayscale, and blur it
+        frame = vs.read()
+        frame = imutils.resize(frame, width=400)
+        # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
+        ##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (7, 7), 0)
+        
         # jwc Frame is originally right-side up, yet timestamp-print is upside down
         #     So, flip upside down before timestamp-print, then re-flip after
-		frame = imutils.rotate(frame, 180)
+        frame = imutils.rotate(frame, 180)
 
-		# if the total number of frames has reached a sufficient
-		# number to construct a reasonable background model, then
-		# continue to process the frame
-		if total > frameCount:
-			# detect motion in the image
-			motion = md.detect(gray)
+        # grab the current timestamp and draw it on the frame
+        timestamp = datetime.datetime.now()
+        # cv2.putText(frame, timestamp.strftime(
+        # 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+        # 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(frame, timestamp.strftime(
+            "%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        frame = imutils.rotate(frame, 180)
 
-			# cehck to see if motion was found in the frame
-			if motion is not None:
-				# unpack the tuple and draw the box surrounding the
-				# "motion area" on the output frame
-				(thresh, (minX, minY, maxX, maxY)) = motion
-				cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-					(0, 0, 255), 2)
-		
-		# update the background model and increment the total number
-		# of frames read thus far
-		md.update(gray)
-		total += 1
+        # if the total number of frames has reached a sufficient
+        # number to construct a reasonable background model, then
+        # continue to process the frame
+        if total > frameCount:
+            # detect motion in the image
+            motion = md.detect(gray)
 
-		# acquire the lock, set the output frame, and release the
-		# lock
-		with lock:
-			outputFrame = frame.copy()
-		
+            # cehck to see if motion was found in the frame
+            if motion is not None:
+                # unpack the tuple and draw the box surrounding the
+                # "motion area" on the output frame
+                (thresh, (minX, minY, maxX, maxY)) = motion
+                cv2.rectangle(frame, (minX, minY), (maxX, maxY),
+                    (0, 0, 255), 2)
+        
+        # update the background model and increment the total number
+        # of frames read thus far
+        md.update(gray)
+        total += 1
+
+        # acquire the lock, set the output frame, and release the
+        # lock
+        with lock:
+            outputFrame = frame.copy()
+
+## jwc 2.1
+##
+
+
+# Generate 'outputFrame' for later client request
+#        
+##jwc o def detect_motion(frameCount):
+def detect_Motions_And_ArucoMarkers_Fn(frameCount):
+    # grab global references to the video stream, output frame, and
+    # lock variables
+    global vs, outputFrame, lock
+
+    # initialize the motion detector and the total number of frames
+    # read thus far
+    md = SingleMotionDetector(accumWeight=0.1)
+    total = 0
+
+    # loop over frames from the video stream
+    while True:
+        # read the next frame from the video stream, resize it,
+        # convert the frame to grayscale, and blur it
+        frame = vs.read()
+        ##jwc o frame = imutils.resize(frame, width=400)
+        frame = imutils.resize(frame, width=1000)
+
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        frame = imutils.rotate(frame, 180)
+
+        # detect ArUco markers in the input frame
+        (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters=arucoParams)
+
+        # verify *at least* one ArUco marker was detected
+        if len(corners) > 0:
+            # flatten the ArUco IDs list
+            ids = ids.flatten()
+    
+            # loop over the detected ArUCo corners
+            for (markerCorner, markerID) in zip(corners, ids):
+                # extract the marker corners (which are always returned
+                # in top-left, top-right, bottom-right, and bottom-left
+                # order)
+                corners = markerCorner.reshape((4, 2))
+                (topLeft, topRight, bottomRight, bottomLeft) = corners
+    
+                # convert each of the (x, y)-coordinate pairs to integers
+                topRight = (int(topRight[0]), int(topRight[1]))
+                bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+                bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+                topLeft = (int(topLeft[0]), int(topLeft[1]))
+    
+                # draw the bounding box of the ArUCo detection
+                cv2.line(frame, topLeft, topRight, (0, 255, 0), 2)
+                cv2.line(frame, topRight, bottomRight, (0, 255, 0), 2)
+                cv2.line(frame, bottomRight, bottomLeft, (0, 255, 0), 2)
+                cv2.line(frame, bottomLeft, topLeft, (0, 255, 0), 2)
+    
+                # compute and draw the center (x, y)-coordinates of the
+                # ArUco marker
+                cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+                cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+                cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
+    
+                # draw the ArUco marker ID on the frame
+                # * Maker ID: Red Color
+                ##jwc o cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
+                # * LineTypes: Recommended: LINE_AA = 8-connected line
+                cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+
+        ##jwc o 2.1 # show the output frame
+        ##jwc o 2.1 cv2.imshow("Frame", frame)
+
+
+        # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
+        ##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)        # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
+        # * LineTypes: Recommended: LINE_AA = 8-connected line
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (7, 7), 0)
+        
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        ##jwc m frame = imutils.rotate(frame, 180)
+        
+        # grab the current timestamp and draw it on the frame
+        timestamp = datetime.datetime.now()
+        # cv2.putText(frame, timestamp.strftime(
+        # 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+        # 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1) 
+        # * Date Stamp: Green Color
+        # * https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
+        # * LineTypes: Recommended: LINE_AA = 8-connected line
+        ##jwc o cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        frame = imutils.rotate(frame, 180)
+
+        # if the total number of frames has reached a sufficient
+        # number to construct a reasonable background model, then
+        # continue to process the frame
+        if total > frameCount:
+            # detect motion in the image
+            motion = md.detect(gray)
+
+            # check to see if motion was found in the frame
+            if motion is not None:
+                # unpack the tuple and draw the box surrounding the
+                # "motion area" on the output frame
+                (thresh, (minX, minY, maxX, maxY)) = motion
+                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
+        
+        # update the background model and increment the total number
+        # of frames read thus far
+        md.update(gray)
+        total += 1
+
+        # acquire the lock, set the output frame, and release the
+        # lock
+        with lock:
+            outputFrame = frame.copy()
+
+# Return generated 'outputFrame' for current client request
 def generate():
-	# grab global references to the output frame and lock variables
-	global outputFrame, lock
+    # grab global references to the output frame and lock variables
+    global outputFrame, lock
 
-	# loop over frames from the output stream
-	while True:
-		# wait until the lock is acquired
-		with lock:
-			# check if the output frame is available, otherwise skip
-			# the iteration of the loop
-			if outputFrame is None:
-				continue
+    # loop over frames from the output stream
+    while True:
+        # wait until the lock is acquired
+        with lock:
+            # check if the output frame is available, otherwise skip
+            # the iteration of the loop
+            if outputFrame is None:
+                continue
 
-			# encode the frame in JPEG format: 'im(age) encode' = 'imencode'
-			(flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+            # encode the frame in JPEG format: 'im(age) encode' = 'imencode'
+            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
 
-			# ensure the frame was successfully encoded
-			if not flag:
-				continue
+            # ensure the frame was successfully encoded
+            if not flag:
+                continue
 
-		# yield the output frame in the byte format
-		yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
-			bytearray(encodedImage) + b'\r\n')
+        # yield the output frame in the byte format
+        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
+            bytearray(encodedImage) + b'\r\n')
 
 
 import logging
@@ -278,6 +455,15 @@ app = Flask(__name__, static_url_path='/static')
 def index():
     """Video streaming home page."""
     return render_template('index.html')
+
+
+# jwc 2020-1223 AiCam 2.0 StreamVideoToWebBrowser-AdrianRosebrock
+#
+@app.route("/video_feed")
+def video_feed():
+    # return the response generated along with the specific media
+    # type (mime type)
+    return Response(generate(),	mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 
 # Immobilizes sytem (chocks on) after 'timeout' seconds 
@@ -730,43 +916,33 @@ def heartbeat():
     return json.dumps(output)
 
 
-def gen(camera):
-    """Video streaming generator function."""
-    while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-               
-##jwc o @app.route('/video_feed')
-##jwc o def video_feed():
-##jwc o     """Video streaming route. Put this in the src attribute of an img tag."""
-##jwc o     return Response(gen(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-# jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
-#
-@app.route("/video_feed")
-def video_feed():
-	# return the response generated along with the specific media
-	# type (mime type)
-	return Response(generate(),	mimetype = "multipart/x-mixed-replace; boundary=frame")
-
-
 if __name__ == '__main__':
     print("*** DEBUG: __main__")
 
-
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
-	# construct the argument parser and parse command line arguments
+    # construct the argument parser and parse command line arguments
     ap = argparse.ArgumentParser()
     ##jwc y ap.add_argument("-i", "--ip", type=str, required=True,help="ip address of the device")
     ap.add_argument("-a", "--address", type=str, default='0.0.0.0', help="ip address of the device")
     ##jwc y ap.add_argument("-o", "--port", type=int, required=True, help="ephemeral port number of the server (1024 to 65535)")
     ap.add_argument("-p", "--port", type=int, default=5000, help="ephemeral port number of the server (1024 to 65535)")
     ap.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
+    # jwc 2.1
+    ap.add_argument("-t", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="type of ArUCo tag to detect")
     args = vars(ap.parse_args())
+
+    # verify that the supplied ArUCo tag exists and is supported by
+    # OpenCV
+    if ARUCO_DICT.get(args["type"], None) is None:
+        print("[INFO] ArUCo tag of '{}' is not supported".format(
+            args["type"]))
+        sys.exit(0)
+
+    # load the ArUCo dictionary and grab the ArUCo parameters
+    print("[INFO] detecting '{}' tags...".format(args["type"]))
+    arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT[args["type"]])
+    arucoParams = cv2.aruco.DetectorParameters_create()
 
 
     hw.light_green_blink(0.1)
@@ -790,7 +966,10 @@ if __name__ == '__main__':
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
     # start a thread that will perform motion detection
-    t = threading.Thread(target=detect_motion, args=(args["frame_count"],))
+    ##jwc o AiCam 2.0 t = threading.Thread(target=detect_motion, args=(args["frame_count"],))
+    ##jwc AiCam 2.1
+    ##
+    t = threading.Thread(target=detect_Motions_And_ArucoMarkers_Fn, args=(args["frame_count"],))
     t.daemon = True
     t.start()
 
