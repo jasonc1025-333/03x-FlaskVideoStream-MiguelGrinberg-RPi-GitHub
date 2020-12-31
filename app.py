@@ -217,7 +217,7 @@ vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
 
-def detect_motion(frameCount):
+def detect_Motions_Fn(frameCount):
     # grab global references to the video stream, output frame, and
     # lock variables
     global vs, outputFrame, lock
@@ -285,7 +285,7 @@ def detect_motion(frameCount):
 
 # Generate 'outputFrame' for later client request
 #        
-##jwc o def detect_motion(frameCount):
+##jwc o def detect_Motions_Fn(frameCount):
 def detect_Motions_And_ArucoMarkers_Fn(frameCount):
     # grab global references to the video stream, output frame, and
     # lock variables
@@ -348,6 +348,8 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                 # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
                 # * LineTypes: Recommended: LINE_AA = 8-connected line
                 cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                print("*** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: markerID=" + str(markerID) + " markerID%10=" + str(markerID % 10))
+
 
         ##jwc o 2.1 # show the output frame
         ##jwc o 2.1 cv2.imshow("Frame", frame)
@@ -373,9 +375,10 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         # * LineTypes: Recommended: LINE_AA = 8-connected line
         ##jwc o cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
-        # jwc Frame is originally right-side up, yet timestamp-print is upside down
-        #     So, flip upside down before timestamp-print, then re-flip after
-        frame = imutils.rotate(frame, 180)
+
+        ##jwc m # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        ##jwc m #     So, flip upside down before timestamp-print, then re-flip after
+        ##jwc m frame = imutils.rotate(frame, 180)
 
         # if the total number of frames has reached a sufficient
         # number to construct a reasonable background model, then
@@ -395,6 +398,10 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         # of frames read thus far
         md.update(gray)
         total += 1
+
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        frame = imutils.rotate(frame, 180)
 
         # acquire the lock, set the output frame, and release the
         # lock
@@ -966,7 +973,7 @@ if __name__ == '__main__':
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
     # start a thread that will perform motion detection
-    ##jwc o AiCam 2.0 t = threading.Thread(target=detect_motion, args=(args["frame_count"],))
+    ##jwc o AiCam 2.0 t = threading.Thread(target=detect_Motions_Fn, args=(args["frame_count"],))
     ##jwc AiCam 2.1
     ##
     t = threading.Thread(target=detect_Motions_And_ArucoMarkers_Fn, args=(args["frame_count"],))

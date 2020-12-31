@@ -126,10 +126,10 @@ function updateHUD(e) {
         // jwc o sensors = "*** Sensors ***<br>Digital 1: ";
         // sensors = "*** HUD: Secondary ***<br>Digital 1: ";
         sensors  = "";
-        sensors += "<br>Cam_Servo_01_Pan_Degrees.: ";
-        sensors += response.s1;
         sensors += "<br>Cam_Servo_02_Tilt_Degrees: ";
         sensors += response.s2;
+        sensors += "<br>Cam_Servo_01_Pan_Degrees.: ";
+        sensors += response.s1;
 
         sensors += "<br>";
         sensors += "<br>Arm_Servo_03_Degrees: ";
@@ -172,6 +172,7 @@ function updateHUD(e) {
         $('#speed-input-val').html(response.l);
         $('#heading-input-val').html(response.l);
 
+        $('#servo_Cam_01_Pan_Degrees_FrontEnd_Response_Id').html(response.s1);
         $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id').html(response.s2);
         $('#servo_Arm_03_Degrees_FrontEnd_Response_Id').html(response.s3);
 

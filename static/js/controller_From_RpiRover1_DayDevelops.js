@@ -102,6 +102,14 @@ function updateMotorSpeeds_ForTurn_Fn() {
 	}
 
 }
+
+function servo_Cam_01_Pan_Degrees_FrontEnd_Fn() {
+	var url_Str = '/servo_Cam_01_Pan_Degrees_FrontEnd_Fn?servo_Cam_01_Pan_Degrees_FrontEnd_Id=' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
+    request.open('GET', url_Str, true);
+    request.send(null);
+	console.log('*** url: ' + url_Str)
+}
+
 function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn?servo_Cam_02_Tilt_Degrees_FrontEnd_Id=' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
     request.open('GET', url_Str, true);

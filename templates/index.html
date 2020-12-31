@@ -91,10 +91,11 @@
 
         </div>
         <!-- col-3: max-width: 25.00% > -->
-        <div class='col-3' id='speed-col'>
-          <!-- dcMotors_Turn_Power_FrontEnd_Id slider -->
-          <input id='dcMotors_Turn_Power_FrontEnd_Id' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
-          <p id='heading-input-val' class='text-center heading-input-value'>0</p>
+        <div class='col-3' id='turn-col'>
+
+          <!-- servo_Cam_01_Pan_Degrees_FrontEnd_Id slider -->
+          <input id='servo_Cam_01_Pan_Degrees_FrontEnd_Id' type='range' min='0' max='180' value='90' step='1' oninput='servo_Cam_01_Pan_Degrees_FrontEnd_Fn()'>
+          <p id='servo_Cam_01_Pan_Degrees_FrontEnd_Response_Id' class='text-center heading-input-value'>0</p>
         </div>
         <!-- col-2: max-width: 16.67% > -->
         <!--jwc 'p-0' not seem needed  <div class='col-2 p-0'> -->
