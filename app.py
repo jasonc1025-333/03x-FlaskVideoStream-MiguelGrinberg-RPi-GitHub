@@ -169,6 +169,7 @@ import imutils
 import time
 import cv2
 
+from collections import defaultdict
 
 ##jwc 2.1 
 ##
@@ -205,6 +206,8 @@ ARUCO_DICT = {
 # are viewing tthe stream)
 outputFrame = None
 lock = threading.Lock()
+
+score_Targeted_Dict = defaultdict(int)
 
 ##jwc o # initialize a flask object
 ##jwc o app = Flask(__name__)
@@ -282,7 +285,6 @@ def detect_Motions_Fn(frameCount):
 ## jwc 2.1
 ##
 
-
 # Generate 'outputFrame' for later client request
 #        
 ##jwc o def detect_Motions_Fn(frameCount):
@@ -348,8 +350,9 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                 # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
                 # * LineTypes: Recommended: LINE_AA = 8-connected line
                 cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                score_Targeted_Dict[str(markerID)] += 1
                 print("*** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: markerID=" + str(markerID) + " markerID%10=" + str(markerID % 10))
-
+                print("*** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
 
         ##jwc o 2.1 # show the output frame
         ##jwc o 2.1 cv2.imshow("Frame", frame)
@@ -920,6 +923,9 @@ def heartbeat():
     ##jwc o output['a2'] = hw.analog_two_read()
     ##jwc o output['a3'] = hw.analog_three_read()
     ##jwc o output['a4'] = hw.analog_four_read()
+
+    output['sc'] = str( score_Targeted_Dict )
+
     return json.dumps(output)
 
 
@@ -936,7 +942,9 @@ if __name__ == '__main__':
     ap.add_argument("-p", "--port", type=int, default=5000, help="ephemeral port number of the server (1024 to 65535)")
     ap.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
     # jwc 2.1
-    ap.add_argument("-t", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="type of ArUCo tag to detect")
+    ##jwc o ap.add_argument("-t", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="type of ArUCo tag to detect")
+    ap.add_argument("-t", "--type", type=str, default="DICT_6X6_100", help="type of ArUCo tag to detect")
+    print("*** DEBUG: __main__: --type (default): cv2.aruco.DICT_6X6_100")
     args = vars(ap.parse_args())
 
     # verify that the supplied ArUCo tag exists and is supported by

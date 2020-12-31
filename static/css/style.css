@@ -115,6 +115,16 @@
     padding: 0 20px 0 20px;
     /* jwc o width: 40%; */
     }
+
+    #score {
+        top: 0;
+        /* float: right; */
+        /* jwc o text-align: right; */
+        /* jwc o padding: 5px; */
+        /* padding: 20px; */
+        padding: 0 20px 0 20px;
+        /* jwc o width: 40%; */
+        }
     
     #buttonbar {
     height: 10%;

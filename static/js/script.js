@@ -87,6 +87,8 @@ function heartbeat() {
 function updateHUD(e) {
 	var status;
     var sensors;
+    var score;
+
     // jwc: https://www.w3schools.com/xml/xml_http.asp explains following logic:
 	if (getSensors.readyState == 4 && getSensors.status == 200) {
         var response = JSON.parse(getSensors.responseText);
@@ -160,8 +162,13 @@ function updateHUD(e) {
         // sensors += "<br>Analog 4: ";
         // sensors += response.a4;
 
+        score  = "";
+        score += "<br>score_Targeted_Dict: ";
+        score += response.sc;
+
         document.getElementById("status").innerHTML = status;
         document.getElementById("sensors").innerHTML = sensors;
+        document.getElementById("score").innerHTML = score;
         // button_status('blue', response.b);
         // button_status('yellow', response.y);
         // button_status('red', response.c);

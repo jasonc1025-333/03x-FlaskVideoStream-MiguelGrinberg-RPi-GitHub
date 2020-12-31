@@ -122,6 +122,12 @@
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
+          <h2 id='col-header-01'>Score</h2>
+          <div id="score"></div>          
+        </div>
+        <!-- col-2: max-width: 16.67% > -->
+        <!-- <div class='col-2 p-0'> -->
+        <div class='col-2'>          
           <h2 id='col-header-01'>Anti-Drift Persistent</h2>
 
           <!-- left motor trim -->
@@ -136,18 +142,12 @@
           <p id='rmtrim-val' class='text-center'>0</p>
           <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
 
-        </div>
-        <!-- col-2: max-width: 16.67% > -->
-        <!-- <div class='col-2 p-0'> -->
-        <div class='col-2'>
-            <!-- cam yaw -->
-          <h2 id='col-header-01'>Reserved</h2>
+          <!-- Reserved -->
+          <h3 id='col-header-01'>Reserved</h2>
           <i id='cam-left' class='ted-inline fas fa-angle-left fa-3x horizontal-icons-with-textlabel' onclick="turnCam({'direction':'L'})"></i>
           <span id='cam-text'>-</span>
           <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>
         </div>
-        
-        
 
        </div>
 
