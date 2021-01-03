@@ -3,7 +3,7 @@
   <head>
 
 
-    <title>RpiRover1</title>
+    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <link rel='stylesheet' href='static/css/style_From_RpiRover1_DayDevelops.css'>
@@ -13,11 +13,11 @@
     <script src="/static/js/script.js"></script>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
   
-    <title>Video Streaming Demonstration</title>
+    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G</title>
   </head>
   <body>
     <!-- jwc o  <h1>Video Streaming Demonstration</h1> -->
-    <h1>RoboQuest VLab Portal</h1>
+    <h1>RoboQuest V-Lab Web-Portal: RQ-CX-G</h1>
     <!-- <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1> -->
     <!-- jwc y  <img src="{{ url_for('video_feed') }}"> -->
 
@@ -51,7 +51,7 @@
           <h2 id='col-header-01'>Driver</h2>
 
           <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
-          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds()' onchange='this.value=0; updateMotorSpeeds();'>
+          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'>
           <p id='speed-input-val' class='text-center'>0</p>
 
         </div>
@@ -100,7 +100,7 @@
         <!-- col-2: max-width: 16.67% > -->
         <!--jwc 'p-0' not seem needed  <div class='col-2 p-0'> -->
         <div class='col-2'>
-            <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='powerOff()'>
+            <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>
               HALT ALL
           </button>
         </div>

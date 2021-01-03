@@ -99,10 +99,6 @@ function updateHUD(e) {
         // jwc o status = "STS-PiLot Status<br>Link: online<br>Videolink: ";
         // status  = "*** HUD: Primary ***";
         status  = "";
-        status += "<br>Battery V: ---";
-        status += "<br>Battery %: ---";
-
-        status += "<br>";
         status += "<br>Web-Link..: online";    
         status += "<br>Video-Link: ";
         if (framerate > 0) {
@@ -110,6 +106,12 @@ function updateHUD(e) {
 	    } else {
         	status += video;
         }
+
+        status += "<br>";
+        status += "<br>BatteryUps_Voltage_Bus_V: ";
+        status += response.bvb;
+        status += "<br>BatteryUps_Voltage_Shunt_mV: ";
+        status += response.bvs;
         
         status += "<br>";
         status += "<br>Motor-L: ";
@@ -118,13 +120,12 @@ function updateHUD(e) {
         status += response.r;
 
         status += "<br>";
-        status += "<br>Motor-L-AntiDrift: ";
-        status += response.lt;
-        status += "<br>Motor-R-AntiDrift: ";
-        status += response.rt;
+        status += "<br>BatteryUps_Current_Total_mA: ";
+        status += response.bct;
+        status += "<br>BatteryUps_Power_Total_mW: ";
+        status += response.bpt;
 
-
-
+        
         // jwc o sensors = "*** Sensors ***<br>Digital 1: ";
         // sensors = "*** HUD: Secondary ***<br>Digital 1: ";
         sensors  = "";
@@ -138,6 +139,12 @@ function updateHUD(e) {
         sensors += response.s3;
         sensors += "<br>Arm_Servo_04_Degrees: ";
         sensors += response.s4;
+
+        sensors += "<br>";
+        sensors += "<br>Motor-L-AntiDrift: ";
+        sensors += response.lt;
+        sensors += "<br>Motor-R-AntiDrift: ";
+        sensors += response.rt;
 
         //jwc not needed yet:
         //
@@ -163,7 +170,7 @@ function updateHUD(e) {
         // sensors += response.a4;
 
         score  = "";
-        score += "<br>score_Targeted_Dict: ";
+        score += "<br>Score_Targeted_Dict: ";
         score += response.sc;
 
         document.getElementById("status").innerHTML = status;

@@ -27,6 +27,40 @@ from flask import Flask, render_template, request, Response
 # jwc n from gevent.wsgi import WSGIServer
 # jwc from gevent.pywsgi import WSGIServer
 
+
+# * BatteryUps: GeekPi/52pi.com: EP-0118
+# * https://wiki.52pi.com/index.php/UPS_(With_RTC_%26_Coulometer)_For_Raspberry_Pi_SKU:_EP-0118
+#
+from ina219 import INA219
+from ina219 import DeviceRangeError
+resistor_Shunt_OHM_GLOBAL = 0.05
+
+# Define method to read information from coulometer.
+batteryUps_ClObj_Global = INA219(resistor_Shunt_OHM_GLOBAL)
+batteryUps_ClObj_Global.configure()
+
+def batteryUps_Read_Fn(config_In):
+    global batteryUps_ClObj_Global
+
+    config_In.batteryUps_Voltage_Bus_V = batteryUps_ClObj_Global.voltage()
+    ##jwc y print("*** DEBUG: batteryUps_Voltage_Bus_V: %.3f V" % config_In.batteryUps_Voltage_Bus_V)
+    print(f"*** DEBUG: batteryUps_Voltage_Bus_V: {config_In.batteryUps_Voltage_Bus_V:.2f} V", end='')
+    try:
+        config_In.batteryUps_Voltage_Shunt_mV = batteryUps_ClObj_Global.shunt_voltage()
+        ##jwc y print("*** DEBUG: batteryUps_Voltage_Shunt_mV: %.3f mV" % config_In.batteryUps_Voltage_Shunt_mV)
+        print(f" // batteryUps_Voltage_Shunt_mV: {config_In.batteryUps_Voltage_Shunt_mV:.2f} mV", end='')
+
+        config_In.batteryUps_Current_Total_mA = batteryUps_ClObj_Global.current()
+        ##jwc y print("*** DEBUG: batteryUps_Current_Total_mA: %.3f mA" % config_In.batteryUps_Current_Total_mA)
+        print(f" // batteryUps_Current_Total_mA: {config_In.batteryUps_Current_Total_mA:.2f} mA", end='')
+
+        config_In.batteryUps_Power_Total_mW = batteryUps_ClObj_Global.power()
+        ##jwc y print("*** DEBUG: batteryUps_Power_Total_mW: %.3f mW" % config_In.batteryUps_Power_Total_mW)
+        print(f" // batteryUps_Power_Total_mW: {config_In.batteryUps_Power_Total_mW:.2f} mW)")
+    except DeviceRangeError as e:
+        print(e)
+
+
 import config as cfg
 
 ##jwc o import io_wrapper as hw
@@ -925,6 +959,12 @@ def heartbeat():
     ##jwc o output['a4'] = hw.analog_four_read()
 
     output['sc'] = str( score_Targeted_Dict )
+
+    batteryUps_Read_Fn( cfg )
+    output['bvb'] = f'{cfg.batteryUps_Voltage_Bus_V:.2f}'
+    output['bvs'] = f'{cfg.batteryUps_Voltage_Shunt_mV:.2f}'
+    output['bct'] = f'{cfg.batteryUps_Current_Total_mA:.2f}'
+    output['bpt'] = f'{cfg.batteryUps_Power_Total_mW:.2f}'
 
     return json.dumps(output)
 

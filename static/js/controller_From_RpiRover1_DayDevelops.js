@@ -61,11 +61,11 @@ function sleep(milliseconds) {
 	do {
 	  currentDate = Date.now();
 	} while (currentDate - date < milliseconds);
-  }
+}
   
 
-function updateMotorSpeeds() {
-	var url_Str = "/motor?l=" + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
+function updateMotorSpeeds_Fn() {
+	var url_Str = '/motor?l=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
     request.send(null);
 	console.log('*** url: ' + url_Str)
@@ -87,7 +87,7 @@ function updateMotorSpeeds() {
 	}
 }
 function updateMotorSpeeds_ForTurn_Fn() {
-	var url_Str = "/motor_for_turn?l=" + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
+	var url_Str = '/motor_for_turn?l=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
     request.send(null);
 	console.log('*** url: ' + url_Str)
@@ -100,7 +100,19 @@ function updateMotorSpeeds_ForTurn_Fn() {
 			sleep(50);
 		}
 	}
-
+}
+function updateMotorSpeeds_ForHalt_Fn() {
+	var url_Str = '/motor?l=0' + '&r=0';
+	request.open("GET", url_Str, true);
+	request.send(null);
+	console.log('*** url: ' + url_Str)
+	// Since Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	for (i=0; i<3; i++) { 
+		request.open("GET", url_Str, true);
+		request.send(null);
+		console.log('*** *** ' + i + ' url: ' + url_Str);
+		sleep(50);
+	}
 }
 
 function servo_Cam_01_Pan_Degrees_FrontEnd_Fn() {
