@@ -28,16 +28,16 @@ from flask import Flask, render_template, request, Response
 # jwc from gevent.pywsgi import WSGIServer
 
 
-# * BatteryUps: GeekPi/52pi.com: EP-0118
-# * https://wiki.52pi.com/index.php/UPS_(With_RTC_%26_Coulometer)_For_Raspberry_Pi_SKU:_EP-0118
-#
-from ina219 import INA219
-from ina219 import DeviceRangeError
-resistor_Shunt_OHM_GLOBAL = 0.05
-
-# Define method to read information from coulometer.
-batteryUps_ClObj_Global = INA219(resistor_Shunt_OHM_GLOBAL)
-batteryUps_ClObj_Global.configure()
+## jwc replace w/ PiUpTimeUps: # * BatteryUps: GeekPi/52pi.com: EP-0118
+## jwc replace w/ PiUpTimeUps: # * https://wiki.52pi.com/index.php/UPS_(With_RTC_%26_Coulometer)_For_Raspberry_Pi_SKU:_EP-0118
+## jwc replace w/ PiUpTimeUps: #
+## jwc replace w/ PiUpTimeUps: from ina219 import INA219
+## jwc replace w/ PiUpTimeUps: from ina219 import DeviceRangeError
+## jwc replace w/ PiUpTimeUps: resistor_Shunt_OHM_GLOBAL = 0.05
+## jwc replace w/ PiUpTimeUps: 
+## jwc replace w/ PiUpTimeUps: # Define method to read information from coulometer.
+## jwc replace w/ PiUpTimeUps: batteryUps_ClObj_Global = INA219(resistor_Shunt_OHM_GLOBAL)
+## jwc replace w/ PiUpTimeUps: batteryUps_ClObj_Global.configure()
 
 def batteryUps_Read_Fn(config_In):
     global batteryUps_ClObj_Global
@@ -960,7 +960,7 @@ def heartbeat():
 
     output['sc'] = str( score_Targeted_Dict )
 
-    batteryUps_Read_Fn( cfg )
+    ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( cfg )
     output['bvb'] = f'{cfg.batteryUps_Voltage_Bus_V:.2f}'
     output['bvs'] = f'{cfg.batteryUps_Voltage_Shunt_mV:.2f}'
     output['bct'] = f'{cfg.batteryUps_Current_Total_mA:.2f}'

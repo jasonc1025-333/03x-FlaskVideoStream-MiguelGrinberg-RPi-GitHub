@@ -76,6 +76,12 @@ def init():
     ##jwc direct power, test = pi_servo_hat.PiServoHat(0x48)
     ##jwc y test = pi_servo_hat.PiServoHat()
     ##jwc y test = pi_servo_hat.PiServoHat(0x40)
+
+    ##jwc y servos_Cam = pi_servo_hat.PiServoHat()
+    ##jwc n servos_Cam = pi_servo_hat.PiServoHat(0x48, True)
+    ##jwc n servos_Cam = pi_servo_hat.PiServoHat(0x41, True)
+    ##jwc y servos_Cam = pi_servo_hat.PiServoHat()
+    ##jwc n servos_Cam = pi_servo_hat.PiServoHat(0x41)
     servos_Cam = pi_servo_hat.PiServoHat()
 
     # Restart Servo Hat (in case Hat is frozen/locked)
