@@ -39,26 +39,28 @@ from flask import Flask, render_template, request, Response
 ## jwc replace w/ PiUpTimeUps: batteryUps_ClObj_Global = INA219(resistor_Shunt_OHM_GLOBAL)
 ## jwc replace w/ PiUpTimeUps: batteryUps_ClObj_Global.configure()
 
-def batteryUps_Read_Fn(config_In):
-    global batteryUps_ClObj_Global
+##jwc replace w/ PiUpTimeUps: def batteryUps_Read_Fn(config_In):
+##jwc replace w/ PiUpTimeUps:     global batteryUps_ClObj_Global
+##jwc replace w/ PiUpTimeUps: 
+##jwc replace w/ PiUpTimeUps:     config_In.batteryUps_Volts_Input_V = batteryUps_ClObj_Global.voltage()
+##jwc replace w/ PiUpTimeUps:     ##jwc y print("*** DEBUG: batteryUps_Volts_Input_V: %.3f V" % config_In.batteryUps_Volts_Input_V)
+##jwc replace w/ PiUpTimeUps:     print(f"*** DEBUG: batteryUps_Volts_Input_V: {config_In.batteryUps_Volts_Input_V:.2f} V", end='')
+##jwc replace w/ PiUpTimeUps:     try:
+##jwc replace w/ PiUpTimeUps:         config_In.batteryUps_Volts_Output_V = batteryUps_ClObj_Global.shunt_voltage()
+##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: batteryUps_Volts_Output_V: %.3f mV" % config_In.batteryUps_Volts_Output_V)
+##jwc replace w/ PiUpTimeUps:         print(f" // batteryUps_Volts_Output_V: {config_In.batteryUps_Volts_Output_V:.2f} mV", end='')
+##jwc replace w/ PiUpTimeUps: 
+##jwc replace w/ PiUpTimeUps:         config_In.batteryUps_Temp_C = batteryUps_ClObj_Global.current()
+##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: batteryUps_Temp_C: %.3f mA" % config_In.batteryUps_Temp_C)
+##jwc replace w/ PiUpTimeUps:         print(f" // batteryUps_Temp_C: {config_In.batteryUps_Temp_C:.2f} mA", end='')
+##jwc replace w/ PiUpTimeUps: 
+##jwc replace w/ PiUpTimeUps:         config_In.batteryUps_Temp_F = batteryUps_ClObj_Global.power()
+##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: batteryUps_Temp_F: %.3f mW" % config_In.batteryUps_Temp_F)
+##jwc replace w/ PiUpTimeUps:         print(f" // batteryUps_Temp_F: {config_In.batteryUps_Temp_F:.2f} mW)")
+##jwc replace w/ PiUpTimeUps:     except DeviceRangeError as e:
+##jwc replace w/ PiUpTimeUps:         print(e)
 
-    config_In.batteryUps_Voltage_Bus_V = batteryUps_ClObj_Global.voltage()
-    ##jwc y print("*** DEBUG: batteryUps_Voltage_Bus_V: %.3f V" % config_In.batteryUps_Voltage_Bus_V)
-    print(f"*** DEBUG: batteryUps_Voltage_Bus_V: {config_In.batteryUps_Voltage_Bus_V:.2f} V", end='')
-    try:
-        config_In.batteryUps_Voltage_Shunt_mV = batteryUps_ClObj_Global.shunt_voltage()
-        ##jwc y print("*** DEBUG: batteryUps_Voltage_Shunt_mV: %.3f mV" % config_In.batteryUps_Voltage_Shunt_mV)
-        print(f" // batteryUps_Voltage_Shunt_mV: {config_In.batteryUps_Voltage_Shunt_mV:.2f} mV", end='')
-
-        config_In.batteryUps_Current_Total_mA = batteryUps_ClObj_Global.current()
-        ##jwc y print("*** DEBUG: batteryUps_Current_Total_mA: %.3f mA" % config_In.batteryUps_Current_Total_mA)
-        print(f" // batteryUps_Current_Total_mA: {config_In.batteryUps_Current_Total_mA:.2f} mA", end='')
-
-        config_In.batteryUps_Power_Total_mW = batteryUps_ClObj_Global.power()
-        ##jwc y print("*** DEBUG: batteryUps_Power_Total_mW: %.3f mW" % config_In.batteryUps_Power_Total_mW)
-        print(f" // batteryUps_Power_Total_mW: {config_In.batteryUps_Power_Total_mW:.2f} mW)")
-    except DeviceRangeError as e:
-        print(e)
+import PiUpTimeUps_2pt0__AlchemyPower
 
 
 import config as cfg
@@ -961,10 +963,13 @@ def heartbeat():
     output['sc'] = str( score_Targeted_Dict )
 
     ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( cfg )
-    output['bvb'] = f'{cfg.batteryUps_Voltage_Bus_V:.2f}'
-    output['bvs'] = f'{cfg.batteryUps_Voltage_Shunt_mV:.2f}'
-    output['bct'] = f'{cfg.batteryUps_Current_Total_mA:.2f}'
-    output['bpt'] = f'{cfg.batteryUps_Power_Total_mW:.2f}'
+    ##jwc n  get_VoltageAndTemp_Status_Fn( cfg )
+    PiUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( cfg )
+    output['bvi'] = f'{cfg.batteryUps_Volts_Input_V:.2f}'
+    output['bvo'] = f'{cfg.batteryUps_Volts_Output_V:.2f}'
+    output['bvb'] = f'{cfg.batteryUps_Volts_Battery_V:.2f}'
+    output['btc'] = f'{cfg.batteryUps_Temp_C:5.2f}C'
+    output['btf'] = f'{cfg.batteryUps_Temp_F:5.2f}F'
 
     return json.dumps(output)
 

@@ -54,7 +54,8 @@ temp = 0
 # * BatteryUps: GeekPi/52pi.com: EP-0118
 # https://wiki.52pi.com/index.php/UPS_(With_RTC_%26_Coulometer)_For_Raspberry_Pi_SKU:_EP-0118
 #
-batteryUps_Voltage_Bus_V = 0
-batteryUps_Voltage_Shunt_mV = 0
-batteryUps_Current_Total_mA = 0
-batteryUps_Power_Total_mW = 0
+batteryUps_Volts_Input_V = 0
+batteryUps_Volts_Output_V = 0
+batteryUps_Volts_Battery_V = 0
+batteryUps_Temp_C = 0
+batteryUps_Temp_F = 0

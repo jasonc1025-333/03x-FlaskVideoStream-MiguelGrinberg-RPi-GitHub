@@ -99,19 +99,13 @@ function updateHUD(e) {
         // jwc o status = "STS-PiLot Status<br>Link: online<br>Videolink: ";
         // status  = "*** HUD: Primary ***";
         status  = "";
-        status += "<br>Web-Link..: online";    
-        status += "<br>Video-Link: ";
-        if (framerate > 0) {
-		    status += (Math.ceil(1000 / framerate) + " FPS");
-	    } else {
-        	status += video;
-        }
 
-        status += "<br>";
-        status += "<br>BatteryUps_Voltage_Bus_V: ";
+        status += "<br>BatteryUps_Volts_Input_V ..(3.8 min): ";
+        status += response.bvi;
+        status += "<br>BatteryUps_Volts_Output_V .(5.0 avg): ";
+        status += response.bvo;
+        status += "<br>BatteryUps_Volts_Battery_V (3.1-4.3): ";
         status += response.bvb;
-        status += "<br>BatteryUps_Voltage_Shunt_mV: ";
-        status += response.bvs;
         
         status += "<br>";
         status += "<br>Motor-L: ";
@@ -120,10 +114,10 @@ function updateHUD(e) {
         status += response.r;
 
         status += "<br>";
-        status += "<br>BatteryUps_Current_Total_mA: ";
-        status += response.bct;
-        status += "<br>BatteryUps_Power_Total_mW: ";
-        status += response.bpt;
+        status += "<br>BatteryUps_Temp_C ( 60max): ";
+        status += response.btc;
+        status += "<br>BatteryUps_Temp_F (140max): ";
+        status += response.btf;
 
         
         // jwc o sensors = "*** Sensors ***<br>Digital 1: ";
@@ -131,12 +125,23 @@ function updateHUD(e) {
         sensors  = "";
         sensors += "<br>Cam_Servo_02_Tilt_Degrees: ";
         sensors += response.s2;
-        sensors += "<br>Cam_Servo_01_Pan_Degrees.: ";
+        sensors += "<br>Cam_Servo_01_Pan_Degrees : ";
         sensors += response.s1;
 
         sensors += "<br>";
         sensors += "<br>Arm_Servo_03_Degrees: ";
         sensors += response.s3;
+
+        sensors += "<br>";
+        sensors += "<br>Web-Link .: online";    
+        sensors += "<br>Video-Link: ";
+        if (framerate > 0) {
+		    sensors += (Math.ceil(1000 / framerate) + " FPS");
+	    } else {
+        	sensors += video;
+        }
+
+        sensors += "<br>";
         sensors += "<br>Arm_Servo_04_Degrees: ";
         sensors += response.s4;
 
