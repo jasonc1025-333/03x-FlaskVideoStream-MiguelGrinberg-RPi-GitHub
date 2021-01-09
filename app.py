@@ -62,8 +62,8 @@ from flask import Flask, render_template, request, Response
 
 import PiUpTimeUps_2pt0__AlchemyPower
 
-
-import config as cfg
+##jwc y import config_Global_File as config_Global_File
+import config_Global_File
 
 ##jwc o import io_wrapper as hw
 import io_wrapper_dummy as hw
@@ -76,18 +76,18 @@ import io_wrapper_dummy as hw
 ##jwc y import robohat
 ##jwc y robohat.init()
 
-import AutoPHat_SparkFun_Driver
+import autoPHat_SparkFun_Driver_File
 
-AutoPHat_SparkFun_Driver.init()
-##jwc y AutoPHat_SparkFun_Driver.runTest()
-AutoPHat_SparkFun_Driver.runTest_Quick()
+autoPHat_SparkFun_Driver_File.init()
+##jwc y autoPHat_SparkFun_Driver_File.runTest()
+autoPHat_SparkFun_Driver_File.runTest_Quick()
 
 ##jwc n global servo_01_Pan_Degrees 
 ##jwc n servo_01_Pan_Degrees = 90
-AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
-AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
+autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_Fn( config_Global_File.servo_01_Pan_Degrees )
+autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_Fn( config_Global_File.servo_02_Tilt_Degrees )
 
-AutoPHat_SparkFun_Driver.servo_Arm_03_Fn( cfg.servo_03_Degrees )
+autoPHat_SparkFun_Driver_File.servo_Arm_03_Fn( config_Global_File.servo_03_Degrees )
 
 ##jwc o # make two variables for the motors to make code shorter to type
 ##jwc o # Right-Side
@@ -487,9 +487,9 @@ import robotProperties_Db_Cl_File
 DB = robotProperties_Db_Cl_File.robotProperties_Db_Cl()
 trims = DB.getTrimValues()
 print("*** DEBUG: DB: " + json.dumps( trims ))
-cfg.left_motor_trim = trims['L']
-cfg.right_motor_trim = trims['R']
-print ("*** DEBUG: DB: cfg.left_motor_trim: " + str( cfg.left_motor_trim ) + ", cfg.right_motor_trim: " + str( cfg.right_motor_trim ))
+config_Global_File.left_motor_trim = trims['L']
+config_Global_File.right_motor_trim = trims['R']
+print ("*** DEBUG: DB: config_Global_File.left_motor_trim: " + str( config_Global_File.left_motor_trim ) + ", config_Global_File.right_motor_trim: " + str( config_Global_File.right_motor_trim ))
 
 
 ##jwc yo app = Flask(__name__)
@@ -514,7 +514,7 @@ def video_feed():
 
 # Immobilizes sytem (chocks on) after 'timeout' seconds 
 def watchdog_timer():
-    while cfg.watchdog_Alive_Bool:
+    while config_Global_File.watchdog_Alive_Bool:
         # jwc: Pauses every 1sec
         ##jwc o time.sleep(1)
         ##jwc
@@ -524,21 +524,21 @@ def watchdog_timer():
         ##jwc y  realize this not affect HUD Stats, so keep as is to prevent premature disconnect
         time.sleep(5)
         
-        if cfg.watchdog_Start_On_Bool:
-            cfg.watchdog_Cycles_Now += 1
-            ##jwc print("*** DEBUG: cfg.watchdog_Cycles_Now: " + str(cfg.watchdog_Cycles_Now))
+        if config_Global_File.watchdog_Start_On_Bool:
+            config_Global_File.watchdog_Cycles_Now += 1
+            ##jwc print("*** DEBUG: config_Global_File.watchdog_Cycles_Now: " + str(config_Global_File.watchdog_Cycles_Now))
             # jwc: appears that beyond 10sec is bad disconnect, 
             #      so engage 'chocks/disable bot', if not already
-            if cfg.watchdog_Cycles_Now > cfg.timeout_Cycles_MAX and not cfg.chocks:
+            if config_Global_File.watchdog_Cycles_Now > config_Global_File.timeout_Cycles_MAX and not config_Global_File.chocks:
                 chocks_on()
-            if cfg.watchdog_Cycles_Now <= cfg.timeout_Cycles_MAX and cfg.chocks:
+            if config_Global_File.watchdog_Cycles_Now <= config_Global_File.timeout_Cycles_MAX and config_Global_File.chocks:
                 chocks_off()
 
 # Handler for a clean shutdown when pressing Ctrl-C
 def signal_handler(signal, frame):
     hw.light_blue_blink(0.1)
-    cfg.watchdog_Alive_Bool = False
-    cfg.camera_active = False
+    config_Global_File.watchdog_Alive_Bool = False
+    config_Global_File.camera_active = False
     brakes_on()
     # jwc: Wait until thread terminates
     watchDog.join()
@@ -551,125 +551,125 @@ def touch_handler(channel, event):
 
     if channel == 1:
         #jwc o 
-        # cfg.blue = not cfg.blue
-        # if cfg.blue:
+        # config_Global_File.blue = not config_Global_File.blue
+        # if config_Global_File.blue:
         #     hw.light_blue_on()
         #     hw.output_one_on()
         # else:
         #     hw.light_blue_off()
         #     hw.output_one_off()
 
-        ##jwc n AttributeError: servo_01_Pan = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositiionGet_Fn()
-        ##jwc n cfg.servo_01_Pan_Degrees = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositionGet_Fn()
+        ##jwc n AttributeError: servo_01_Pan = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositiionGet_Fn()
+        ##jwc n config_Global_File.servo_01_Pan_Degrees = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositionGet_Fn()
 
-        cfg.servo_01_Pan_Degrees = cfg.servo_01_Pan_Degrees - 10
-        if cfg.servo_01_Pan_Degrees < 0: 
-            cfg.servo_01_Pan_Degrees = 0
-        AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
-        print("*** DEBUG: S1: servo: pan: " + str(cfg.servo_01_Pan_Degrees))
+        config_Global_File.servo_01_Pan_Degrees = config_Global_File.servo_01_Pan_Degrees - 10
+        if config_Global_File.servo_01_Pan_Degrees < 0: 
+            config_Global_File.servo_01_Pan_Degrees = 0
+        autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_Fn( config_Global_File.servo_01_Pan_Degrees )
+        print("*** DEBUG: S1: servo: pan: " + str(config_Global_File.servo_01_Pan_Degrees))
         
     if channel == 2:
         #jwc o 
-        # cfg.yellow = not cfg.yellow
-        # if cfg.yellow:
+        # config_Global_File.yellow = not config_Global_File.yellow
+        # if config_Global_File.yellow:
         #     hw.light_yellow_on()
         #     hw.output_two_on()
         # else:
         #     hw.light_yellow_off()
         #     hw.output_two_off()
 
-        ##jwc n AttributeError: servo_01_Pan = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositiionGet_Fn()
-        ##jwc n cfg.servo_01_Pan_Degrees = AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_PositionGet_Fn()
+        ##jwc n AttributeError: servo_01_Pan = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositiionGet_Fn()
+        ##jwc n config_Global_File.servo_01_Pan_Degrees = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositionGet_Fn()
 
-        cfg.servo_01_Pan_Degrees = cfg.servo_01_Pan_Degrees + 10
-        if cfg.servo_01_Pan_Degrees > 180: 
-            cfg.servo_01_Pan_Degrees = 180
-        AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )
-        print("*** DEBUG: S1: servo: pan: " + str(cfg.servo_01_Pan_Degrees))
+        config_Global_File.servo_01_Pan_Degrees = config_Global_File.servo_01_Pan_Degrees + 10
+        if config_Global_File.servo_01_Pan_Degrees > 180: 
+            config_Global_File.servo_01_Pan_Degrees = 180
+        autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_Fn( config_Global_File.servo_01_Pan_Degrees )
+        print("*** DEBUG: S1: servo: pan: " + str(config_Global_File.servo_01_Pan_Degrees))
 
     if channel == 3:
-        cfg.chocks = not cfg.chocks
+        config_Global_File.chocks = not config_Global_File.chocks
         # jwc: Chocks set to True: Admin Lock
-        if cfg.chocks:
+        if config_Global_File.chocks:
             # jwc: Since Motors not free to operate, Watchdog not needed
-            cfg.watchdog_Start_On_Bool = False
+            config_Global_File.watchdog_Start_On_Bool = False
             chocks_on()
         # jwc: Chocks set to False: Admin Unlock
         else:
             # jwc: Since Motors are free to operate, Watchdog is needed
-            cfg.watchdog_Start_On_Bool = True
+            config_Global_File.watchdog_Start_On_Bool = True
             chocks_off()
 
     if channel == 4:
         hw.light_green_blink(0.1)
         #jwc o 
-        # cfg.green = True
+        # config_Global_File.green = True
         # ##jwc o time.sleep(5)
-        # if cfg.chocks:
+        # if config_Global_File.chocks:
         #     hw.light_green_on()
         #     ##jwc o os.system("sudo -s shutdown -h now")
         # else:
         #     hw.light_green_off()
-        #     cfg.green = False
+        #     config_Global_File.green = False
 
-        ##jwc n cfg.temp = AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_PositionGet_Fn()
+        ##jwc n config_Global_File.temp = autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_PositionGet_Fn()
 
         ##jwc n
         # servoCam02Tilt = servoCam02Tilt + 10
-        # AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( servoCam02Tilt ) 
-        # print("*** DEBUG: S2: servo: tilt: " + str(AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_PositionGet_Fn()))
+        # autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_Fn( servoCam02Tilt ) 
+        # print("*** DEBUG: S2: servo: tilt: " + str(autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_PositionGet_Fn()))
 
-        cfg.servo_02_Tilt_Degrees = cfg.servo_02_Tilt_Degrees - 10
-        if cfg.servo_02_Tilt_Degrees < 0: 
-            cfg.servo_02_Tilt_Degrees = 0
-        AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
-        print("*** DEBUG: S2: servo: tilt: " + str(cfg.servo_02_Tilt_Degrees))
+        config_Global_File.servo_02_Tilt_Degrees = config_Global_File.servo_02_Tilt_Degrees - 10
+        if config_Global_File.servo_02_Tilt_Degrees < 0: 
+            config_Global_File.servo_02_Tilt_Degrees = 0
+        autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_Fn( config_Global_File.servo_02_Tilt_Degrees )
+        print("*** DEBUG: S2: servo: tilt: " + str(config_Global_File.servo_02_Tilt_Degrees))
 
     if channel == 5:
         hw.light_green_blink(0.1)
         #jwc o 
-        # cfg.green = True
+        # config_Global_File.green = True
         # ##jwc o time.sleep(5)
-        # if cfg.chocks:
+        # if config_Global_File.chocks:
         #     hw.light_green_on()
         #     ##jwc o os.system("sudo -s shutdown -h now")
         # else:
         #     hw.light_green_off()
-        #     cfg.green = False
+        #     config_Global_File.green = False
 
-        ##jwc n cfg.temp = AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_PositionGet_Fn()
+        ##jwc n config_Global_File.temp = autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_PositionGet_Fn()
 
         ##jwc n
         # servoCam02Tilt = servoCam02Tilt + 10
-        # AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( servoCam02Tilt ) 
-        # print("*** DEBUG: S2: servo: tilt: " + str(AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_PositionGet_Fn()))
+        # autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_Fn( servoCam02Tilt ) 
+        # print("*** DEBUG: S2: servo: tilt: " + str(autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_PositionGet_Fn()))
 
-        cfg.servo_02_Tilt_Degrees = cfg.servo_02_Tilt_Degrees + 10
-        if cfg.servo_02_Tilt_Degrees > 180: 
-            cfg.servo_02_Tilt_Degrees = 180
-        AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
-        print("*** DEBUG: S2: servo: tilt: " + str(cfg.servo_02_Tilt_Degrees))
+        config_Global_File.servo_02_Tilt_Degrees = config_Global_File.servo_02_Tilt_Degrees + 10
+        if config_Global_File.servo_02_Tilt_Degrees > 180: 
+            config_Global_File.servo_02_Tilt_Degrees = 180
+        autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_Fn( config_Global_File.servo_02_Tilt_Degrees )
+        print("*** DEBUG: S2: servo: tilt: " + str(config_Global_File.servo_02_Tilt_Degrees))
 
 def brakes_on():
-    cfg.brakes = True
-    cfg.left_motor = 0
-    cfg.right_motor = 0
-    ##jwc o hw.motor_one_speed(cfg.right_motor)
-    ##jwc o hw.motor_two_speed(cfg.left_motor)
+    config_Global_File.brakes = True
+    config_Global_File.left_motor = 0
+    config_Global_File.right_motor = 0
+    ##jwc o hw.motor_one_speed(config_Global_File.right_motor)
+    ##jwc o hw.motor_two_speed(config_Global_File.left_motor)
     
 # jwc: Motors free to operate: Lo-Level: User-Level
 def brakes_off():
-    cfg.brakes = False
-    cfg.watchdog_Cycles_Now = 0
+    config_Global_File.brakes = False
+    config_Global_File.watchdog_Cycles_Now = 0
     
 def chocks_on():
-    cfg.chocks = True
+    config_Global_File.chocks = True
     brakes_on()
     hw.light_red_blink(0.2)
 
 # jwc: Motors free to operate: Hi-Level: Admin-Level ~ Overrides User-Level for Security/Safety
 def chocks_off():
-    cfg.chocks = False
+    config_Global_File.chocks = False
     brakes_off()
     hw.light_red_off()
 
@@ -679,12 +679,12 @@ def chocks_off():
 @app.route('/motor')
 def motor():
     left = request.args.get('l')
-    ##o if left and not cfg.chocks:
+    ##o if left and not config_Global_File.chocks:
     if left:
         left = int(left)
         if left >= -100 and left <= 100:
-            ##o cfg.left_motor = left
-            ##o hw.motor_two_speed(cfg.left_motor)
+            ##o config_Global_File.left_motor = left
+            ##o hw.motor_two_speed(config_Global_File.left_motor)
             left_normalized = (left / 100 )
             motor_1.throttle = left_normalized
             time.sleep(3)
@@ -715,48 +715,48 @@ def motor():
     left_normalized = 0
     right_normalized = 0
 
-    if left and not cfg.chocks:
+    if left and not config_Global_File.chocks:
         left_Int = int(left)
-        cfg.left_motor = left_Int
+        config_Global_File.left_motor = left_Int
         left_Absolute = abs( left_Int )
         if left_Int >= -100 and left_Int <= 100:
-            ##jwc yo cfg.left_motor = left
-            ##jwc o hw.motor_two_speed(cfg.left_motor)
+            ##jwc yo config_Global_File.left_motor = left
+            ##jwc o hw.motor_two_speed(config_Global_File.left_motor)
             ##jwc o left_normalized = (left / 100 )
             if left_Int >= 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
-                AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorLeft_Fn( left_Int )
+                autoPHat_SparkFun_Driver_File.motorLeft_Fn( (left_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( (left_Int/100) * 250 )
 
                 print("*** DEBUG: L1: motor: L " + str((left_Int/100) * 250))
             elif left_Int < 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
-                AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorLeft_Fn( left_Int )
+                autoPHat_SparkFun_Driver_File.motorLeft_Fn( (left_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( (left_Int/100) * 250 )
 
                 print("*** DEBUG: L2: motor: L " + str((left_Int/100) * 250))
             else:
                 print("*** Error: Invalid Value: left_Int: ", left_Int)
             ##jwc o motor_1.throttle = left_normalized
 
-    if right and not cfg.chocks:
+    if right and not config_Global_File.chocks:
         right_Int = int(right)
-        cfg.right_motor = right_Int
+        config_Global_File.right_motor = right_Int
         right_Absolute = abs( right_Int )
         if right_Int >= -100 and right_Int <= 100:
-            ##jwc o cfg.right_motor = right
-            ##jwc o hw.motor_one_speed(cfg.right_motor)
+            ##jwc o config_Global_File.right_motor = right
+            ##jwc o hw.motor_one_speed(config_Global_File.right_motor)
             ##jwc o right_normalized = (right / 100 )
             if right_Int >= 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
-                AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorRight_Fn( right_Int )
+                autoPHat_SparkFun_Driver_File.motorRight_Fn( (right_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( -1 * (right_Int/100) * 250 )
 
                 print("*** DEBUG: R1: motor: R " + str((right_Int/100) * 250))
             elif right_Int < 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
-                AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorRight_Fn( right_Int )
+                autoPHat_SparkFun_Driver_File.motorRight_Fn( (right_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( -1 * (right_Int/100) * 250 )
 
                 print("*** DEBUG: R2: motor: R " + str((right_Int/100) * 250))
             else:
@@ -779,50 +779,50 @@ def motor_for_turn():
     left_normalized = 0
     right_normalized = 0
 
-    if left and not cfg.chocks:
+    if left and not config_Global_File.chocks:
         left_Int = int(left)
-        cfg.left_motor = left_Int
+        config_Global_File.left_motor = left_Int
         left_Absolute = abs( left_Int )
         if left_Int >= -100 and left_Int <= 100:
-            ##jwc yo cfg.left_motor = left
-            ##jwc o hw.motor_two_speed(cfg.left_motor)
+            ##jwc yo config_Global_File.left_motor = left
+            ##jwc o hw.motor_two_speed(config_Global_File.left_motor)
             ##jwc o left_normalized = (left / 100 )
             if left_Int >= 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
-                AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorLeft_Fn( left_Int )
+                autoPHat_SparkFun_Driver_File.motorLeft_Fn( (left_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( (left_Int/100) * 250 )
 
                 print("*** DEBUG: L1: motor: L " + str((left_Int/100) * 250))
             elif left_Int < 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorLeft_Fn( left_Int )
-                AutoPHat_SparkFun_Driver.motorLeft_Fn( (left_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( (left_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorLeft_Fn( left_Int )
+                autoPHat_SparkFun_Driver_File.motorLeft_Fn( (left_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( (left_Int/100) * 250 )
 
                 print("*** DEBUG: L2: motor: L " + str((left_Int/100) * 250))
             else:
                 print("*** Error: Invalid Value: left_Int: ", left_Int)
             ##jwc o motor_1.throttle = left_normalized
 
-    if right and not cfg.chocks:
+    if right and not config_Global_File.chocks:
         right_Int = int(right)
         # Since turning, need to invert sign of 'right'
         right_Int = -1 * right_Int
-        cfg.right_motor = right_Int
+        config_Global_File.right_motor = right_Int
         right_Absolute = abs( right_Int )
         if right_Int >= -100 and right_Int <= 100:
-            ##jwc o cfg.right_motor = right
-            ##jwc o hw.motor_one_speed(cfg.right_motor)
+            ##jwc o config_Global_File.right_motor = right
+            ##jwc o hw.motor_one_speed(config_Global_File.right_motor)
             ##jwc o right_normalized = (right / 100 )
             if right_Int >= 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
-                AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorRight_Fn( right_Int )
+                autoPHat_SparkFun_Driver_File.motorRight_Fn( (right_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( -1 * (right_Int/100) * 250 )
 
                 print("*** DEBUG: R1: motor: R " + str((right_Int/100) * 250))
             elif right_Int < 0:
-                ##jwc y AutoPHat_SparkFun_Driver.motorRight_Fn( right_Int )
-                AutoPHat_SparkFun_Driver.motorRight_Fn( (right_Int/100) * 250 )
-                ##jwc n AutoPHat_SparkFun_Driver.motorRight_Fn( -1 * (right_Int/100) * 250 )
+                ##jwc y autoPHat_SparkFun_Driver_File.motorRight_Fn( right_Int )
+                autoPHat_SparkFun_Driver_File.motorRight_Fn( (right_Int/100) * 250 )
+                ##jwc n autoPHat_SparkFun_Driver_File.motorRight_Fn( -1 * (right_Int/100) * 250 )
 
                 print("*** DEBUG: R2: motor: R " + str((right_Int/100) * 250))
             else:
@@ -843,8 +843,8 @@ def servo_Cam_01_Pan_Degrees_FrontEnd_Fn():
         servoDegreesInt = 0
     elif servoDegreesInt > 180: 
         servoDegreesInt = 180
-    cfg.servo_01_Pan_Degrees = servoDegreesInt
-    AutoPHat_SparkFun_Driver.servo_Cam_01_Pan_Fn( cfg.servo_01_Pan_Degrees )    
+    config_Global_File.servo_01_Pan_Degrees = servoDegreesInt
+    autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_Fn( config_Global_File.servo_01_Pan_Degrees )    
     print("*** DEBUG: /servo_Cam_01_Pan_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
     return 'ok'
 
@@ -857,8 +857,8 @@ def servo_Cam_02_Tilt_Degrees_FrontEnd_Fn():
         servoDegreesInt = 0
     elif servoDegreesInt > 180: 
         servoDegreesInt = 180
-    cfg.servo_02_Tilt_Degrees = servoDegreesInt
-    AutoPHat_SparkFun_Driver.servo_Cam_02_Tilt_Fn( cfg.servo_02_Tilt_Degrees )
+    config_Global_File.servo_02_Tilt_Degrees = servoDegreesInt
+    autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_Fn( config_Global_File.servo_02_Tilt_Degrees )
     print("*** DEBUG: /servo_Cam_02_Tilt_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
     return 'ok'
 
@@ -870,8 +870,8 @@ def servo_Arm_03_Degrees_FrontEnd_Fn():
         servoDegreesInt = 0
     elif servoDegreesInt > 180: 
         servoDegreesInt = 180
-    cfg.servo_03_Degrees = servoDegreesInt
-    AutoPHat_SparkFun_Driver.servo_Arm_03_Fn( cfg.servo_03_Degrees )
+    config_Global_File.servo_03_Degrees = servoDegreesInt
+    autoPHat_SparkFun_Driver_File.servo_Arm_03_Fn( config_Global_File.servo_03_Degrees )
     print("*** DEBUG: /servo_Arm_03_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
     return 'ok'
 
@@ -884,12 +884,12 @@ def motorTrim():
 
     print("*** *** DEBUG: motorTrim() Pre : left: " + str(left) + " right: " + str(right))
 
-    cfg.left_motor_trim += int( left )
-    cfg.right_motor_trim += int( right )
+    config_Global_File.left_motor_trim += int( left )
+    config_Global_File.right_motor_trim += int( right )
 
-    DB.updateTrimValues(cfg.left_motor_trim, cfg.right_motor_trim)
+    DB.updateTrimValues(config_Global_File.left_motor_trim, config_Global_File.right_motor_trim)
 
-    print("*** *** DEBUG: motorTrim() Post: left: " + str(cfg.left_motor_trim) + " right: " + str(cfg.right_motor_trim))
+    print("*** *** DEBUG: motorTrim() Post: left: " + str(config_Global_File.left_motor_trim) + " right: " + str(config_Global_File.right_motor_trim))
 
     return 'ok'
 
@@ -898,7 +898,7 @@ def motorTrim():
  # URL for joystick input - format: /joystick?x=[x-axis]&y=[y-axis]
 @app.route('/joystick')
 def joystick():
-    cfg.watchdog_Cycles_Now = 0
+    config_Global_File.watchdog_Cycles_Now = 0
     x_axis = int(request.args.get('x'))
     y_axis = int(request.args.get('y'))
     x_axis = -1 * max( min(x_axis, 100), -100)
@@ -907,11 +907,11 @@ def joystick():
     w = (100-abs(y_axis)) * (x_axis/100) + x_axis
     r = int((v+w) / 2)
     l = int((v-w) / 2)
-    if not cfg.chocks:
-        cfg.right_motor = r
-        cfg.left_motor = l
-        hw.motor_one_speed(cfg.right_motor)
-        hw.motor_two_speed(cfg.left_motor)
+    if not config_Global_File.chocks:
+        config_Global_File.right_motor = r
+        config_Global_File.left_motor = l
+        hw.motor_one_speed(config_Global_File.right_motor)
+        hw.motor_two_speed(config_Global_File.left_motor)
     return 'ok'
  """
 
@@ -927,29 +927,29 @@ def touchpad():
 # Returns JSON object with status data
 @app.route('/heartbeat')
 def heartbeat():
-    cfg.watchdog_Cycles_Now = 0
+    config_Global_File.watchdog_Cycles_Now = 0
     output = {}
-    output['b'] = cfg.blue
-    output['y'] = cfg.yellow
-    output['c'] = cfg.chocks
-    output['g'] = cfg.green
-    output['f'] = cfg.video_fps
-    output['v'] = cfg.video_status
+    output['b'] = config_Global_File.blue
+    output['y'] = config_Global_File.yellow
+    output['c'] = config_Global_File.chocks
+    output['g'] = config_Global_File.green
+    output['f'] = config_Global_File.video_fps
+    output['v'] = config_Global_File.video_status
     
-    output['l'] = cfg.left_motor
+    output['l'] = config_Global_File.left_motor
     ##jwc o output['l'] = motor_1.throttle
-    output['r'] = cfg.right_motor
+    output['r'] = config_Global_File.right_motor
     ##jwc o output['r'] = motor_2.throttle
 
     # jwc 
     # 
-    output['lt'] = cfg.left_motor_trim
-    output['rt'] = cfg.right_motor_trim
+    output['lt'] = config_Global_File.left_motor_trim
+    output['rt'] = config_Global_File.right_motor_trim
 
-    output['s1'] = cfg.servo_01_Pan_Degrees
-    output['s2'] = cfg.servo_02_Tilt_Degrees
-    output['s3'] = cfg.servo_03_Degrees
-    output['s4'] = cfg.servo_04_Degrees
+    output['s1'] = config_Global_File.servo_01_Pan_Degrees
+    output['s2'] = config_Global_File.servo_02_Tilt_Degrees
+    output['s3'] = config_Global_File.servo_03_Degrees
+    output['s4'] = config_Global_File.servo_04_Degrees
 
     output['i1'] = hw.input_one_read()
     output['i2'] = hw.input_two_read()
@@ -962,14 +962,14 @@ def heartbeat():
 
     output['sc'] = str( score_Targeted_Dict )
 
-    ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( cfg )
-    ##jwc n  get_VoltageAndTemp_Status_Fn( cfg )
-    PiUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( cfg )
-    output['bvi'] = f'{cfg.batteryUps_Volts_Input_V:.2f}'
-    output['bvo'] = f'{cfg.batteryUps_Volts_Output_V:.2f}'
-    output['bvb'] = f'{cfg.batteryUps_Volts_Battery_V:.2f}'
-    output['btc'] = f'{cfg.batteryUps_Temp_C:5.2f}C'
-    output['btf'] = f'{cfg.batteryUps_Temp_F:5.2f}F'
+    ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( config_Global_File )
+    ##jwc n  get_VoltageAndTemp_Status_Fn( config_Global_File )
+    PiUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( config_Global_File )
+    output['bvi'] = f'{config_Global_File.batteryUps_Volts_Input_V:.2f}'
+    output['bvo'] = f'{config_Global_File.batteryUps_Volts_Output_V:.2f}'
+    output['bvb'] = f'{config_Global_File.batteryUps_Volts_Battery_V:.2f}'
+    output['btc'] = f'{config_Global_File.batteryUps_Temp_C:5.2f}C'
+    output['btf'] = f'{config_Global_File.batteryUps_Temp_F:5.2f}F'
 
     return json.dumps(output)
 
