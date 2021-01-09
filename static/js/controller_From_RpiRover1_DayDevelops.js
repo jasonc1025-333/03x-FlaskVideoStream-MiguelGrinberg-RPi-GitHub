@@ -67,7 +67,8 @@ function sleep(milliseconds) {
 function updateMotorSpeeds_Fn() {
 	var url_Str = '/motor?l=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
-    request.send(null);
+	request.send(null);
+	document.getElementById("speed-input-val").innerHTML = $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 	// If Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val()==0) {
@@ -90,6 +91,7 @@ function updateMotorSpeeds_ForTurn_Fn() {
 	var url_Str = '/motor_for_turn?l=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
     request.open("GET", url_Str, true);
     request.send(null);
+	document.getElementById("heading-input-val").innerHTML = $('#dcMotors_Turn_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 	// If Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_Turn_Power_FrontEnd_Id').val()==0) {
@@ -119,6 +121,7 @@ function servo_Cam_01_Pan_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_01_Pan_Degrees_FrontEnd_Fn?servo_Cam_01_Pan_Degrees_FrontEnd_Id=' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
     request.open('GET', url_Str, true);
     request.send(null);
+	document.getElementById("servo_Cam_01_Pan_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 }
 
@@ -126,6 +129,7 @@ function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn?servo_Cam_02_Tilt_Degrees_FrontEnd_Id=' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
     request.open('GET', url_Str, true);
     request.send(null);
+	document.getElementById("servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 }
 
@@ -133,6 +137,7 @@ function servo_Arm_03_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Arm_03_Degrees_FrontEnd_Fn?servo_Arm_03_Degrees_FrontEnd_Id=' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
     request.open('GET', url_Str, true);
     request.send(null);
+	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 }
 

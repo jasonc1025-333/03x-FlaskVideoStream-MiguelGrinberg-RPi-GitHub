@@ -178,7 +178,7 @@ minPW=(1.0-myCorrection)/1000
 ##jwc o         yield (b'--frame\r\n'
 ##jwc o                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 ##jwc o          
-##jwc o @app.route('/video_feed')
+##jwc o @app_Cl_Ob.route('/video_feed')
 ##jwc o def video_feed():
 ##jwc o     """Video streaming route. Put this in the src attribute of an img tag."""
 ##jwc o     return Response(gen(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -189,24 +189,24 @@ minPW=(1.0-myCorrection)/1000
 
 # import camera driver
 ##jwc o if os.environ.get('CAMERA'):
-##jwc o     Camera_Cl = import_module('camera_' + os.environ['CAMERA']).Camera_Cl
+##jwc o     camera_Cl = import_module('camera_' + os.environ['CAMERA']).camera_Cl
 ##jwc o     print("*** DEBUG: Camera-02a: camera_" + os.environ['CAMERA'])
 ##jwc o else:
 ##jwc o     ##jwc o from camera import Camera_File
 ##jwc o     # Default to most sophisticated tech
-##jwc o     from camera_OpenCv_File import Camera_Cl
+##jwc o     from camera_OpenCv_File import camera_Cl
 ##jwc o     print("*** DEBUG: Camera-02b: camera_opencv")
 
 ##jwc o from camera import Camera_File
 # Default to most sophisticated tech
-from camera_OpenCv_File import Camera_Cl
+from camera_OpenCv_File import camera_Cl
 print("*** DEBUG: Camera: camera_opencv")
 
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #
-##jwc o from pyimagesearch.motion_detection import SingleMotionDetector
-from motion_detection.singlemotiondetector import SingleMotionDetector
+##jwc o from pyimagesearch.motion_detection import singleMotionDetector_Cl
+from motion_detection.singleMotionDetector_File import singleMotionDetector_Cl
 from imutils.video import VideoStream
 import threading
 import argparse
@@ -256,31 +256,31 @@ lock = threading.Lock()
 score_Targeted_Dict = defaultdict(int)
 
 ##jwc o # initialize a flask object
-##jwc o app = Flask(__name__)
+##jwc o app_Cl_Ob = Flask(__name__)
 
 # initialize the video stream and allow the camera sensor to
 # warmup
-#vs = VideoStream(usePiCamera=1).start()
+#videoStream_Cl_Ob = VideoStream(usePiCamera=1).start()
 print("[INFO] starting video stream...")
-vs = VideoStream(src=0).start()
+videoStream_Cl_Ob = VideoStream(src=0).start()
 time.sleep(2.0)
 
 
 def detect_Motions_Fn(frameCount):
     # grab global references to the video stream, output frame, and
     # lock variables
-    global vs, outputFrame, lock
+    global videoStream_Cl_Ob, outputFrame, lock
 
     # initialize the motion detector and the total number of frames
     # read thus far
-    md = SingleMotionDetector(accumWeight=0.1)
+    motionDetect_Cl_Ob = singleMotionDetector_Cl(accumWeight=0.1)
     total = 0
 
     # loop over frames from the video stream
     while True:
         # read the next frame from the video stream, resize it,
         # convert the frame to grayscale, and blur it
-        frame = vs.read()
+        frame = videoStream_Cl_Ob.read()
         frame = imutils.resize(frame, width=400)
         # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
         ##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)
@@ -308,7 +308,7 @@ def detect_Motions_Fn(frameCount):
         # continue to process the frame
         if total > frameCount:
             # detect motion in the image
-            motion = md.detect(gray)
+            motion = motionDetect_Cl_Ob.detect(gray)
 
             # cehck to see if motion was found in the frame
             if motion is not None:
@@ -320,7 +320,7 @@ def detect_Motions_Fn(frameCount):
         
         # update the background model and increment the total number
         # of frames read thus far
-        md.update(gray)
+        motionDetect_Cl_Ob.update(gray)
         total += 1
 
         # acquire the lock, set the output frame, and release the
@@ -337,18 +337,18 @@ def detect_Motions_Fn(frameCount):
 def detect_Motions_And_ArucoMarkers_Fn(frameCount):
     # grab global references to the video stream, output frame, and
     # lock variables
-    global vs, outputFrame, lock
+    global videoStream_Cl_Ob, outputFrame, lock
 
     # initialize the motion detector and the total number of frames
     # read thus far
-    md = SingleMotionDetector(accumWeight=0.1)
+    motionDetect_Cl_Ob = singleMotionDetector_Cl(accumWeight=0.1)
     total = 0
 
     # loop over frames from the video stream
     while True:
         # read the next frame from the video stream, resize it,
         # convert the frame to grayscale, and blur it
-        frame = vs.read()
+        frame = videoStream_Cl_Ob.read()
         ##jwc o frame = imutils.resize(frame, width=400)
         frame = imutils.resize(frame, width=1000)
 
@@ -434,7 +434,7 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         # continue to process the frame
         if total > frameCount:
             # detect motion in the image
-            motion = md.detect(gray)
+            motion = motionDetect_Cl_Ob.detect(gray)
 
             # check to see if motion was found in the frame
             if motion is not None:
@@ -445,7 +445,7 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         
         # update the background model and increment the total number
         # of frames read thus far
-        md.update(gray)
+        motionDetect_Cl_Ob.update(gray)
         total += 1
 
         # jwc Frame is originally right-side up, yet timestamp-print is upside down
@@ -502,12 +502,12 @@ config_Global_File.right_motor_trim = trims['R']
 print ("*** DEBUG: DB: config_Global_File.left_motor_trim: " + str( config_Global_File.left_motor_trim ) + ", config_Global_File.right_motor_trim: " + str( config_Global_File.right_motor_trim ))
 
 
-##jwc yo app = Flask(__name__)
+##jwc yo app_Cl_Ob = Flask(__name__)
 
-app = Flask(__name__, static_url_path='/static')
+app_Cl_Ob = Flask(__name__, static_url_path='/static')
 
     
-@app.route('/')
+@app_Cl_Ob.route('/')
 def index():
     """Video streaming home page."""
     return render_template('index.html')
@@ -515,7 +515,7 @@ def index():
 
 # jwc 2020-1223 AiCam 2.0 StreamVideoToWebBrowser-AdrianRosebrock
 #
-@app.route("/video_feed")
+@app_Cl_Ob.route("/video_feed")
 def video_feed():
     # return the response generated along with the specific media
     # type (mime type)
@@ -686,7 +686,7 @@ def chocks_off():
 
 """ jwc y
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
-@app.route('/motor')
+@app_Cl_Ob.route('/motor')
 def motor():
     left = request.args.get('l')
     ##o if left and not config_Global_File.chocks:
@@ -715,7 +715,7 @@ def motor():
  """
 
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
-@app.route('/motor')
+@app_Cl_Ob.route('/motor')
 def motor():
     left = request.args.get('l')
     right = request.args.get('r')
@@ -779,7 +779,7 @@ def motor():
     return 'ok'
 
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
-@app.route('/motor_for_turn')
+@app_Cl_Ob.route('/motor_for_turn')
 def motor_for_turn():
     left = request.args.get('l')
     right = request.args.get('r')
@@ -845,7 +845,7 @@ def motor_for_turn():
     return 'ok'
 
 
-@app.route('/servo_Cam_01_Pan_Degrees_FrontEnd_Fn')
+@app_Cl_Ob.route('/servo_Cam_01_Pan_Degrees_FrontEnd_Fn')
 def servo_Cam_01_Pan_Degrees_FrontEnd_Fn():
     servoDegreesInt = int(request.args.get('servo_Cam_01_Pan_Degrees_FrontEnd_Id'))
 
@@ -859,7 +859,7 @@ def servo_Cam_01_Pan_Degrees_FrontEnd_Fn():
     return 'ok'
 
 
-@app.route('/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn')
+@app_Cl_Ob.route('/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn')
 def servo_Cam_02_Tilt_Degrees_FrontEnd_Fn():
     servoDegreesInt = int(request.args.get('servo_Cam_02_Tilt_Degrees_FrontEnd_Id'))
 
@@ -872,7 +872,7 @@ def servo_Cam_02_Tilt_Degrees_FrontEnd_Fn():
     print("*** DEBUG: /servo_Cam_02_Tilt_Degrees_FrontEnd_Fn: " + str(servoDegreesInt))
     return 'ok'
 
-@app.route('/servo_Arm_03_Degrees_FrontEnd_Fn')
+@app_Cl_Ob.route('/servo_Arm_03_Degrees_FrontEnd_Fn')
 def servo_Arm_03_Degrees_FrontEnd_Fn():
     servoDegreesInt = int(request.args.get('servo_Arm_03_Degrees_FrontEnd_Id'))
 
@@ -887,7 +887,7 @@ def servo_Arm_03_Degrees_FrontEnd_Fn():
 
 
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
-@app.route('/motorTrim')
+@app_Cl_Ob.route('/motorTrim')
 def motorTrim():
     left = request.args.get('l')
     right = request.args.get('r')
@@ -906,7 +906,7 @@ def motorTrim():
 
 """ jwc o
  # URL for joystick input - format: /joystick?x=[x-axis]&y=[y-axis]
-@app.route('/joystick')
+@app_Cl_Ob.route('/joystick')
 def joystick():
     config_Global_File.watchdog_Cycles_Now = 0
     x_axis = int(request.args.get('x'))
@@ -926,7 +926,7 @@ def joystick():
  """
 
 # URL to remote control touchpads 1-4 on explorer-hat
-@app.route('/touchpad')
+@app_Cl_Ob.route('/touchpad')
 def touchpad():
     pad = request.args.get('pad')
     if pad:
@@ -935,7 +935,7 @@ def touchpad():
 
 # URL for heartbeat requests (resets watchdog timer)    
 # Returns JSON object with status data
-@app.route('/heartbeat')
+@app_Cl_Ob.route('/heartbeat')
 def heartbeat():
     config_Global_File.watchdog_Cycles_Now = 0
     output = {}
@@ -990,17 +990,17 @@ if __name__ == '__main__':
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
     # construct the argument parser and parse command line arguments
-    ap = argparse.ArgumentParser()
-    ##jwc y ap.add_argument("-i", "--ip", type=str, required=True,help="ip address of the device")
-    ap.add_argument("-a", "--address", type=str, default='0.0.0.0', help="ip address of the device")
-    ##jwc y ap.add_argument("-o", "--port", type=int, required=True, help="ephemeral port number of the server (1024 to 65535)")
-    ap.add_argument("-p", "--port", type=int, default=5000, help="ephemeral port number of the server (1024 to 65535)")
-    ap.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
+    argumentParser_Cl_Ob = argparse.ArgumentParser()
+    ##jwc y argumentParser_Cl_Ob.add_argument("-i", "--ip", type=str, required=True,help="ip address of the device")
+    argumentParser_Cl_Ob.add_argument("-a", "--address", type=str, default='0.0.0.0', help="ip address of the device")
+    ##jwc y argumentParser_Cl_Ob.add_argument("-o", "--port", type=int, required=True, help="ephemeral port number of the server (1024 to 65535)")
+    argumentParser_Cl_Ob.add_argument("-p", "--port", type=int, default=5000, help="ephemeral port number of the server (1024 to 65535)")
+    argumentParser_Cl_Ob.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
     # jwc 2.1
-    ##jwc o ap.add_argument("-t", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="type of ArUCo tag to detect")
-    ap.add_argument("-t", "--type", type=str, default="DICT_6X6_100", help="type of ArUCo tag to detect")
+    ##jwc o argumentParser_Cl_Ob.add_argument("-thread_Cl_Ob", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="type of ArUCo tag to detect")
+    argumentParser_Cl_Ob.add_argument("-thread_Cl_Ob", "--type", type=str, default="DICT_6X6_100", help="type of ArUCo tag to detect")
     print("*** DEBUG: __main__: --type (default): cv2.aruco.DICT_6X6_100")
-    args = vars(ap.parse_args())
+    args = vars(argumentParser_Cl_Ob.parse_args())
 
     # verify that the supplied ArUCo tag exists and is supported by
     # OpenCV
@@ -1036,53 +1036,53 @@ if __name__ == '__main__':
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
     # start a thread that will perform motion detection
-    ##jwc o AiCam 2.0 t = threading.Thread(target=detect_Motions_Fn, args=(args["frame_count"],))
+    ##jwc o AiCam 2.0 thread_Cl_Ob = threading.Thread(target=detect_Motions_Fn, args=(args["frame_count"],))
     ##jwc AiCam 2.1
     ##
-    t = threading.Thread(target=detect_Motions_And_ArucoMarkers_Fn, args=(args["frame_count"],))
-    t.daemon = True
-    t.start()
+    thread_Cl_Ob = threading.Thread(target=detect_Motions_And_ArucoMarkers_Fn, args=(args["frame_count"],))
+    thread_Cl_Ob.daemon = True
+    thread_Cl_Ob.start()
 
 
-    ##jwc o app.run(host='0.0.0.0', debug=False, threaded=True)
+    ##jwc o app_Cl_Ob.run(host='0.0.0.0', debug=False, threaded=True)
     ##
-    ##jwc n app.run(host='192.168.1.80', debug=False, threaded=True)
+    ##jwc n app_Cl_Ob.run(host='192.168.1.80', debug=False, threaded=True)
     ##jwc to not conflict with other apps
-    ##jwc y app.run(host='0.0.0.0', port=5001, debug=False, threaded=True)
+    ##jwc y app_Cl_Ob.run(host='0.0.0.0', port=5001, debug=False, threaded=True)
     
     ## jwc NameError: name 'WSGIServer' is not defined
-    ##jwc on http_server = WSGIServer(('', 5001), app)
+    ##jwc on http_server = WSGIServer(('', 5001), app_Cl_Ob)
     ##jwc on http_server.serve_forever()
 
-    ##jwc y app.run(host='0.0.0.0', port=5001, debug=False, threaded=True)
-    ##jwc n seems to cause rpi crash and video-stream not work: app.run(host='0.0.0.0', port=5001, debug=True, threaded=True)
-    ##jwc y app.run(host='0.0.0.0', port=5001, debug=True, threaded=False)
-    ##jwc y app.run(host='0.0.0.0', port=5001, debug=True, threaded=True)
+    ##jwc y app_Cl_Ob.run(host='0.0.0.0', port=5001, debug=False, threaded=True)
+    ##jwc n seems to cause rpi crash and video-stream not work: app_Cl_Ob.run(host='0.0.0.0', port=5001, debug=True, threaded=True)
+    ##jwc y app_Cl_Ob.run(host='0.0.0.0', port=5001, debug=True, threaded=False)
+    ##jwc y app_Cl_Ob.run(host='0.0.0.0', port=5001, debug=True, threaded=True)
 
     # jwc: Does 'debug=False' prevents two instances of 'main()'
     # jwc: TYJ camera seems to work now, via 'run: start debugging', esp. after rpi reboot
 
-    ##jwc yo app.run(host='0.0.0.0', threaded=True)
-    ## y app.run(host='0.0.0.0', debug=True, threaded=True)
-    ##jwc y app.run(host='0.0.0.0', threaded=True)
+    ##jwc yo app_Cl_Ob.run(host='0.0.0.0', threaded=True)
+    ## y app_Cl_Ob.run(host='0.0.0.0', debug=True, threaded=True)
+    ##jwc y app_Cl_Ob.run(host='0.0.0.0', threaded=True)
 
-    ##jwc y app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
-    ##jwc n app.run(host='0.0.0.0', port=80, debug=False, threaded=True)
-    ##jwc app.run(host='0.0.0.0', port=8888, debug=False, threaded=True)
-    ##jwc o app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    ##jwc y app_Cl_Ob.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    ##jwc n app_Cl_Ob.run(host='0.0.0.0', port=80, debug=False, threaded=True)
+    ##jwc app_Cl_Ob.run(host='0.0.0.0', port=8888, debug=False, threaded=True)
+    ##jwc o app_Cl_Ob.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
 
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
-    #jwc y app.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False)
+    #jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False)
     # jwc TYJ following works with local debugging, though cam may not work
-    # jwc o, obsolete since now will use external-VSCode-debugger and not Flask-debugger: app.run(host=args["address"], port=args["port"], debug=False, threaded=True, use_reloader=False)
+    # jwc o, obsolete since now will use external-VSCode-debugger and not Flask-debugger: app_Cl_Ob.run(host=args["address"], port=args["port"], debug=False, threaded=True, use_reloader=False)
     ## jwc Seems that Flask-dedug now fix and not this 'passthrough_errosrs' workaround: 'passthrough_errors=True' since need errors to bubble up to ext VSCode-debugger
-    ##jwc y app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
-    ##jwc y app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=False)
-    app.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
+    ##jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
+    ##jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=False)
+    app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
 
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #
 # release the video stream pointer
-vs.stop()
+videoStream_Cl_Ob.stop()

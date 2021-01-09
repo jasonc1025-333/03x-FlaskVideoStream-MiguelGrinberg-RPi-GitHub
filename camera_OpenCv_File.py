@@ -3,31 +3,31 @@ import cv2
 from camera_Base_File import camera_Base_Cl
 
 
-class Camera_Cl(camera_Base_Cl):
+class camera_Cl(camera_Base_Cl):
     video_source = 0
     
     # jwc: Status Camera Mode
     ##jwc o print("*** DEBUG: camera_opencv.py ***")
-    print("*** DEBUG: Camera_Cl-01: camera_opencv.py ***")
+    print("*** DEBUG: camera_Cl-01: camera_opencv.py ***")
 
     def __init__(self):
         if os.environ.get('OPENCV_CAMERA_SOURCE'):
-            Camera_Cl.set_video_source(int(os.environ['OPENCV_CAMERA_SOURCE']))
-        super(Camera_Cl, self).__init__()
+            camera_Cl.set_video_source(int(os.environ['OPENCV_CAMERA_SOURCE']))
+        super(camera_Cl, self).__init__()
 
     @staticmethod
     def set_video_source(source):
-        Camera_Cl.video_source = source
+        camera_Cl.video_source = source
 
     @staticmethod
     def frames():
-        Camera_Cl = cv2.VideoCapture(Camera_Cl.video_source)
-        if not Camera_Cl.isOpened():
-            raise RuntimeError('Could not start Camera_Cl.')
+        camera_Cl = cv2.VideoCapture(camera_Cl.video_source)
+        if not camera_Cl.isOpened():
+            raise RuntimeError('Could not start camera_Cl.')
 
         while True:
             # read current frame
-            _, img = Camera_Cl.read()
+            _, img = camera_Cl.read()
 
             # encode as a jpeg image and return it
             ##jwc o yield cv2.imencode('.jpg', img)[1].tobytes()
