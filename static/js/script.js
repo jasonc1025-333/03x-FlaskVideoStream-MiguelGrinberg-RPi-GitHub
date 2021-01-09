@@ -21,7 +21,11 @@ var doubleClickTimer = 300;
 // y var heartbeatTimer = 1000000;  // 1000sec = 16.67min
 // jwc improve real-time stats
 // jwc var heartbeatTimer = 3000;  // 3sec
-var heartbeatTimer = 1000;  // 1sec
+//jwc n 2021-0109 TTFB  var heartbeatTimer = 1000;  // 1sec
+//jwc y TTFB 854ms var heartbeatTimer = 10000;  // 10sec
+// *KEY NOTE: Important to throttle timer slow enough for enough time for feedback packet to be generated and returned
+// ** 2021-0109 TTFB (Time To First Byte): 900ms
+var heartbeatTimer = 2000;  // 2sec  TYJ
 
 //jwc o var linkCheckTimer = 5000;
 var linkCheckTimer = 1000000;  // 1000sec = 16.67min

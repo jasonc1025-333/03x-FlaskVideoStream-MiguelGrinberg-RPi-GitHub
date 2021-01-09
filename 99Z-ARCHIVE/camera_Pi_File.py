@@ -1,22 +1,23 @@
 import io
 import time
 import picamera
-from base_camera import BaseCamera
+from camera_Base_File import camera_Base_Cl
 
 
-class Camera(BaseCamera):
+class Camera_Cl(camera_Base_Cl):
 
-    # jwc: Status Camera Mode
-    print("*** DEBUG: camera_pi.py ***")
+    # jwc: Status Camera_Cl Mode
+    ##jwc o print("*** DEBUG: camera_pi.py ***")
+    print("*** DEBUG: Camera_Cl-01: camera_pi.py ***")
 
     @staticmethod
     def frames():
-        with picamera.PiCamera() as camera:
-            # let camera warm up
+        with picamera.PiCamera() as Camera_Cl:
+            # let Camera_Cl warm up
             time.sleep(2)
 
             stream = io.BytesIO()
-            for _ in camera.capture_continuous(stream, 'jpeg',
+            for _ in Camera_Cl.capture_continuous(stream, 'jpeg',
                                                  use_video_port=True):
                 # return current frame
                 stream.seek(0)

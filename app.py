@@ -60,13 +60,17 @@ from flask import Flask, render_template, request, Response
 ##jwc replace w/ PiUpTimeUps:     except DeviceRangeError as e:
 ##jwc replace w/ PiUpTimeUps:         print(e)
 
-import PiUpTimeUps_2pt0__AlchemyPower
+import piUpTimeUps_2pt0__AlchemyPower
 
 ##jwc y import config_Global_File as config_Global_File
+##jwc ? import config_Global_File
+##jwc o import config_Global_File as cfg
 import config_Global_File
 
 ##jwc o import io_wrapper as hw
-import io_wrapper_dummy as hw
+##jwc y import io_Driver_File
+##jwc m import io_Driver_Simulator_File as io_Driver_File
+import io_Driver_Simulator_File as io_Driver_File
 
 ## jwc o import RPi.GPIO as GPIO
 
@@ -165,7 +169,7 @@ minPW=(1.0-myCorrection)/1000
 ##jwc o AiCam Gen 1
 ##jwc o 
 ##jwc o  Raspberry Pi camera module (requires picamera package)
-##jwc o  from camera_pi import Camera
+##jwc o  from camera_pi import Camera_File
 ##jwc o 
 ##jwc o def gen(camera):
 ##jwc o     """Video streaming generator function."""
@@ -184,14 +188,20 @@ minPW=(1.0-myCorrection)/1000
 #
 
 # import camera driver
-if os.environ.get('CAMERA'):
-    Camera = import_module('camera_' + os.environ['CAMERA']).Camera
-    print("*** DEBUG: Camera-01: camera_" + os.environ['CAMERA'])
-else:
-    ##jwc o from camera import Camera
-    # Default to most sophisticated tech
-    from camera_opencv import Camera
-    print("*** DEBUG: Camera-02: camera_opencv")
+##jwc o if os.environ.get('CAMERA'):
+##jwc o     Camera_Cl = import_module('camera_' + os.environ['CAMERA']).Camera_Cl
+##jwc o     print("*** DEBUG: Camera-02a: camera_" + os.environ['CAMERA'])
+##jwc o else:
+##jwc o     ##jwc o from camera import Camera_File
+##jwc o     # Default to most sophisticated tech
+##jwc o     from camera_OpenCv_File import Camera_Cl
+##jwc o     print("*** DEBUG: Camera-02b: camera_opencv")
+
+##jwc o from camera import Camera_File
+# Default to most sophisticated tech
+from camera_OpenCv_File import Camera_Cl
+print("*** DEBUG: Camera: camera_opencv")
+
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #
@@ -536,14 +546,14 @@ def watchdog_timer():
 
 # Handler for a clean shutdown when pressing Ctrl-C
 def signal_handler(signal, frame):
-    hw.light_blue_blink(0.1)
+    io_Driver_File.light_blue_blink(0.1)
     config_Global_File.watchdog_Alive_Bool = False
     config_Global_File.camera_active = False
     brakes_on()
     # jwc: Wait until thread terminates
     watchDog.join()
     ##jwc o http_server.close()
-    hw.light_blue_off()
+    io_Driver_File.light_blue_off()
     sys.exit(0)
 
 # Handler for explorer-hat touchpads
@@ -553,11 +563,11 @@ def touch_handler(channel, event):
         #jwc o 
         # config_Global_File.blue = not config_Global_File.blue
         # if config_Global_File.blue:
-        #     hw.light_blue_on()
-        #     hw.output_one_on()
+        #     io_Driver_File.light_blue_on()
+        #     io_Driver_File.output_one_on()
         # else:
-        #     hw.light_blue_off()
-        #     hw.output_one_off()
+        #     io_Driver_File.light_blue_off()
+        #     io_Driver_File.output_one_off()
 
         ##jwc n AttributeError: servo_01_Pan = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositiionGet_Fn()
         ##jwc n config_Global_File.servo_01_Pan_Degrees = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositionGet_Fn()
@@ -572,11 +582,11 @@ def touch_handler(channel, event):
         #jwc o 
         # config_Global_File.yellow = not config_Global_File.yellow
         # if config_Global_File.yellow:
-        #     hw.light_yellow_on()
-        #     hw.output_two_on()
+        #     io_Driver_File.light_yellow_on()
+        #     io_Driver_File.output_two_on()
         # else:
-        #     hw.light_yellow_off()
-        #     hw.output_two_off()
+        #     io_Driver_File.light_yellow_off()
+        #     io_Driver_File.output_two_off()
 
         ##jwc n AttributeError: servo_01_Pan = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositiionGet_Fn()
         ##jwc n config_Global_File.servo_01_Pan_Degrees = autoPHat_SparkFun_Driver_File.servo_Cam_01_Pan_PositionGet_Fn()
@@ -601,15 +611,15 @@ def touch_handler(channel, event):
             chocks_off()
 
     if channel == 4:
-        hw.light_green_blink(0.1)
+        io_Driver_File.light_green_blink(0.1)
         #jwc o 
         # config_Global_File.green = True
         # ##jwc o time.sleep(5)
         # if config_Global_File.chocks:
-        #     hw.light_green_on()
+        #     io_Driver_File.light_green_on()
         #     ##jwc o os.system("sudo -s shutdown -h now")
         # else:
-        #     hw.light_green_off()
+        #     io_Driver_File.light_green_off()
         #     config_Global_File.green = False
 
         ##jwc n config_Global_File.temp = autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_PositionGet_Fn()
@@ -626,15 +636,15 @@ def touch_handler(channel, event):
         print("*** DEBUG: S2: servo: tilt: " + str(config_Global_File.servo_02_Tilt_Degrees))
 
     if channel == 5:
-        hw.light_green_blink(0.1)
+        io_Driver_File.light_green_blink(0.1)
         #jwc o 
         # config_Global_File.green = True
         # ##jwc o time.sleep(5)
         # if config_Global_File.chocks:
-        #     hw.light_green_on()
+        #     io_Driver_File.light_green_on()
         #     ##jwc o os.system("sudo -s shutdown -h now")
         # else:
-        #     hw.light_green_off()
+        #     io_Driver_File.light_green_off()
         #     config_Global_File.green = False
 
         ##jwc n config_Global_File.temp = autoPHat_SparkFun_Driver_File.servo_Cam_02_Tilt_PositionGet_Fn()
@@ -654,8 +664,8 @@ def brakes_on():
     config_Global_File.brakes = True
     config_Global_File.left_motor = 0
     config_Global_File.right_motor = 0
-    ##jwc o hw.motor_one_speed(config_Global_File.right_motor)
-    ##jwc o hw.motor_two_speed(config_Global_File.left_motor)
+    ##jwc o io_Driver_File.motor_one_speed(config_Global_File.right_motor)
+    ##jwc o io_Driver_File.motor_two_speed(config_Global_File.left_motor)
     
 # jwc: Motors free to operate: Lo-Level: User-Level
 def brakes_off():
@@ -665,13 +675,13 @@ def brakes_off():
 def chocks_on():
     config_Global_File.chocks = True
     brakes_on()
-    hw.light_red_blink(0.2)
+    io_Driver_File.light_red_blink(0.2)
 
 # jwc: Motors free to operate: Hi-Level: Admin-Level ~ Overrides User-Level for Security/Safety
 def chocks_off():
     config_Global_File.chocks = False
     brakes_off()
-    hw.light_red_off()
+    io_Driver_File.light_red_off()
 
 
 """ jwc y
@@ -684,7 +694,7 @@ def motor():
         left = int(left)
         if left >= -100 and left <= 100:
             ##o config_Global_File.left_motor = left
-            ##o hw.motor_two_speed(config_Global_File.left_motor)
+            ##o io_Driver_File.motor_two_speed(config_Global_File.left_motor)
             left_normalized = (left / 100 )
             motor_1.throttle = left_normalized
             time.sleep(3)
@@ -721,7 +731,7 @@ def motor():
         left_Absolute = abs( left_Int )
         if left_Int >= -100 and left_Int <= 100:
             ##jwc yo config_Global_File.left_motor = left
-            ##jwc o hw.motor_two_speed(config_Global_File.left_motor)
+            ##jwc o io_Driver_File.motor_two_speed(config_Global_File.left_motor)
             ##jwc o left_normalized = (left / 100 )
             if left_Int >= 0:
                 ##jwc y autoPHat_SparkFun_Driver_File.motorLeft_Fn( left_Int )
@@ -745,7 +755,7 @@ def motor():
         right_Absolute = abs( right_Int )
         if right_Int >= -100 and right_Int <= 100:
             ##jwc o config_Global_File.right_motor = right
-            ##jwc o hw.motor_one_speed(config_Global_File.right_motor)
+            ##jwc o io_Driver_File.motor_one_speed(config_Global_File.right_motor)
             ##jwc o right_normalized = (right / 100 )
             if right_Int >= 0:
                 ##jwc y autoPHat_SparkFun_Driver_File.motorRight_Fn( right_Int )
@@ -785,7 +795,7 @@ def motor_for_turn():
         left_Absolute = abs( left_Int )
         if left_Int >= -100 and left_Int <= 100:
             ##jwc yo config_Global_File.left_motor = left
-            ##jwc o hw.motor_two_speed(config_Global_File.left_motor)
+            ##jwc o io_Driver_File.motor_two_speed(config_Global_File.left_motor)
             ##jwc o left_normalized = (left / 100 )
             if left_Int >= 0:
                 ##jwc y autoPHat_SparkFun_Driver_File.motorLeft_Fn( left_Int )
@@ -811,7 +821,7 @@ def motor_for_turn():
         right_Absolute = abs( right_Int )
         if right_Int >= -100 and right_Int <= 100:
             ##jwc o config_Global_File.right_motor = right
-            ##jwc o hw.motor_one_speed(config_Global_File.right_motor)
+            ##jwc o io_Driver_File.motor_one_speed(config_Global_File.right_motor)
             ##jwc o right_normalized = (right / 100 )
             if right_Int >= 0:
                 ##jwc y autoPHat_SparkFun_Driver_File.motorRight_Fn( right_Int )
@@ -910,8 +920,8 @@ def joystick():
     if not config_Global_File.chocks:
         config_Global_File.right_motor = r
         config_Global_File.left_motor = l
-        hw.motor_one_speed(config_Global_File.right_motor)
-        hw.motor_two_speed(config_Global_File.left_motor)
+        io_Driver_File.motor_one_speed(config_Global_File.right_motor)
+        io_Driver_File.motor_two_speed(config_Global_File.left_motor)
     return 'ok'
  """
 
@@ -951,20 +961,20 @@ def heartbeat():
     output['s3'] = config_Global_File.servo_03_Degrees
     output['s4'] = config_Global_File.servo_04_Degrees
 
-    output['i1'] = hw.input_one_read()
-    output['i2'] = hw.input_two_read()
-    output['i3'] = hw.input_three_read()
-    output['i4'] = hw.input_four_read()
-    ##jwc o output['a1'] = hw.analog_one_read()
-    ##jwc o output['a2'] = hw.analog_two_read()
-    ##jwc o output['a3'] = hw.analog_three_read()
-    ##jwc o output['a4'] = hw.analog_four_read()
+    output['i1'] = io_Driver_File.input_one_read()
+    output['i2'] = io_Driver_File.input_two_read()
+    output['i3'] = io_Driver_File.input_three_read()
+    output['i4'] = io_Driver_File.input_four_read()
+    ##jwc o output['a1'] = io_Driver_File.analog_one_read()
+    ##jwc o output['a2'] = io_Driver_File.analog_two_read()
+    ##jwc o output['a3'] = io_Driver_File.analog_three_read()
+    ##jwc o output['a4'] = io_Driver_File.analog_four_read()
 
     output['sc'] = str( score_Targeted_Dict )
 
     ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( config_Global_File )
     ##jwc n  get_VoltageAndTemp_Status_Fn( config_Global_File )
-    PiUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( config_Global_File )
+    piUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( config_Global_File )
     output['bvi'] = f'{config_Global_File.batteryUps_Volts_Input_V:.2f}'
     output['bvo'] = f'{config_Global_File.batteryUps_Volts_Output_V:.2f}'
     output['bvb'] = f'{config_Global_File.batteryUps_Volts_Battery_V:.2f}'
@@ -1005,16 +1015,16 @@ if __name__ == '__main__':
     arucoParams = cv2.aruco.DetectorParameters_create()
 
 
-    hw.light_green_blink(0.1)
+    io_Driver_File.light_green_blink(0.1)
     time.sleep(1)
-    hw.light_green_off()
+    io_Driver_File.light_green_off()
 
     # register signal handler for a clean exit    
     signal.signal(signal.SIGINT, signal_handler)
 
     ##jwc o # register handler for touchpads
-    ##jwc o if hw.explorerhat:
-    ##jwc o     hw.xhat.touch.released(touch_handler)
+    ##jwc o if io_Driver_File.explorerhat:
+    ##jwc o     io_Driver_File.xhat.touch.released(touch_handler)
         
     # prepare and start watchdog
     # jwc since watchdog happens so much (seems infinite loop and recursive) and interferes w/ debug, thus turn off
