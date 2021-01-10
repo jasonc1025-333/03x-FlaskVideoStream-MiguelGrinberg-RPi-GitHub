@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-
-
-    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G</title>
+    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G DVO-System</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <link rel='stylesheet' href='static/css/style_From_RpiRover1_DayDevelops.css'>
@@ -11,13 +9,11 @@
 
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <script src="/static/js/script.js"></script>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-  
-    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />  
   </head>
   <body>
     <!-- jwc o  <h1>Video Streaming Demonstration</h1> -->
-    <h1>RoboQuest V-Lab Web-Portal: RQ-CX-G</h1>
+    <h1>RoboQuest V-Lab Web-Portal: RQ-CX-G DVO-System</h1>
     <!-- <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1> -->
     <!-- jwc y  <img src="{{ url_for('video_feed') }}"> -->
 
@@ -48,7 +44,7 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01'>Driver</h2>
+          <h2 id='col-header-01'>Driver(Wheel-Motors)</h2>
 
           <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
           <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'>
@@ -58,7 +54,7 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='turn-col'>
-          <h2 id='col-header-01'>Camera</h2>
+          <h2 id='col-header-01'>Vision(Camera-Servos)</h2>
           
           <!-- servo_Cam_02_Tilt_Degrees_FrontEnd_Id slider -->
           <input id='servo_Cam_02_Tilt_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Cam_02_Tilt_Degrees_FrontEnd_Fn()'>
@@ -68,7 +64,7 @@
 
         <!-- col-2: max-width: 16.67% > -->
         <div class='col-2' id='speed-col'>
-          <h2 id='col-header-01'>Action-Arm</h2>
+          <h2 id='col-header-01'>Operator(Arm-Servos)</h2>
 
           <!-- servo_Arm_03_Degrees_FrontEnd_Id slider -->
           <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'>

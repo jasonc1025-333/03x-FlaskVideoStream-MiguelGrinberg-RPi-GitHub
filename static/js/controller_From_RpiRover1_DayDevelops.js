@@ -70,9 +70,9 @@ function updateMotorSpeeds_Fn() {
 	request.send(null);
 	document.getElementById("speed-input-val").innerHTML = $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
-	// If Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	// If Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val()==0) {
-		for (i=0; i<3; i++) { 
+		for (i=0; i<2; i++) { 
 			request.open("GET", url_Str, true);
 			request.send(null);
 			console.log('*** *** ' + i + ' url: ' + url_Str);
@@ -93,9 +93,9 @@ function updateMotorSpeeds_ForTurn_Fn() {
     request.send(null);
 	document.getElementById("heading-input-val").innerHTML = $('#dcMotors_Turn_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
-	// If Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	// If Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_Turn_Power_FrontEnd_Id').val()==0) {
-		for (i=0; i<3; i++) { 
+		for (i=0; i<2; i++) { 
 			request.open("GET", url_Str, true);
 			request.send(null);
 			console.log('*** *** ' + i + ' url: ' + url_Str);
@@ -108,8 +108,8 @@ function updateMotorSpeeds_ForHalt_Fn() {
 	request.open("GET", url_Str, true);
 	request.send(null);
 	console.log('*** url: ' + url_Str)
-	// Since Power == 0, then resend multiple times to insure at least one packet survives transmission (not get dropped in network) for critical stop
-	for (i=0; i<3; i++) { 
+	// Since Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	for (i=0; i<2; i++) { 
 		request.open("GET", url_Str, true);
 		request.send(null);
 		console.log('*** *** ' + i + ' url: ' + url_Str);

@@ -290,7 +290,7 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 	# If input V is low and battery V is low initiate the shutdown process.
 	if ( volts_In < volts_Input_Min_DEC_GLOBAL ): # volts_In has failed or is a brownout
 			if (volts_Battery < volts_Battery_Min_DEC_GLOBAL ): # Battery is low, time to shutdown.
-					print("Shutdown initiated at %s " % (time.ctime()))
+					print("*** *** Shutdown initiated at %s " % (time.ctime()))
 					#
 					# The command shuts down the pi in 2 minutes. Replace
 					# 2 with word "now" (without the quotes) for immediate
