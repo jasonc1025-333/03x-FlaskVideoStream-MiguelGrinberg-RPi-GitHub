@@ -42,6 +42,7 @@ right_motor = 0
 # 
 left_motor_trim = 0
 right_motor_trim = 0
+heartbeat_freq = 0
 
 # default to 90 degrees
 #

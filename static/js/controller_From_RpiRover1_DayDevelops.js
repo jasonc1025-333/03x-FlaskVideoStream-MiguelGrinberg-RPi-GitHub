@@ -1,7 +1,7 @@
 var socket, connected = false;
 
 // jwc n
-var request = makeHttpObject();
+var httpRequest_Cl_Ob = makeHttpObject();
 
 addEventListener('load',setUpControllerEvents);
 
@@ -66,15 +66,15 @@ function sleep(milliseconds) {
 
 function updateMotorSpeeds_Fn() {
 	var url_Str = '/motor?l=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
-    request.open("GET", url_Str, true);
-	request.send(null);
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+	httpRequest_Cl_Ob.send(null);
 	document.getElementById("speed-input-val").innerHTML = $('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 	// If Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_FwdOrRev_Power_FrontEnd_Id').val()==0) {
 		for (i=0; i<2; i++) { 
-			request.open("GET", url_Str, true);
-			request.send(null);
+			httpRequest_Cl_Ob.open("GET", url_Str, true);
+			httpRequest_Cl_Ob.send(null);
 			console.log('*** *** ' + i + ' url: ' + url_Str);
 			//jwc n  await new Promise(r => setTimeout(r, 2000));
 			//y  sleep(2000);
@@ -89,15 +89,15 @@ function updateMotorSpeeds_Fn() {
 }
 function updateMotorSpeeds_ForTurn_Fn() {
 	var url_Str = '/motor_for_turn?l=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
-    request.open("GET", url_Str, true);
-    request.send(null);
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
 	document.getElementById("heading-input-val").innerHTML = $('#dcMotors_Turn_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 	// If Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_Turn_Power_FrontEnd_Id').val()==0) {
 		for (i=0; i<2; i++) { 
-			request.open("GET", url_Str, true);
-			request.send(null);
+			httpRequest_Cl_Ob.open("GET", url_Str, true);
+			httpRequest_Cl_Ob.send(null);
 			console.log('*** *** ' + i + ' url: ' + url_Str);
 			sleep(50);
 		}
@@ -105,13 +105,13 @@ function updateMotorSpeeds_ForTurn_Fn() {
 }
 function updateMotorSpeeds_ForHalt_Fn() {
 	var url_Str = '/motor?l=0' + '&r=0';
-	request.open("GET", url_Str, true);
-	request.send(null);
+	httpRequest_Cl_Ob.open("GET", url_Str, true);
+	httpRequest_Cl_Ob.send(null);
 	console.log('*** url: ' + url_Str)
 	// Since Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	for (i=0; i<2; i++) { 
-		request.open("GET", url_Str, true);
-		request.send(null);
+		httpRequest_Cl_Ob.open("GET", url_Str, true);
+		httpRequest_Cl_Ob.send(null);
 		console.log('*** *** ' + i + ' url: ' + url_Str);
 		sleep(50);
 	}
@@ -119,24 +119,24 @@ function updateMotorSpeeds_ForHalt_Fn() {
 
 function servo_Cam_01_Pan_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_01_Pan_Degrees_FrontEnd_Fn?servo_Cam_01_Pan_Degrees_FrontEnd_Id=' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
-    request.open('GET', url_Str, true);
-    request.send(null);
+    httpRequest_Cl_Ob.open('GET', url_Str, true);
+    httpRequest_Cl_Ob.send(null);
 	document.getElementById("servo_Cam_01_Pan_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 }
 
 function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn?servo_Cam_02_Tilt_Degrees_FrontEnd_Id=' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
-    request.open('GET', url_Str, true);
-    request.send(null);
+    httpRequest_Cl_Ob.open('GET', url_Str, true);
+    httpRequest_Cl_Ob.send(null);
 	document.getElementById("servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 }
 
 function servo_Arm_03_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Arm_03_Degrees_FrontEnd_Fn?servo_Arm_03_Degrees_FrontEnd_Id=' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
-    request.open('GET', url_Str, true);
-    request.send(null);
+    httpRequest_Cl_Ob.open('GET', url_Str, true);
+    httpRequest_Cl_Ob.send(null);
 	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
 }
@@ -144,8 +144,17 @@ function servo_Arm_03_Degrees_FrontEnd_Fn() {
 function changeTrim(data) {
 	///jwc o socket.emit('updateTrim',{'L':data.L, 'R':data.R});
 	var motorTrim_url = "/motorTrim?l=" + data.L + '&r=' + data.R;
-    request.open("GET", motorTrim_url, true);
-    request.send(null);
+    httpRequest_Cl_Ob.open("GET", motorTrim_url, true);
+    httpRequest_Cl_Ob.send(null);
+	
+	console.log('### DEBUG: asking server to update motorTrim');
+}
+
+function heartbeat_Freq_Mod_IncDec_Fn(data) {
+	///jwc o socket.emit('updateTrim',{'L':data.L, 'R':data.R});
+	var url_Str = "/heartbeat_Freq_Mod_IncDec_Fn?incdec=" + data.incdec;
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
 	
 	console.log('### DEBUG: asking server to update motorTrim');
 }

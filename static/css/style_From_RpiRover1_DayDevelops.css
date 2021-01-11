@@ -124,7 +124,7 @@ body, html {
 	position:relative;
 	/* top:5px; */
 }
-#cam-text {
+#cam-text, heartbeat_Freq_Mod_Id{
 	position:relative;
 	top:-13px;
 	margin-left:20px;

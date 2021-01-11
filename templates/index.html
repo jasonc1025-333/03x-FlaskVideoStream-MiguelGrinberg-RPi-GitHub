@@ -124,25 +124,31 @@
         <!-- col-2: max-width: 16.67% > -->
         <!-- <div class='col-2 p-0'> -->
         <div class='col-2'>          
-          <h2 id='col-header-01'>Anti-Drift Persistent</h2>
+          <h2 id='col-header-01'>Persistent Mods</h2>
 
-          <!-- left motor trim -->
-          <h3 id='col-header-01'>Motor-L</h3>
+          <!-- heartbeat_freq -->
+          <h3 id='col-header-01'>Heartbeat-Freq-Mod</h2>
+            <i id='heartbeat_Freq_Mod_Dec_Id' class='ted-inline fas fa-angle-left fa-3x horizontal-icons-with-textlabel' onclick="heartbeat_Freq_Mod_IncDec_Fn({'incdec':'-1'})"></i>
+            <span id='heartbeat_Freq_Mod_Id'>-</span>
+            <i id='heartbeat_Freq_Mod_Inc_Id' class='d-inline fas fa-angle-right fa-3x' onclick="heartbeat_Freq_Mod_IncDec_Fn({'incdec':'+1'})"></i>
+
+            <!-- left motor trim -->
+          <h3 id='col-header-01'>Motor-Trim-L</h3>
           <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
           <p id='lmtrim-val' class='text-center'>0</p>
           <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
 
           <!-- right motor trim -->
-          <h3 id='col-header-01'>Motor-R</h3>
+          <h3 id='col-header-01'>Motor-Trim-R</h3>
           <i id='rmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
           <p id='rmtrim-val' class='text-center'>0</p>
           <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
 
           <!-- Reserved -->
-          <h3 id='col-header-01'>Reserved</h2>
-          <i id='cam-left' class='ted-inline fas fa-angle-left fa-3x horizontal-icons-with-textlabel' onclick="turnCam({'direction':'L'})"></i>
-          <span id='cam-text'>-</span>
-          <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>
+          <!--jwc o  <h3 id='col-header-01'>Reserved</h2>
+            <i id='cam-left' class='ted-inline fas fa-angle-left fa-3x horizontal-icons-with-textlabel' onclick="turnCam({'direction':'L'})"></i>
+            <span id='cam-text'>-</span>
+            <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>   -->
         </div>
 
        </div>

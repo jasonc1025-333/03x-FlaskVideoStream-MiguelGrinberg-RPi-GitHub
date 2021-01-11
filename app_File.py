@@ -495,11 +495,17 @@ sys.path.append('db')
 import robotProperties_Db_Cl_File
 
 DB = robotProperties_Db_Cl_File.robotProperties_Db_Cl()
-trims = DB.getTrimValues()
-print("*** DEBUG: DB: " + json.dumps( trims ))
-config_Global_File.left_motor_trim = trims['L']
-config_Global_File.right_motor_trim = trims['R']
+
+dictionary_ReturnValues = DB.read_LeftRight_MotorTrim_Fn()
+print("*** DEBUG: DB.read_LeftRight_MotorTrim_Fn: " + json.dumps( dictionary_ReturnValues ))
+config_Global_File.left_motor_trim = dictionary_ReturnValues['L']
+config_Global_File.right_motor_trim = dictionary_ReturnValues['R']
 print ("*** DEBUG: DB: config_Global_File.left_motor_trim: " + str( config_Global_File.left_motor_trim ) + ", config_Global_File.right_motor_trim: " + str( config_Global_File.right_motor_trim ))
+
+dictionary_ReturnValues = DB.read_Heartbeat_Freq_Fn()
+print("*** DEBUG: DB.read_Heartbeat_Freq_Fn: " + json.dumps( dictionary_ReturnValues ))
+config_Global_File.heartbeat_freq = dictionary_ReturnValues['H']
+print ("*** DEBUG: DB: config_Global_File.heartbeat_freq: " + str( config_Global_File.heartbeat_freq ))
 
 
 ##jwc yo app_Cl_Ob = Flask(__name__)
@@ -897,9 +903,24 @@ def motorTrim():
     config_Global_File.left_motor_trim += int( left )
     config_Global_File.right_motor_trim += int( right )
 
-    DB.updateTrimValues(config_Global_File.left_motor_trim, config_Global_File.right_motor_trim)
+    DB.write_LeftRight_MotorTrim_Fn(config_Global_File.left_motor_trim, config_Global_File.right_motor_trim)
 
     print("*** *** DEBUG: motorTrim() Post: left: " + str(config_Global_File.left_motor_trim) + " right: " + str(config_Global_File.right_motor_trim))
+
+    return 'ok'
+
+# URL for motor control - format: /motor?l=[speed]&r=[speed]
+@app_Cl_Ob.route('/heartbeat_Freq_Mod_IncDec_Fn')
+def heartbeat_Freq_IncDec_Fn():
+    incdec = request.args.get('incdec')
+
+    print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn() Pre : incdec: " + str(incdec))
+
+    config_Global_File.heartbeat_freq += int( incdec )
+
+    DB.write_Heartbeat_Freq_Fn(config_Global_File.heartbeat_freq)
+
+    print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn() Post : incdec: " + str(incdec))
 
     return 'ok'
 
@@ -955,6 +976,8 @@ def heartbeat():
     # 
     output['lt'] = config_Global_File.left_motor_trim
     output['rt'] = config_Global_File.right_motor_trim
+
+    output['hf'] = config_Global_File.heartbeat_freq
 
     output['s1'] = config_Global_File.servo_01_Pan_Degrees
     output['s2'] = config_Global_File.servo_02_Tilt_Degrees

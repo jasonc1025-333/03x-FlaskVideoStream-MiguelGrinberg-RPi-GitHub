@@ -8,19 +8,28 @@ class robotProperties_Db_Cl():
         pass
         # print 'Database ready'
 
-    def getTrimValues(self):
+    def read_LeftRight_MotorTrim_Fn(self):
         rp_db = TinyDB('db/data/robotProperties.json')
         # jwc get 1st index record
         #
         left_trim = rp_db.search(Query().property=='left_trim')[0]['value']
         right_trim = rp_db.search(Query().property=='right_trim')[0]['value']
         return {'L':left_trim,'R':right_trim}
-
-
-    def updateTrimValues(self,ltrim,rtrim):
+    def write_LeftRight_MotorTrim_Fn(self,ltrim,rtrim):
         rp_db = TinyDB('db/data/robotProperties.json')
         rp_db.update({'value': ltrim}, Query().property=='left_trim')
         rp_db.update({'value': rtrim}, Query().property=='right_trim')
+
+    def read_Heartbeat_Freq_Fn(self):
+        rp_db = TinyDB('db/data/robotProperties.json')
+        # jwc get 1st index record
+        #
+        heartbeat_freq = rp_db.search(Query().property=='heartbeat_freq')[0]['value']
+        return {'H':heartbeat_freq}
+    def write_Heartbeat_Freq_Fn(self,heartbeatfreq):
+        rp_db = TinyDB('db/data/robotProperties.json')
+        rp_db.update({'value': heartbeatfreq}, Query().property=='heartbeat_freq')
+
 
     def log(self,table,data):
         if table=='controllerCommands':

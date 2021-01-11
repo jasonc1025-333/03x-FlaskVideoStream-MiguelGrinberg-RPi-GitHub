@@ -5,5 +5,6 @@ from tinydb import TinyDB
 db = TinyDB('db/data/robotProperties.json')
 db.insert({'property':'left_trim','value':0})
 db.insert({'property':'right_trim','value':0})
+db.insert({'property':'heartbeat_freq','value':0})
 
-print ('robot properties collection initialized')
+print ('*** Robot Properties Collection Initialized')
