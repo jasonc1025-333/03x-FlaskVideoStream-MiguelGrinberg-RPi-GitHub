@@ -1102,7 +1102,8 @@ if __name__ == '__main__':
     ## jwc Seems that Flask-dedug now fix and not this 'passthrough_errosrs' workaround: 'passthrough_errors=True' since need errors to bubble up to ext VSCode-debugger
     ##jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
     ##jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=False)
-    app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
+    ##jwc y 2021-0113 app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
+    app_Cl_Ob.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False, passthrough_errors=True)
 
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock

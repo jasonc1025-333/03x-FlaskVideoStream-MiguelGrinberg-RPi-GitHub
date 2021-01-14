@@ -47,8 +47,21 @@
           <h2 id='col-header-01'>Driver(Wheel-Motors)</h2>
 
           <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
+          <!--jwc yo  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'> -->
+          <!--jwc y TYJ allows ipad to touch once for pulse, may use button instead. <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()';'> -->
+          <!--jwc m TYJ <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'> -->
+          <!--jwc not wokr on ipad <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'; sleep(3000); onchange='this.value=0; updateMotorSpeeds_Fn();'> -->
+          <!--jwc y works on ipad on safari TYJ  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'; onchange='this.value=0;'> -->
+          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='sleep(100); this.value=0; updateMotorSpeeds_Fn();'> -->
+          <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onselect='updateMotorSpeeds_Fn()'> -->
+          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' ondragenter='updateMotorSpeeds_Fn()'> -->
+          <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onmousedown='updateMotorSpeeds_Fn()'> -->
+          <!-- y <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'> -->
           <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'>
+          <!--jwc m <button class='btn-block btn-sm' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>Btn 11</button> -->
+          <!--jwc m <button class='btn btn-sm' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>Btn 22</button> -->
           <p id='speed-input-val' class='text-center'>0</p>
+
 
         </div>
 
@@ -67,7 +80,8 @@
           <h2 id='col-header-01'>Operator(Arm-Servos)</h2>
 
           <!-- servo_Arm_03_Degrees_FrontEnd_Id slider -->
-          <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'>
+          <!--jwc o  <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'> -->
+          <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'>
           <p id='servo_Arm_03_Degrees_FrontEnd_Response_Id' class='text-center'>0</p>
 
         </div>
@@ -96,9 +110,7 @@
         <!-- col-2: max-width: 16.67% > -->
         <!--jwc 'p-0' not seem needed  <div class='col-2 p-0'> -->
         <div class='col-2'>
-            <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>
-              HALT ALL
-          </button>
+          <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>HALT ALL</button>
         </div>
 
       </div>

@@ -31,6 +31,10 @@ var heartbeat_TimerMax_Now_Global = heartbeat_TimerMax_Default_GLOBAL;  // 3sec 
 var heartbeat_TimerMax_Old_Global = heartbeat_TimerMax_Now_Global;
 var heartbeat_TimerMax_IncDec_Max = 500;  // 500msec
 
+var _ping_RoundTrip_Start_mSec_Int = 0;
+var _ping_RoundTrip_End_mSec_Int = 0;
+var _ping_RoundTrip_Total_mSec_Int = 0;
+
 //jwc o var linkCheckTimer = 5000;
 ///jwc y too long: var linkCheckTimer = 1000000;  // 1000sec = 16.67min
 var linkCheckTimer = 5000;  // 5000msec = 5sec
@@ -75,7 +79,8 @@ function webServerLink_Lost_Fn() {
 	document.getElementById("status").innerHTML = status;
     document.getElementById("sensors").innerHTML = sensors;
     ///jwc o ocument.getElementById("video").innerHTML = '&nbsp';
-    document.getElementById("video").innerHTML = 'WebServerLink: Lost';
+    ///jwc n 'uncaught TypeError: Cannot set property 'innerHTML' of null: document.getElementById("video").innerHTML = 'WebServerLink: Lost';
+    ///jwc n '    Uncaught TypeError: Cannot set property 'innerHTML' of null: document.getElementById("video").innerHTML = '&nbsp';
     webServerLink_On_Bool_Global = false;
 }
 
@@ -97,6 +102,7 @@ function heartbeat_Request_Fn() {
     var heartbeat_url = "/heartbeat";
     getSensors.open("GET", heartbeat_url, true);
     getSensors.send(null);
+    _ping_RoundTrip_Start_mSec_Int = Date.now();    
 }
 function updateHUD(e) {
 	var status;
@@ -118,6 +124,10 @@ function updateHUD(e) {
     //       404: "Page not found"
     //    For a complete list go to the Http Messages Reference    
 	if (getSensors.readyState == 4 && getSensors.status == 200) {
+        _ping_RoundTrip_End_mSec_Int = Date.now();    
+        _ping_RoundTrip_Total_mSec_Int = _ping_RoundTrip_End_mSec_Int - _ping_RoundTrip_Start_mSec_Int;
+        console.log('*** _ping_RoundTrip_Total_mSec_Int: ' + _ping_RoundTrip_Total_mSec_Int);
+
         var response = JSON.parse(getSensors.responseText);
         video = response.v;
         framerate = response.f;
@@ -160,6 +170,8 @@ function updateHUD(e) {
         sensors += response.s3;
 
         sensors += "<br>";
+        sensors += "<br>Ping_RoundTrip_Total_mSec_Int: ";
+        sensors += _ping_RoundTrip_Total_mSec_Int;
         sensors += "<br>Heartbeat_Freq_Mod: ";
         sensors += response.hf;
 
