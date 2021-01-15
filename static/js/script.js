@@ -28,7 +28,6 @@ var doubleClickTimer = 300;
 //jwc y but sometimes (10%) not long enough:  var heartbeat_TimerMax_Now_Global = 2000;  // 2sec  TYJ
 var heartbeat_TimerMax_Default_GLOBAL = 3000;  // 3sec  TYJ
 var heartbeat_TimerMax_Now_Global = heartbeat_TimerMax_Default_GLOBAL;  // 3sec  TYJ
-var heartbeat_TimerMax_Old_Global = heartbeat_TimerMax_Now_Global;
 var heartbeat_TimerMax_IncDec_Max = 500;  // 500msec
 
 var _ping_RoundTrip_Start_mSec_Int = 0;
@@ -37,7 +36,8 @@ var _ping_RoundTrip_Total_mSec_Int = 0;
 
 //jwc o var linkCheckTimer = 5000;
 ///jwc y too long: var linkCheckTimer = 1000000;  // 1000sec = 16.67min
-var linkCheckTimer = 5000;  // 5000msec = 5sec
+///jwc y too short: var linkCheckTimer = 5000;  // 5000msec = 5sec
+var linkCheckTimer = 10000;  // 10000msec = 10sec since 3sec is avg lag
 
 
 var newSpeedL = 0;
@@ -338,74 +338,3 @@ function brake() {
 
 ///jwc o seems redundant since 'setInterval': //  * Request server's ('I'm Alive') heartbeat_Request_Fn with its vital-stats
 ///jwc o seems redundant since 'setInterval': heartbeat_Request_Fn();
-
-
-/* jwc y 
-
-function makeHttpObject() {
-    try {return new XMLHttpRequest();}
-    catch (error) {}
-    try {return new ActiveXObject("Msxml2.XMLHTTP");}
-    catch (error) {}
-    try {return new ActiveXObject("Microsoft.XMLHTTP");}
-    catch (error) {}
-    throw new Error("Could not create HTTP httpRequest_Cl_Ob object.");
-}
-
-var httpRequest_Cl_Ob = makeHttpObject();
-
-var newSpeedL = 0;
-var newSpeedR = 0;
-var actSpeedL = 0;
-var actSpeedR = 0;
-
-var inactive = "0px";
-var active = "10px solid black";
-
-var showHUD = true;
-
-function toggle_hud() {
-	button_status('hud', showHUD);
-	showHUD = !showHUD;
-	if (showHUD) {
-		//o document.getElementById("overlay").style.display = 'block';
-	} else {
-		//o document.getElementById("overlay").style.display = 'none';
-	}
-}
-
-function button_status(button, status) {
-	if (status) {
-		document.getElementById(button).style.opacity = '0.5';
-	} else {
-		document.getElementById(button).style.opacity = '1';
-	}
-}
-
-function motor_l(lspeed) {
-    newSpeedL = lspeed;
-    // if (lspeed == actSpeedL && lspeed != actSpeedR && doubleClick) {
-	// newSpeedR = lspeed;
-	// doubleClick = false;
-    // } else {
-	// set_doubleclick();
-    // }
-    set_motor();
-}
-function set_motor() {
-    //o var motor_url = "/motor?l=" + newSpeedL.toString() + '&r=' + newSpeedR.toString();
-    var motor_url = "/motor?l=" + newSpeedL.toString();
-    httpRequest_Cl_Ob.open("GET", motor_url, true);
-    httpRequest_Cl_Ob.send(null);
-    var oldId = "l" + actSpeedL.toString();
-    var newId = "l" + newSpeedL.toString();
- //n   document.getElementById(oldId).style.outline = inactive;
-    document.getElementById(newId).style.outline = active;
-    // oldId = "r" + actSpeedR.toString();
-    // newId = "r" + newSpeedR.toString();
-    // document.getElementById(oldId).style.outline = inactive;
-    // document.getElementById(newId).style.outline = active;
-    actSpeedL = newSpeedL;
-    // actSpeedR = newSpeedR;
-}
- */

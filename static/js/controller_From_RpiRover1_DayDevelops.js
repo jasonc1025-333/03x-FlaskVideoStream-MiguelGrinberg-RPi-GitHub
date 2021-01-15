@@ -270,18 +270,16 @@ function changeTrim(data) {
 	///jwc o socket.emit('updateTrim',{'L':data.L, 'R':data.R});
 	var motorTrim_url = "/motorTrim?l=" + data.L + '&r=' + data.R;
     httpRequest_Cl_Ob.open("GET", motorTrim_url, true);
-    httpRequest_Cl_Ob.send(null);
-	
+    httpRequest_Cl_Ob.send(null);	
 	console.log('### DEBUG: asking server to update motorTrim');
 }
 
 function heartbeat_Freq_Mod_IncDec_Fn(data) {
 	///jwc o socket.emit('updateTrim',{'L':data.L, 'R':data.R});
 	var url_Str = "/heartbeat_Freq_Mod_IncDec_Fn?incdec=" + data.incdec;
-    httpRequest_Cl_Ob.open("GET", url_Str, true);
-    httpRequest_Cl_Ob.send(null);
-	
-	console.log('### DEBUG: asking server to update motorTrim');
+	httpRequest_Cl_Ob.open("GET", url_Str, true);
+	httpRequest_Cl_Ob.send(null);		
+	console.log('### DEBUG: heartbeat_Freq_Mod_IncDec_Fn');
 }
 
 function turnCam(data) {

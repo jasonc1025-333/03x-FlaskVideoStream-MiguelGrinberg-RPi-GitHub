@@ -914,16 +914,15 @@ def motorTrim():
 def heartbeat_Freq_IncDec_Fn():
     incdec = request.args.get('incdec')
 
-    print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn() Pre : incdec: " + str(incdec))
+    print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn(): incdec: " + str(incdec))
 
-    config_Global_File.heartbeat_freq += int( incdec )
-
-    DB.write_Heartbeat_Freq_Fn(config_Global_File.heartbeat_freq)
-
-    print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn() Post : incdec: " + str(incdec))
-
+    if (config_Global_File.heartbeat_freq + int( incdec )) < 0:
+        print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn(): config_Global_File.heartbeat_freq < 0: Invalid")
+    else:
+        config_Global_File.heartbeat_freq += int( incdec )
+        DB.write_Heartbeat_Freq_Fn(config_Global_File.heartbeat_freq)
+        print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn(): config_Global_File.heartbeat_freq >= 0: Valid"  )
     return 'ok'
-
 
 """ jwc o
  # URL for joystick input - format: /joystick?x=[x-axis]&y=[y-axis]
