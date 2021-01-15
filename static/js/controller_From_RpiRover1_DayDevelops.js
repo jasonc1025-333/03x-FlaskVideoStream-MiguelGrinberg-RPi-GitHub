@@ -129,8 +129,9 @@ function updateMotorSpeeds_ForTurn_Fn() {
 	var url_Str = '/motor_for_turn?l=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
     httpRequest_Cl_Ob.open("GET", url_Str, true);
     httpRequest_Cl_Ob.send(null);
-	document.getElementById("heading-input-val").innerHTML = $('#dcMotors_Turn_Power_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
+
+	document.getElementById("heading-input-val").innerHTML = $('#dcMotors_Turn_Power_FrontEnd_Id').val();
 	// If Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
 	if ($('#dcMotors_Turn_Power_FrontEnd_Id').val()==0) {
 		for (i=0; i<2; i++) { 
@@ -147,9 +148,9 @@ async function updateMotorSpeeds_ForHalt_Fn() {
 	httpRequest_Cl_Ob.send(null);
 	console.log('*** url: ' + url_Str)
 
-	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = 1;
+	///jwc debug  document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = 1;
 	await sleep2(500);
-	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = 2;
+	///jwc debug document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = 2;
 	
 	var url_Str = '/motor?l=0' + '&r=0';
 	httpRequest_Cl_Ob.open("GET", url_Str, true);
@@ -207,19 +208,34 @@ async function updateMotorSpeeds_ForBurst_Fn_OLD_AAA_TYJ() {
 	}
 }
 async function updateMotorSpeeds_ForBurst_Fn() {
-	///jwc y var url_Str = '/motor?l=' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val() + '&r=' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
-	var url_Str = '/motor?l=100' + '&r=100';
 	///jwc var url_Str = "/motor?l=" + power_In.toString + '&r=100';
+	///jwc y var url_Str = '/motor?l=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val();
+	///jwc y var url_Str = '/motor?l=100' + '&r=100';
+	///jwc y var url_Str = '/motor?l=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val() + '&r=' + $('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val();
+	
+	if ($('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val() >= 0) {
+		var url_Str = '/motor?l=100' + '&r=100';
+	} else {
+		var url_Str = '/motor?l=-100' + '&r=-100';
+	}
 	httpRequest_Cl_Ob.open("GET", url_Str, true);
 	httpRequest_Cl_Ob.send(null);
 	console.log('*** url: ' + url_Str)
 
-	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = 1;
+	//jwc n document.getElementById("dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id").innerHTML = $('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val();
+	// * Provide Real-Time Feedback
+	document.getElementById("speed-input-val").innerHTML = $('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val();
+
 	///jwc y await sleep2(500);
-	///jwc n await sleep2($('#servo_Arm_03_Degrees_FrontEnd_Id').val()*50);
-	var sleep_duration = $('#servo_Arm_03_Degrees_FrontEnd_Id').val()*50;
+	///jwc n await sleep2($('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val()*50);
+	///jwc ? var sleep_duration = Math.abs($('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val()) * 50;
+	///jwc y  var sleep_duration = Math.abs($('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val()) * 1;
+	var sleep_duration = Math.abs($('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val()) * (1 + parseInt($('#lmtrim-val').text()));
+	// * Clear input value
+	$('#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id').val(0);
+	console.log('*** updateMotorSpeeds_ForBurst_Fn: lmtrim-val: ' +$('#lmtrim-val').text()+ ' sleep_duration: ' + sleep_duration);
+
 	await sleep2(sleep_duration);
-	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = 2;
 	
 	var url_Str = '/motor?l=0' + '&r=0';
 	httpRequest_Cl_Ob.open("GET", url_Str, true);
@@ -238,7 +254,47 @@ async function updateMotorSpeeds_ForBurst_Fn() {
 		///jwc n sleep2(100);
 		///jwc n sleep2(1000);
 		sleep(50);
+	}
+}
+async function updateMotorSpeeds_ForTurn_ForBurst_Fn() {
+	//jwc o  var url_Str = '/motor_for_turn?l=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val() + '&r=' + $('#dcMotors_Turn_Power_FrontEnd_Id').val();
 
+	if ($('#dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id').val() >= 0) {
+		var url_Str = '/motor_for_turn?l=100' + '&r=100';
+	} else {
+		var url_Str = '/motor_for_turn?l=-100' + '&r=-100';
+	}
+	httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
+	console.log('*** url: ' + url_Str)
+
+	// * Provide Real-Time Feedback
+	document.getElementById("heading-input-val").innerHTML = $('#dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id').val();
+
+	var sleep_duration = Math.abs($('#dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id').val()) * (1 + parseInt($('#lmtrim-val').text()));
+	// * Clear input value
+	$('#dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id').val(0);
+	console.log('*** updateMotorSpeeds_ForTurn_ForBurst_Fn: lmtrim-val: ' +$('#lmtrim-val').text()+ ' sleep_duration: ' + sleep_duration);
+
+	await sleep2(sleep_duration);
+
+	var url_Str = '/motor?l=0' + '&r=0';
+	httpRequest_Cl_Ob.open("GET", url_Str, true);
+	httpRequest_Cl_Ob.send(null);
+	console.log('*** url: ' + url_Str)
+	///jwc n sleep2(50);
+	sleep(50);
+
+	// Since Power == 0, then resend two more times (for total of 3 times) to insure at least one packet survives transmission (not get dropped in network) for critical stop
+	for (i=0; i<2; i++) { 
+		httpRequest_Cl_Ob.open("GET", url_Str, true);
+		httpRequest_Cl_Ob.send(null);
+		console.log('*** *** ' + i + ' url: ' + url_Str);
+		//jwc o sleep(50);
+		//jwc n sleep2(50);
+		///jwc n sleep2(100);
+		///jwc n sleep2(1000);
+		sleep(50);
 	}
 }
 

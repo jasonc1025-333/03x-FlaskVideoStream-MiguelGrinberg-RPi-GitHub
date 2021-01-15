@@ -46,6 +46,7 @@ var actSpeedL = 0;
 var actSpeedR = 0;
 var doubleClick = false;
 var showHUD = true;
+var activate_Ipad_Tap_Bool = false;
 var video = false;
 var framerate = 0;
 var webServerLink_On_Bool_Global = true;
@@ -282,6 +283,35 @@ function button_status(button, status) {
 		document.getElementById(button).style.opacity = '1';
 	}
 }
+
+function activate_Ipad_Tap_Fn() {
+	activate_Ipad_Tap_Bool = !activate_Ipad_Tap_Bool;
+	activate_Ipad_Tap_Button_Fn('activate_Ipad_Tap_Id', activate_Ipad_Tap_Bool);
+	if (activate_Ipad_Tap_Bool) {
+        // document.getElementById("overlay").style.display = 'block';
+        $('.sliderTapForIpadFix_Not_CssCl').removeClass('visible_CssCl')
+        $('.sliderTapForIpadFix_Not_CssCl').addClass('visible_Not_CssCl')
+
+        $('.sliderTapForIpadFix_CssCl').removeClass('visible_Not_CssCl')
+        $('.sliderTapForIpadFix_CssCl').addClass('visible_CssCl')
+	} else {
+        // document.getElementById("overlay").style.display = 'none';
+        $('.sliderTapForIpadFix_Not_CssCl').removeClass('visible_Not_CssCl')
+        $('.sliderTapForIpadFix_Not_CssCl').addClass('visible_CssCl')
+
+        $('.sliderTapForIpadFix_CssCl').removeClass('visible_CssCl')
+        $('.sliderTapForIpadFix_CssCl').addClass('visible_Not_CssCl')
+    }
+}
+function activate_Ipad_Tap_Button_Fn(button, status) {
+	if (status) {
+		//jwc o  document.getElementById(button).style.opacity = '0.5';
+		document.getElementById(button).style.opacity = '0.25';
+	} else {
+		document.getElementById(button).style.opacity = '1';
+	}
+}
+
 function reset_doubleclick() {
     doubleClick = false;
 }

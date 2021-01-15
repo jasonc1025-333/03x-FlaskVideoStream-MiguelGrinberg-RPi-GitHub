@@ -181,44 +181,50 @@
     
     @media screen and (orientation:portrait) {
     
-    #middle {
-    position: absolute;
-    width: 100%;
-    height: 50%;
-    top: 0;
-    float: left;
+        #middle {
+        position: absolute;
+        width: 100%;
+        height: 50%;
+        top: 0;
+        float: left;
+        }
+        
+        #leftbar {
+        position: absolute;
+        width: 20%;
+        height: 50%;
+        top: 50%;
+        left: 0;
+        overflow: hidden;
+        }
+        
+        #stop {
+        display: block;
+        position: absolute;
+        width: 60%;
+        height: 50%;
+        top: 50%;
+        left: 20%;
+        overflow: hidden;
+        background-color: #a70000;
+        text-align: center;
+        font-weight: bold;
+        font-size: 300%;
+        }
+        
+        #rightbar {
+        position: absolute;
+        width: 20%;
+        height: 50%;
+        top: 50%;
+        left: 80%;
+        overflow: hidden;
+        }
     }
-    
-    #leftbar {
-    position: absolute;
-    width: 20%;
-    height: 50%;
-    top: 50%;
-    left: 0;
-    overflow: hidden;
+
+    .visible_CssCl {
+        display: block;
     }
-    
-    #stop {
-    display: block;
-    position: absolute;
-    width: 60%;
-    height: 50%;
-    top: 50%;
-    left: 20%;
-    overflow: hidden;
-    background-color: #a70000;
-    text-align: center;
-    font-weight: bold;
-    font-size: 300%;
+    .visible_Not_CssCl {
+        display: none;
     }
-    
-    #rightbar {
-    position: absolute;
-    width: 20%;
-    height: 50%;
-    top: 50%;
-    left: 80%;
-    overflow: hidden;
-    }
-    }
-    

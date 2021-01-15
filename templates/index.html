@@ -44,7 +44,8 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01'>Driver(Wheel-Motors)</h2>
+          <h2 id='col-header-01' class='sliderTapForIpadFix_Not_CssCl visible_CssCl'>Driver(Wheel-Motors)</h2>
+          <h2 id='col-header-01' class='sliderTapForIpadFix_CssCl visible_Not_CssCl'>Driver(Wheel-Motors)[iPad]</h2>
 
           <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
           <!--jwc yo  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'> -->
@@ -57,9 +58,11 @@
           <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' ondragenter='updateMotorSpeeds_Fn()'> -->
           <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onmousedown='updateMotorSpeeds_Fn()'> -->
           <!-- y <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'> -->
-          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'>
-          <!--jwc m <button class='btn-block btn-sm' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>Btn 11</button> -->
-          <!--jwc m <button class='btn btn-sm' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>Btn 22</button> -->
+          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'>
+
+          <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'> -->
+          <input id='dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_CssCl sliderTapForIpadFix_CssCl visible_Not_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'>
+
           <p id='speed-input-val' class='text-center'>0</p>
 
 
@@ -80,8 +83,8 @@
           <h2 id='col-header-01'>Operator(Arm-Servos)</h2>
 
           <!-- servo_Arm_03_Degrees_FrontEnd_Id slider -->
-          <!--jwc o  <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'> -->
-          <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'>
+          <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'> -->
+          <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'>
           <p id='servo_Arm_03_Degrees_FrontEnd_Response_Id' class='text-center'>0</p>
 
         </div>
@@ -96,7 +99,11 @@
         <div class='col-3' id='speed-col'>
 
           <!-- dcMotors_Turn_Power_FrontEnd_Id slider -->
-          <input id='dcMotors_Turn_Power_FrontEnd_Id' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'>
+          <!--jwc yo <input id='dcMotors_Turn_Power_FrontEnd_Id' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'> -->
+          <input id='dcMotors_Turn_Power_FrontEnd_Id' class='dcMotors_Turn_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'>
+          
+          <input id='dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id' class='dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_CssCl sliderTapForIpadFix_CssCl visible_Not_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_ForBurst_Fn()'>
+          
           <p id='heading-input-val' class='text-center heading-input-value'>0</p>
 
         </div>
@@ -110,7 +117,8 @@
         <!-- col-2: max-width: 16.67% > -->
         <!--jwc 'p-0' not seem needed  <div class='col-2 p-0'> -->
         <div class='col-2'>
-          <button class='btn btn-lrg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>HALT ALL</button>
+          <!--jwc o <button class='btn btn-lg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>HALT ALL</button> -->
+          <button class='btn btn-lg btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>Slider-Tap for iPad</button>
         </div>
 
       </div>
@@ -145,7 +153,7 @@
             <i id='heartbeat_Freq_Mod_Inc_Id' class='d-inline fas fa-angle-right fa-3x' onclick="heartbeat_Freq_Mod_IncDec_Fn({'incdec':'+1'})"></i>
 
             <!-- left motor trim -->
-          <h3 id='col-header-01'>Motor-Trim-L</h3>
+          <h3 id='col-header-01'>iPad-Tap</h3>
           <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
           <p id='lmtrim-val' class='text-center'>0</p>
           <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>

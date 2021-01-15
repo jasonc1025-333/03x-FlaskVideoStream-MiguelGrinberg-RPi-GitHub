@@ -73,6 +73,7 @@ body, html {
 	padding-top:10px
 }
 #dcMotors_FwdOrRev_Power_FrontEnd_Id, 
+#dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id, 
 #servo_Cam_02_Tilt_Degrees_FrontEnd_Id, 
 #servo_Arm_03_Degrees_FrontEnd_Id {
 	/*jwc o try to center\ margin-left:15px; */
@@ -88,6 +89,7 @@ body, html {
 
 }
 #dcMotors_Turn_Power_FrontEnd_Id,
+#dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id,
 #servo_Cam_01_Pan_Degrees_FrontEnd_Id {
 	/* width:100%; */
 	/* width:75%; */
@@ -124,6 +126,9 @@ body, html {
 	position:relative;
 	/* top:5px; */
 }
+#activate_Ipad_Tap_Id {
+	padding: 1.5rem 4.0rem;
+}
 #cam-text, #heartbeat_Freq_Mod_Id {
 	position:relative;
 	top:-13px;
@@ -143,11 +148,27 @@ input[type=range][orient=vertical]
     height: 175px;
     padding: 0 5px;
 }
-#dcMotors_FwdOrRev_Power_FrontEnd_Id::-webkit-slider-runnable-track  {
+/* #dcMotors_FwdOrRev_Power_FrontEnd_Id::-webkit-slider-runnable-track  { */
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	/* background-image: linear-gradient(rgb(0, 0, 32),rgb(127, 255, 127),rgb(0, 32, 0));
+} */
+.dcMotors_FwdOrRev_Power_FrontEnd_CssCl::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
 	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
 	background-image: linear-gradient(rgb(0, 0, 32),rgb(127, 255, 127),rgb(0, 32, 0));
 }
+/* #dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id::-webkit-slider-runnable-track  { */
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	/* background-image: linear-gradient(rgb(0, 0, 32),rgb(255, 255, 0),rgb(0, 32, 0));
+} */
+.dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_CssCl::-webkit-slider-runnable-track  {
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	background-image: linear-gradient(rgb(0, 0, 32),rgb(255, 0, 225),rgb(0, 32, 0));
+}
+
 #servo_Cam_02_Tilt_Degrees_FrontEnd_Id::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
 	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
@@ -158,10 +179,20 @@ input[type=range][orient=vertical]
 	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
 	background-image: linear-gradient(rgb(32, 32, 0),rgb(255, 225, 127),rgb(32, 32, 0));
 }
-#dcMotors_Turn_Power_FrontEnd_Id::-webkit-slider-runnable-track  {
+/* /* #dcMotors_Turn_Power_FrontEnd_Id::-webkit-slider-runnable-track  { */
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	/* jwc o background-image: linear-gradient(to right,green,yellow,red,yellow,green); */
+	/* background-image: linear-gradient(to right,rgb(0, 0, 32),rgb(127, 255, 127),rgb(0, 32, 0));
+} */
+.dcMotors_Turn_Power_FrontEnd_CssCl::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
 	/* jwc o background-image: linear-gradient(to right,green,yellow,red,yellow,green); */
 	background-image: linear-gradient(to right,rgb(0, 0, 32),rgb(127, 255, 127),rgb(0, 32, 0));
+}
+.dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_CssCl::-webkit-slider-runnable-track  {
+	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
+	/* jwc o background-image: linear-gradient(green,yellow,red,yellow,green); */
+	background-image: linear-gradient(to right,rgb(0, 0, 32),rgb(255, 0, 225),rgb(0, 32, 0));
 }
 #servo_Cam_01_Pan_Degrees_FrontEnd_Id::-webkit-slider-runnable-track  {
 	/* jwc o background-image: linear-gradient(red,yellow,green,yellow,red); */
