@@ -26,6 +26,7 @@ import json
 from flask import Flask, render_template, request, Response
 # jwc n from gevent.wsgi import WSGIServer
 # jwc from gevent.pywsgi import WSGIServer
+from waitress import serve
 
 
 ## jwc replace w/ PiUpTimeUps: # * BatteryUps: GeekPi/52pi.com: EP-0118
@@ -1102,8 +1103,15 @@ if __name__ == '__main__':
     ##jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
     ##jwc y app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=False)
     ##jwc y 2021-0113 app_Cl_Ob.run(host=args["address"], port=args["port"], use_debugger=False, threaded=True, use_reloader=False, passthrough_errors=True)
-    app_Cl_Ob.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False, passthrough_errors=True)
+    
+    # * For Flask In-House Development Non-Production Server
+    ##jwc yy app_Cl_Ob.run(host=args["address"], port=args["port"], debug=True, threaded=True, use_reloader=False, passthrough_errors=True)
+    
+    # * For WSGI Server: GUnicorn
+    ##jwc n app_Cl_Ob.run()
 
+    # * For WSGI Server: Waitress
+    serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https' )
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #
