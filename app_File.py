@@ -23,10 +23,16 @@ import signal
 import threading
 import time
 import json
+import math
 from flask import Flask, render_template, request, Response
 # jwc n from gevent.wsgi import WSGIServer
 # jwc from gevent.pywsgi import WSGIServer
 from waitress import serve
+
+
+# * https://flask.palletsprojects.com/en/1.1.x/deploying/wsgi-standalone/ : Gevent
+from gevent.pywsgi import WSGIServer
+##jwc n from yourapplication import app
 
 
 ## jwc replace w/ PiUpTimeUps: # * BatteryUps: GeekPi/52pi.com: EP-0118
@@ -85,6 +91,7 @@ import autoPHat_SparkFun_Driver_File
 
 autoPHat_SparkFun_Driver_File.init()
 ##jwc y autoPHat_SparkFun_Driver_File.runTest()
+##jwc y 2021-0124: Comment out to silence dcmotors test: TODO uncomment later:   autoPHat_SparkFun_Driver_File.runTest_Quick()
 autoPHat_SparkFun_Driver_File.runTest_Quick()
 
 ##jwc n global servo_01_Pan_Degrees 
@@ -297,9 +304,7 @@ def detect_Motions_Fn(frameCount):
         # cv2.putText(frame, timestamp.strftime(
         # 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
         # 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-        cv2.putText(frame, timestamp.strftime(
-            "%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         # jwc Frame is originally right-side up, yet timestamp-print is upside down
         #     So, flip upside down before timestamp-print, then re-flip after
         frame = imutils.rotate(frame, 180)
@@ -316,8 +321,7 @@ def detect_Motions_Fn(frameCount):
                 # unpack the tuple and draw the box surrounding the
                 # "motion area" on the output frame
                 (thresh, (minX, minY, maxX, maxY)) = motion
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-                    (0, 0, 255), 2)
+                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
         
         # update the background model and increment the total number
         # of frames read thus far
@@ -353,12 +357,34 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         ##jwc o frame = imutils.resize(frame, width=400)
         frame = imutils.resize(frame, width=1000)
 
+        video_Height, video_Width = frame.shape[:2]  # float
+        ##jwc n video_Width = camera_Cl.__getattribute__(cv2.CAP_PROP_FRAME_WIDTH)  # float
+        ##jwc n video_Height = camera_Cl.__getattribute__(cv2.CAP_PROP_FRAME_HEIGHT)  # float
+        video_Center_X = int(video_Width/2)
+        video_Center_Y = int(video_Height/2)
+        video_Crosshair_SideLength = 200
+
+        print("*** *** DEBUG: video_Width: " + str(video_Width) + " video_Height: " + str(video_Height) + " video_Center_X: " + str(video_Center_X) + " video_Center_Y: " + str(video_Center_Y))
+
         # jwc Frame is originally right-side up, yet timestamp-print is upside down
         #     So, flip upside down before timestamp-print, then re-flip after
         frame = imutils.rotate(frame, 180)
 
+        # * Detect ArUco Markers: Adrian Rosebrock
+        #
+
         # detect ArUco markers in the input frame
         (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters=arucoParams)
+
+        # Draw Crosshairs
+        # * Draw Crosshairs after AI Image Detection
+        # * Color = (B,G,R)
+        ##jwc o cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
+        ##jwc n cv2.rectangle(frame, ((video_Width/2)-50, (video_Height/2)-50), ((video_Width/2)+50, (video_Height/2)+50), (0, 255, 0), 2)
+        ##jwc y cv2.rectangle(frame, (50, 50), (100, 100), (0, 0, 255), 2)
+        ##jwc y cv2.rectangle(frame, (int(video_Width/2)-50, int(video_Height/2)-50), (int(video_Width/2)+50, int(video_Height/2)+50), (0, 255, 0), 2)
+        ##jwc y cv2.rectangle(frame, (video_Center_X - video_Crosshair_SideLength, video_Center_Y - video_Crosshair_SideLength), (video_Center_X + video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength), (0, 255, 0), 2)
+        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, (0, 255, 0), 2)
 
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
@@ -379,31 +405,50 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                 bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
                 topLeft = (int(topLeft[0]), int(topLeft[1]))
     
-                # draw the bounding box of the ArUCo detection
-                cv2.line(frame, topLeft, topRight, (0, 255, 0), 2)
-                cv2.line(frame, topRight, bottomRight, (0, 255, 0), 2)
-                cv2.line(frame, bottomRight, bottomLeft, (0, 255, 0), 2)
-                cv2.line(frame, bottomLeft, topLeft, (0, 255, 0), 2)
-    
-                # compute and draw the center (x, y)-coordinates of the
-                # ArUco marker
+                # compute and draw the center (x, y)-coordinates of the ArUco marker
                 cX = int((topLeft[0] + bottomRight[0]) / 2.0)
                 cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-                cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
+                ##jwc o cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
+                cv2.circle(frame, (cX, cY), 10, (255, 0, 0), -1)
+                print("*** *** *** DEBUG: cX: " + str(cX) + " cY: " + str(cY))
+
+                if math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ) <= video_Crosshair_SideLength:
+
+                    color_BGR_Tuple = (0, 0, 255)
+                    # draw the bounding box of the ArUCo detection
+                    cv2.line(frame, topLeft, topRight, color_BGR_Tuple, 2)
+                    cv2.line(frame, topRight, bottomRight, color_BGR_Tuple, 2)
+                    cv2.line(frame, bottomRight, bottomLeft, color_BGR_Tuple, 2)
+                    cv2.line(frame, bottomLeft, topLeft, color_BGR_Tuple, 2)
     
+                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 4)
+
+                    score_Targeted_Dict[str(markerID)] += 1
+                    print("*** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
+                else:
+                    color_BGR_Tuple = (0, 255, 0)
+                    # draw the bounding box of the ArUCo detection
+                    cv2.line(frame, topLeft, topRight, color_BGR_Tuple, 2)
+                    cv2.line(frame, topRight, bottomRight, color_BGR_Tuple, 2)
+                    cv2.line(frame, bottomRight, bottomLeft, color_BGR_Tuple, 2)
+                    cv2.line(frame, bottomLeft, topLeft, color_BGR_Tuple, 2)
+    
+                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 2)
+
+   
                 # draw the ArUco marker ID on the frame
                 # * Maker ID: Red Color
                 ##jwc o cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
                 # * LineTypes: Recommended: LINE_AA = 8-connected line
                 cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-                score_Targeted_Dict[str(markerID)] += 1
                 print("*** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: markerID=" + str(markerID) + " markerID%10=" + str(markerID % 10))
-                print("*** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
 
         ##jwc o 2.1 # show the output frame
         ##jwc o 2.1 cv2.imshow("Frame", frame)
 
+        # * Borrowed from 'detect_Motions_Fn()'
+        #
 
         # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
         ##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)        # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
@@ -439,10 +484,11 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
 
             # check to see if motion was found in the frame
             if motion is not None:
-                # unpack the tuple and draw the box surrounding the
+                # unpack the tuple and draw the box surrounding the 
                 # "motion area" on the output frame
+                # ** Use Less-Strong Yellow Color
                 (thresh, (minX, minY, maxX, maxY)) = motion
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
+                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 255, 255), 2)
         
         # update the background model and increment the total number
         # of frames read thus far
@@ -1021,7 +1067,8 @@ if __name__ == '__main__':
     argumentParser_Cl_Ob.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
     # jwc 2.1
     ##jwc o argumentParser_Cl_Ob.add_argument("-thread_Cl_Ob", "--type", type=str, default="DICT_ARUCO_ORIGINAL", help="type of ArUCo tag to detect")
-    argumentParser_Cl_Ob.add_argument("-thread_Cl_Ob", "--type", type=str, default="DICT_6X6_100", help="type of ArUCo tag to detect")
+    ##jwc type error '-thread_Cl_Ob': argumentParser_Cl_Ob.add_argument("-thread_Cl_Ob", "--type", type=str, default="DICT_6X6_100", help="type of ArUCo tag to detect")
+    argumentParser_Cl_Ob.add_argument("-t", "--type", type=str, default="DICT_6X6_100", help="type of ArUCo tag to detect")
     print("*** DEBUG: __main__: --type (default): cv2.aruco.DICT_6X6_100")
     args = vars(argumentParser_Cl_Ob.parse_args())
 
@@ -1109,9 +1156,19 @@ if __name__ == '__main__':
     
     # * For WSGI Server: GUnicorn
     ##jwc n app_Cl_Ob.run()
+    ##jwc y app_Cl_Ob.run()
 
     # * For WSGI Server: Waitress
-    serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https' )
+    ##jwc yn queue issue: serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https' )
+    # * Threads default = 4, issue w/ 2,3rd browser
+    ##jwc n not any better, seems worst: serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https', threads=6 )
+    ## from 6 to 100
+    serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https', threads=100 )
+
+    # * Gevent
+    ##jwc y? http_server = WSGIServer(('', 5000), app_Cl_Ob)
+    ##jwc y? http_server.serve_forever()
+   
 
 # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
 #

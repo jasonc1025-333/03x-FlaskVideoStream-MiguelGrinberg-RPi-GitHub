@@ -2,6 +2,8 @@ Adafruit-GPIO==1.0.3
 Adafruit-PureIO==1.1.8
 click==7.1.2
 Flask==1.1.2
+gevent==21.1.1
+greenlet==1.0.0
 gunicorn==20.0.4
 imutils==0.5.3
 itsdangerous==1.1.0
@@ -39,5 +41,8 @@ sparkfun-top-phat-button==0.0.2
 sparkfun-ublox-gps==1.1.3
 spidev==3.5
 tinydb==4.3.0
+uWSGI==2.0.19.1
 waitress==1.4.4
 Werkzeug==1.0.1
+zope.event==4.5.0
+zope.interface==5.2.0
