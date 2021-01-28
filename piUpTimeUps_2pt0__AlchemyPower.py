@@ -119,7 +119,7 @@ volts_Battery_Min_DEC_GLOBAL = 3.1 # Minimum V of battery at which time shutdown
 # Min Voltage
 #=========================================================================================================
 volts_Input_Min_DEC_GLOBAL = 3.8 # Minimum input Voltage. Below this voltage level, it is not recommended to operate the
-               # Pi. Called a brown-out condition. We display result as 0.
+			   # Pi. Called a brown-out condition. We display result as 0.
 #=========================================================================================================
 # Temperature
 #=========================================================================================================
@@ -130,7 +130,7 @@ volts_Input_Min_DEC_GLOBAL = 3.8 # Minimum input Voltage. Below this voltage lev
 
 temp_Min_DEC_GLOBAL = 5.0 # Min temperature at which battery charging enclose should be warmed up.
 temp_Max_DEC_GLOBAL = 60.0 # Max temperature after which battery charging should be discontinued.
-                # Best to provide cooling e.g. a fan.
+				# Best to provide cooling e.g. a fan.
 # This range is lower/higher by about 10 degrees to allow corrective action.
 
 #=========================================================================================================
@@ -290,7 +290,8 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 	# If input V is low and battery V is low initiate the shutdown process.
 	if ( volts_In < volts_Input_Min_DEC_GLOBAL ): # volts_In has failed or is a brownout
 			if (volts_Battery < volts_Battery_Min_DEC_GLOBAL ): # Battery is low, time to shutdown.
-					print("*** *** Shutdown initiated at %s " % (time.ctime()))
+					##jwc o print("Shutdown initiated at %s " % (time.ctime()))
+					print("*** DEBUG: Vbattery < V_batt_min: Shutdown initiated at %s " % (time.ctime()))
 					#
 					# The command shuts down the pi in 2 minutes. Replace
 					# 2 with word "now" (without the quotes) for immediate
@@ -299,16 +300,18 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 					# The subprocess method forks a process which can run in the background while this
 					# program exits properly. os.system method continues to run in the program thread.
 					#
-					print ("At %s, volts_In = %4.2f, volts_Out = %4.2f, volts_Battery = %4.2f, Temperature = %5.2fC %5.2fF" % (time.ctime(), volts_In, volts_Out, volts_Battery, temperature_InCelcius_Dec,temperature_InFahrenheit_Dec)) # Print the values see to initiate the shutdown.
-					# print ("At %s, volts_In = %4.2f, volts_Out = %4.2f, volts_Battery = %4.2f" % (time.ctime(), volts_In, volts_Out, volts_Battery)) # Print the values see to initiate the shutdown.
-					sys.stdout.flush()
-					subprocess.call("shutdown -h 2 &", shell=True)
+					##jwc O print ("At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f, Temperature = %5.2fC %5.2fF" % (time.ctime(), Vin, Vout, Vbattery, TempC,TempF)) # Print the values see to initiate the shutdown.
+					print ("*** DEBUG: Vbattery < V_batt_min: At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f, Temperature = %5.2fC %5.2fF" % (time.ctime(), Vin, Vout, Vbattery, TempC,TempF)) # Print the values see to initiate the shutdown.
+					# print ("At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f" % (time.ctime(), Vin, Vout, Vbattery)) # Print the values see to initiate the shutdown.
+					##jwc O sys.stdout.flush()
+					##jwc O subprocess.call("shutdown -h 2 &", shell=True)
+
 					#
 					# Sleep for a second or so for the shutdown process to fork and then exit
 					# Print the values out if needed - ok for debug.
-					time.sleep(2)
+					##jwc O time.sleep(2)
 					# Flush any stdout messages before exiting..
-					exit() # Exit out of the code - no further print etc. is printed.
+					##jwc O exit() # Exit out of the code - no further print etc. is printed.
 				#
 				# Note the if statement falls out of the code if all is well.
 				#
