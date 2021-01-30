@@ -70,7 +70,7 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='turn-col'>
-          <h2 id='col-header-01'>Vision(Camera-Servos)</h2>
+          <h2 id='col-header-01'>Viewer(Cam-Servos)</h2>
           
           <!-- servo_Cam_02_Tilt_Degrees_FrontEnd_Id slider -->
           <input id='servo_Cam_02_Tilt_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Cam_02_Tilt_Degrees_FrontEnd_Fn()'>
@@ -118,7 +118,9 @@
         <!--jwc 'p-0' not seem needed  <div class='col-2 p-0'> -->
         <div class='col-2'>
           <!--jwc o <button class='btn btn-lg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>HALT ALL</button> -->
-          <button class='btn btn-lg btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>Slider-Tap for iPad</button>
+          <!-- jwc y <button class='btn btn-lg btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>Slider-Tap for iPad</button> -->
+          <button class='btn btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>iPad Driver-Tap</button>
+          <button class='btn btn-danger' id='timer_Mission_Reset_Id' onclick='timer_Mission_Reset_Fn()'>Mission Reset</button>
         </div>
 
       </div>

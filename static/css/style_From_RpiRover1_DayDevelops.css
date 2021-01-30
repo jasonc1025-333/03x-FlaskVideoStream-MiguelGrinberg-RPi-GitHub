@@ -70,7 +70,8 @@ body, html {
 #bottom-row {
 	/*jwc o  height:25%; */
 	height:25%;
-	padding-top:10px
+	/*jwc o padding-top:10px */
+	padding-top:50px
 }
 #dcMotors_FwdOrRev_Power_FrontEnd_Id, 
 #dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id, 
@@ -127,8 +128,12 @@ body, html {
 	/* top:5px; */
 }
 #activate_Ipad_Tap_Id {
-	padding: 1.5rem 4.0rem;
+	/* jwc o padding: 1.5rem 4.0rem; */
 }
+#timer_Mission_Reset_Id {
+	margin-top:0.5rem
+}
+
 #cam-text, #heartbeat_Freq_Mod_Id {
 	position:relative;
 	top:-13px;

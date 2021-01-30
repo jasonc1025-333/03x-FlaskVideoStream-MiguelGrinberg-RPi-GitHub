@@ -32,10 +32,11 @@ chocks = False
 blue = False
 yellow = False
 green = False
-watchdog_Alive_Bool = True
-watchdog_Start_On_Bool = True
-watchdog_Cycles_Now = 20
-timeout_Cycles_MAX = 10
+_watchdog_Server_Control_C_Inactive_Bool = True
+_watchdog_EmergencyStop_Inactive_Bool = True
+##jwc o _watchdog_Cycles_SinceLastConnect_Now = 20  ## 
+_watchdog_Cycles_SinceLastConnect_MAX = 10
+_watchdog_Cycles_SinceLastConnect_Now = _watchdog_Cycles_SinceLastConnect_MAX  ## default to disconnected ever since
 left_motor = 0
 right_motor = 0
 # jwc 
@@ -60,3 +61,11 @@ batteryUps_Volts_Output_V = 0
 batteryUps_Volts_Battery_V = 0
 batteryUps_Temp_C = 0
 batteryUps_Temp_F = 0
+
+# * Timer
+_timer_Mission_Start_Sec = 0
+_timer_Mission_Now_Sec = 0
+_timer_Mission_Countdown_Sec = 0
+_timer_Mission_Duration_MAX_SEC = 100
+_timer_Mission_Reserves_Sec_Int = 0
+_timer_Mission_Reserves_SEC_MAX_INT = 300

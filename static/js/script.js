@@ -219,6 +219,10 @@ function updateHUD(e) {
         // sensors += response.a4;
 
         score  = "";
+        score += "<br>_timer_Mission_Countdown_Sec: ";
+        score += response.tmc
+        score += "<br>_timer_Mission_Reserves_Sec_Int: ";
+        score += response.tmr
         score += "<br>Score_Targeted_Dict: ";
         score += response.sc;
 
@@ -310,6 +314,12 @@ function activate_Ipad_Tap_Button_Fn(button, status) {
 	} else {
 		document.getElementById(button).style.opacity = '1';
 	}
+}
+
+function timer_Mission_Reset_Fn(pad) {
+    var url_Str = "/timer_Mission_Reset_Fn";
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
 }
 
 function reset_doubleclick() {

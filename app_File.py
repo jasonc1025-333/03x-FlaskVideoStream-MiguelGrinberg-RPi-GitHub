@@ -274,7 +274,7 @@ videoStream_Cl_Ob = VideoStream(src=0).start()
 time.sleep(2.0)
 
 
-def detect_Motions_Fn(frameCount):
+def detect_Motions_ARCHIVED_Fn(frameCount):
     # grab global references to the video stream, output frame, and
     # lock variables
     global videoStream_Cl_Ob, outputFrame, lock
@@ -338,7 +338,7 @@ def detect_Motions_Fn(frameCount):
 
 # Generate 'outputFrame' for later client request
 #        
-##jwc o def detect_Motions_Fn(frameCount):
+##jwc o def detect_Motions_ARCHIVED_Fn(frameCount):
 def detect_Motions_And_ArucoMarkers_Fn(frameCount):
     # grab global references to the video stream, output frame, and
     # lock variables
@@ -363,6 +363,9 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         video_Center_X = int(video_Width/2)
         video_Center_Y = int(video_Height/2)
         video_Crosshair_SideLength = 200
+        
+        crosshairs_Line_Thickness = 8
+        target_Line_thickness = 4
 
         print("*** *** DEBUG: video_Width: " + str(video_Width) + " video_Height: " + str(video_Height) + " video_Center_X: " + str(video_Center_X) + " video_Center_Y: " + str(video_Center_Y))
 
@@ -376,15 +379,43 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         # detect ArUco markers in the input frame
         (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters=arucoParams)
 
-        # Draw Crosshairs
-        # * Draw Crosshairs after AI Image Detection
+        # * Setup Context-Based Color-Scheme
         # * Color = (B,G,R)
-        ##jwc o cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
+        #
+        if (config_Global_File.servo_03_Degrees < 180):
+            # * Arm not in Standby/Neutral/Safety: Max_180 Position, Thus Cam Inactive: Not in viewer mode: Black >> Grey
+            #
+            ##jwc:  crosshairs_Color_BGR_Tuple_ActivatedNot = (255, 255, 255)
+            ##jwc:  crosshairs_Color_BGR_Tuple_Activated = (255, 255, 255)
+            ##jwc:  target_Color_BGR_Tuple_ActivatedNot = (255, 255, 255)
+            ##jwc;  target_Color_BGR_Tuple_Activated = (255, 255, 255)
+            crosshairs_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
+            crosshairs_Color_BGR_Tuple_Activated = (0, 255, 255)
+            target_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
+            target_Color_BGR_Tuple_Activated = (0, 255, 255)
+            target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
+            cv2.putText(frame, 'Cam: Non-Active', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Arm: Set to Max_180', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+        else:
+            # * Arm in Standby/Neutral/Safety: Max_180 Position, Thus Cam Active: In viewer mode: Green
+            #
+            crosshairs_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
+            crosshairs_Color_BGR_Tuple_Activated = (0, 0, 255)
+            target_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
+            target_Color_BGR_Tuple_Activated = (0, 0, 255)
+            target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
+            cv2.putText(frame, 'Cam: Active', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Arm: Max_180', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+
+        # * Draw Crosshairs
+        # ** Draw Crosshairs after AI Image Detection
+        ##jwc o cv2.rectangle(frame, (minX, minY), (maxX, maxY), (255, 255, 255), 2)
         ##jwc n cv2.rectangle(frame, ((video_Width/2)-50, (video_Height/2)-50), ((video_Width/2)+50, (video_Height/2)+50), (0, 255, 0), 2)
         ##jwc y cv2.rectangle(frame, (50, 50), (100, 100), (0, 0, 255), 2)
         ##jwc y cv2.rectangle(frame, (int(video_Width/2)-50, int(video_Height/2)-50), (int(video_Width/2)+50, int(video_Height/2)+50), (0, 255, 0), 2)
         ##jwc y cv2.rectangle(frame, (video_Center_X - video_Crosshair_SideLength, video_Center_Y - video_Crosshair_SideLength), (video_Center_X + video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength), (0, 255, 0), 2)
-        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, (0, 255, 0), 2)
+        ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, (0, 255, 0), 2)
+        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, crosshairs_Color_BGR_Tuple_ActivatedNot, crosshairs_Line_Thickness)
 
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
@@ -414,27 +445,53 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
 
                 if math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ) <= video_Crosshair_SideLength:
 
-                    color_BGR_Tuple = (0, 0, 255)
-                    # draw the bounding box of the ArUCo detection
-                    cv2.line(frame, topLeft, topRight, color_BGR_Tuple, 2)
-                    cv2.line(frame, topRight, bottomRight, color_BGR_Tuple, 2)
-                    cv2.line(frame, bottomRight, bottomLeft, color_BGR_Tuple, 2)
-                    cv2.line(frame, bottomLeft, topLeft, color_BGR_Tuple, 2)
-    
-                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 4)
+                    ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 4)
+                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, crosshairs_Color_BGR_Tuple_Activated, crosshairs_Line_Thickness)
 
-                    score_Targeted_Dict[str(markerID)] += 1
-                    print("*** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
+                    # Friendly Targets
+                    #   Appears that Aruco Markers more reliable recognition on inner-part of arm (vs. outer-part of arm)
+                    if(markerID == 0 or markerID ==1):
+                        # ASAP, Override Enemy-Borders with Friendly-Borders
+                        cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                        cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                        cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                        cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+
+                        timer_Mission_Countdown_Expired_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - config_Global_File._timer_Mission_Countdown_Sec
+                        # Recharge Threshold starts at significant-amount of secs
+                        if(timer_Mission_Countdown_Expired_Sec > int(0.10 * config_Global_File._timer_Mission_Duration_MAX_SEC)):
+                            config_Global_File._timer_Mission_Reserves_Sec_Int -= timer_Mission_Countdown_Expired_Sec
+                            ##jwc n config_Global_File._timer_Mission_Countdown_Sec += timer_Mission_Countdown_Expired_Sec
+                            config_Global_File._timer_Mission_Start_Sec += timer_Mission_Countdown_Expired_Sec
+                            ##jwc y cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                            cv2.putText(frame, 'Recharge: ' + str(timer_Mission_Countdown_Expired_Sec), (topLeft[0], topLeft[1] - 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                            print("*** *** *** ***")
+                            print("*** *** *** *** DEBUG: Recharge:  ", timer_Mission_Countdown_Expired_Sec, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
+                            print("*** *** *** ***")
+                    # Enemy Targets
+                    else:
+                        ##jwc y color_BGR_Tuple = (0, 0, 255)
+                        # draw the bounding box of the ArUCo detection
+                        cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+                        cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+                        cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+                        cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+        
+                        # Enemy Targets
+                        if(config_Global_File.servo_03_Degrees == 180):
+                            score_Targeted_Dict[str(markerID)] += 1
+                            print("*** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
+                                   
                 else:
-                    color_BGR_Tuple = (0, 255, 0)
+                    ##jwc y color_BGR_Tuple = (0, target_Line_thickness55, 0)
                     # draw the bounding box of the ArUCo detection
-                    cv2.line(frame, topLeft, topRight, color_BGR_Tuple, 2)
-                    cv2.line(frame, topRight, bottomRight, color_BGR_Tuple, 2)
-                    cv2.line(frame, bottomRight, bottomLeft, color_BGR_Tuple, 2)
-                    cv2.line(frame, bottomLeft, topLeft, color_BGR_Tuple, 2)
+                    cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+                    cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+                    cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+                    cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
     
-                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 2)
-
+                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 2)
+                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, crosshairs_Color_BGR_Tuple_ActivatedNot, 4)
    
                 # draw the ArUco marker ID on the frame
                 # * Maker ID: Red Color
@@ -447,7 +504,7 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         ##jwc o 2.1 # show the output frame
         ##jwc o 2.1 cv2.imshow("Frame", frame)
 
-        # * Borrowed from 'detect_Motions_Fn()'
+        # * Borrowed from 'detect_Motions_ARCHIVED_Fn()'
         #
 
         # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
@@ -488,7 +545,8 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                 # "motion area" on the output frame
                 # ** Use Less-Strong Yellow Color
                 (thresh, (minX, minY, maxX, maxY)) = motion
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 255, 255), 2)
+                ##jwc y cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 255, 255), 2)
+                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (127, 127, 127), 2)
         
         # update the background model and increment the total number
         # of frames read thus far
@@ -577,7 +635,7 @@ def video_feed():
 
 # Immobilizes sytem (chocks on) after 'timeout' seconds 
 def watchdog_timer():
-    while config_Global_File.watchdog_Alive_Bool:
+    while config_Global_File._watchdog_Server_Control_C_Inactive_Bool:
         # jwc: Pauses every 1sec
         ##jwc o time.sleep(1)
         ##jwc
@@ -585,22 +643,24 @@ def watchdog_timer():
         ##jwc still too long: time.sleep(1)
         ##jwc time.sleep(.10)
         ##jwc y  realize this not affect HUD Stats, so keep as is to prevent premature disconnect
-        time.sleep(5)
+        time.sleep(5)  ## 5 sec pause, frequency
         
-        if config_Global_File.watchdog_Start_On_Bool:
-            config_Global_File.watchdog_Cycles_Now += 1
-            ##jwc print("*** DEBUG: config_Global_File.watchdog_Cycles_Now: " + str(config_Global_File.watchdog_Cycles_Now))
+        if config_Global_File._watchdog_EmergencyStop_Inactive_Bool:
+            config_Global_File._watchdog_Cycles_SinceLastConnect_Now += 1
+            ##jwc print("*** DEBUG: config_Global_File._watchdog_Cycles_SinceLastConnect_Now: " + str(config_Global_File._watchdog_Cycles_SinceLastConnect_Now))
             # jwc: appears that beyond 10sec is bad disconnect, 
             #      so engage 'chocks/disable bot', if not already
-            if config_Global_File.watchdog_Cycles_Now > config_Global_File.timeout_Cycles_MAX and not config_Global_File.chocks:
-                chocks_on()
-            if config_Global_File.watchdog_Cycles_Now <= config_Global_File.timeout_Cycles_MAX and config_Global_File.chocks:
-                chocks_off()
+            ##jwc o if config_Global_File._watchdog_Cycles_SinceLastConnect_Now > config_Global_File._watchdog_Cycles_SinceLastConnect_MAX and not config_Global_File.chocks:
+            if config_Global_File._watchdog_Cycles_SinceLastConnect_Now >= config_Global_File._watchdog_Cycles_SinceLastConnect_MAX and not config_Global_File.chocks:
+                emergencyStop_On_Fn()
+            ##jwc o if config_Global_File._watchdog_Cycles_SinceLastConnect_Now <= config_Global_File._watchdog_Cycles_SinceLastConnect_MAX and config_Global_File.chocks:
+            if config_Global_File._watchdog_Cycles_SinceLastConnect_Now < config_Global_File._watchdog_Cycles_SinceLastConnect_MAX and config_Global_File.chocks:
+                emergencyStop_Off_Fn()
 
 # Handler for a clean shutdown when pressing Ctrl-C
 def signal_handler(signal, frame):
     io_Driver_File.light_blue_blink(0.1)
-    config_Global_File.watchdog_Alive_Bool = False
+    config_Global_File._watchdog_Server_Control_C_Inactive_Bool = False
     config_Global_File.camera_active = False
     brakes_on()
     # jwc: Wait until thread terminates
@@ -655,13 +715,13 @@ def touch_handler(channel, event):
         # jwc: Chocks set to True: Admin Lock
         if config_Global_File.chocks:
             # jwc: Since Motors not free to operate, Watchdog not needed
-            config_Global_File.watchdog_Start_On_Bool = False
-            chocks_on()
+            config_Global_File._watchdog_EmergencyStop_Inactive_Bool = False
+            emergencyStop_On_Fn()
         # jwc: Chocks set to False: Admin Unlock
         else:
             # jwc: Since Motors are free to operate, Watchdog is needed
-            config_Global_File.watchdog_Start_On_Bool = True
-            chocks_off()
+            config_Global_File._watchdog_EmergencyStop_Inactive_Bool = True
+            emergencyStop_Off_Fn()
 
     if channel == 4:
         io_Driver_File.light_green_blink(0.1)
@@ -723,15 +783,15 @@ def brakes_on():
 # jwc: Motors free to operate: Lo-Level: User-Level
 def brakes_off():
     config_Global_File.brakes = False
-    config_Global_File.watchdog_Cycles_Now = 0
+    config_Global_File._watchdog_Cycles_SinceLastConnect_Now = 0
     
-def chocks_on():
+def emergencyStop_On_Fn():
     config_Global_File.chocks = True
     brakes_on()
     io_Driver_File.light_red_blink(0.2)
 
 # jwc: Motors free to operate: Hi-Level: Admin-Level ~ Overrides User-Level for Security/Safety
-def chocks_off():
+def emergencyStop_Off_Fn():
     config_Global_File.chocks = False
     brakes_off()
     io_Driver_File.light_red_off()
@@ -968,14 +1028,27 @@ def heartbeat_Freq_IncDec_Fn():
     else:
         config_Global_File.heartbeat_freq += int( incdec )
         DB.write_Heartbeat_Freq_Fn(config_Global_File.heartbeat_freq)
-        print("*** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn(): config_Global_File.heartbeat_freq >= 0: Valid"  )
+        print("*** *** *** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn(): config_Global_File.heartbeat_freq >= 0: Valid"  )
+    return 'ok'
+
+@app_Cl_Ob.route('/timer_Mission_Reset_Fn')
+def timer_Mission_Reset_Fn():
+    ##jwc o  incdec = request.args.get('incdec')
+
+    config_Global_File._timer_Mission_Start_Sec = int(time.time())
+    config_Global_File._timer_Mission_Now_Sec = config_Global_File._timer_Mission_Start_Sec
+    config_Global_File._timer_Mission_Countdown_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC
+    config_Global_File._timer_Mission_Reserves_Sec_Int = config_Global_File._timer_Mission_Reserves_SEC_MAX_INT
+
+    print("*** *** DEBUG: timer_Mission_Reset_Fn: ", config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
+    
     return 'ok'
 
 """ jwc o
  # URL for joystick input - format: /joystick?x=[x-axis]&y=[y-axis]
 @app_Cl_Ob.route('/joystick')
 def joystick():
-    config_Global_File.watchdog_Cycles_Now = 0
+    config_Global_File._watchdog_Cycles_SinceLastConnect_Now = 0
     x_axis = int(request.args.get('x'))
     y_axis = int(request.args.get('y'))
     x_axis = -1 * max( min(x_axis, 100), -100)
@@ -1004,7 +1077,7 @@ def touchpad():
 # Returns JSON object with status data
 @app_Cl_Ob.route('/heartbeat')
 def heartbeat():
-    config_Global_File.watchdog_Cycles_Now = 0
+    config_Global_File._watchdog_Cycles_SinceLastConnect_Now = 0
     output = {}
     output['b'] = config_Global_File.blue
     output['y'] = config_Global_File.yellow
@@ -1049,6 +1122,14 @@ def heartbeat():
     output['bvb'] = f'{config_Global_File.batteryUps_Volts_Battery_V:.2f}'
     output['btc'] = f'{config_Global_File.batteryUps_Temp_C:5.2f}C'
     output['btf'] = f'{config_Global_File.batteryUps_Temp_F:5.2f}F'
+    
+    config_Global_File._timer_Mission_Now_Sec = int(time.time())
+    config_Global_File._timer_Mission_Countdown_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - (config_Global_File._timer_Mission_Now_Sec - config_Global_File._timer_Mission_Start_Sec)
+    if(config_Global_File._timer_Mission_Countdown_Sec < 0):
+        config_Global_File._timer_Mission_Countdown_Sec = 0
+    output['tmc'] = config_Global_File._timer_Mission_Countdown_Sec
+    output['tmr'] = config_Global_File._timer_Mission_Reserves_Sec_Int
+    print("*** *** *** DEBUG: timer_Mission: ", config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Countdown_Sec)
 
     return json.dumps(output)
 
@@ -1106,7 +1187,7 @@ if __name__ == '__main__':
     # jwc 2020-1223 StreamVideoToWebBrowser-AdrianRosebrock
     #
     # start a thread that will perform motion detection
-    ##jwc o AiCam 2.0 thread_Cl_Ob = threading.Thread(target=detect_Motions_Fn, args=(args["frame_count"],))
+    ##jwc o AiCam 2.0 thread_Cl_Ob = threading.Thread(target=detect_Motions_ARCHIVED_Fn, args=(args["frame_count"],))
     ##jwc AiCam 2.1
     ##
     thread_Cl_Ob = threading.Thread(target=detect_Motions_And_ArucoMarkers_Fn, args=(args["frame_count"],))

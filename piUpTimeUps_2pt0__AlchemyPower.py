@@ -301,7 +301,8 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 					# program exits properly. os.system method continues to run in the program thread.
 					#
 					##jwc O print ("At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f, Temperature = %5.2fC %5.2fF" % (time.ctime(), Vin, Vout, Vbattery, TempC,TempF)) # Print the values see to initiate the shutdown.
-					print ("*** DEBUG: Vbattery < V_batt_min: At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f, Temperature = %5.2fC %5.2fF" % (time.ctime(), Vin, Vout, Vbattery, TempC,TempF)) # Print the values see to initiate the shutdown.
+					##jwc o print ("*** DEBUG: Vbattery < V_batt_min: At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f, Temperature = %5.2fC %5.2fF" % (time.ctime(), Vin, Vout, Vbattery, TempC,TempF)) # Print the values see to initiate the shutdown.
+					print ("*** DEBUG: Vbattery < V_batt_min: %s %5.2f %5.2f %5.2f %8.2fC %6.2fF" % (time.ctime(), volts_In, volts_Out, volts_Battery, temperature_InCelcius_Dec, temperature_InFahrenheit_Dec)) 
 					# print ("At %s, Vin = %4.2f, Vout = %4.2f, Vbattery = %4.2f" % (time.ctime(), Vin, Vout, Vbattery)) # Print the values see to initiate the shutdown.
 					##jwc O sys.stdout.flush()
 					##jwc O subprocess.call("shutdown -h 2 &", shell=True)
