@@ -14,25 +14,25 @@ var httpRequest_Cl_Ob = makeHttpObject();
 var getSensors = makeHttpObject();
 var doubleClickTimer = 300;
 
-//jwc o var heartbeat_TimerMax_Now_Global = 1000;
-// y too long, restore o: var heartbeat_TimerMax_Now_Global = 1000000;  // 1000sec = 16.67min
-// y var heartbeat_TimerMax_Now_Global = 1000;  // 1sec
-// y var heartbeat_TimerMax_Now_Global = 10000;  // 10sec
-// y var heartbeat_TimerMax_Now_Global = 1000000;  // 1000sec = 16.67min
+//jwc o var _serverHeartbeat_Req_Interval_Total_Msec = 1000;
+// y too long, restore o: var _serverHeartbeat_Req_Interval_Total_Msec = 1000000;  // 1000sec = 16.67min
+// y var _serverHeartbeat_Req_Interval_Total_Msec = 1000;  // 1sec
+// y var _serverHeartbeat_Req_Interval_Total_Msec = 10000;  // 10sec
+// y var _serverHeartbeat_Req_Interval_Total_Msec = 1000000;  // 1000sec = 16.67min
 // jwc improve real-time stats
-// jwc var heartbeat_TimerMax_Now_Global = 3000;  // 3sec
-//jwc n 2021-0109 TTFB  var heartbeat_TimerMax_Now_Global = 1000;  // 1sec
-//jwc y TTFB 854ms var heartbeat_TimerMax_Now_Global = 10000;  // 10sec
+// jwc var _serverHeartbeat_Req_Interval_Total_Msec = 3000;  // 3sec
+//jwc n 2021-0109 TTFB  var _serverHeartbeat_Req_Interval_Total_Msec = 1000;  // 1sec
+//jwc y TTFB 854ms var _serverHeartbeat_Req_Interval_Total_Msec = 10000;  // 10sec
 // *KEY NOTE: Important to throttle timer slow enough for enough time for feedback packet to be generated and returned
 // ** 2021-0109 TTFB (Time To First Byte): 900ms
-//jwc y but sometimes (10%) not long enough:  var heartbeat_TimerMax_Now_Global = 2000;  // 2sec  TYJ
-var heartbeat_TimerMax_Default_GLOBAL = 3000;  // 3sec  TYJ
-var heartbeat_TimerMax_Now_Global = heartbeat_TimerMax_Default_GLOBAL;  // 3sec  TYJ
-var heartbeat_TimerMax_IncDec_Max = 500;  // 500msec
+//jwc y but sometimes (10%) not long enough:  var _serverHeartbeat_Req_Interval_Total_Msec = 2000;  // 2sec  TYJ
+var _serverHeartbeat_Req_Interval_BASE_MSEC = 3000;  // 3sec  TYJ
+var _serverHeartbeat_Req_Interval_Total_Msec = _serverHeartbeat_Req_Interval_BASE_MSEC;  // 3sec  TYJ
+var _serverHeartbeat_Req_Interval_INCDECMAX_MSEC = 500;  // 500msec
 
 var _ping_RoundTrip_Start_mSec_Int = 0;
 var _ping_RoundTrip_End_mSec_Int = 0;
-var _ping_RoundTrip_Total_mSec_Int = 0;
+var _ping_RoundTrip_Total_Msec_Int = 0;
 
 //jwc o var linkCheckTimer = 5000;
 ///jwc y too long: var linkCheckTimer = 1000000;  // 1000sec = 16.67min
@@ -47,6 +47,16 @@ var actSpeedR = 0;
 var doubleClick = false;
 var showHUD = true;
 var activate_Ipad_Tap_Bool = false;
+
+// Default to false
+// Need for iPad since '.button:active' not work
+//
+var trigger_Client_01_Opacity_Bool = false;
+var trigger_Client_02_Opacity_Bool = false;
+var trigger_Client_03_Opacity_Bool = false;
+
+var timer_Mission_Refresh_Opacity_Bool = false;
+
 var video = false;
 var framerate = 0;
 var webServerLink_On_Bool_Global = true;
@@ -64,8 +74,12 @@ var clickTimer = setTimeout(reset_doubleclick, doubleClickTimer);
 // jwc: every 'linkCheckTimer' (5sec), 'linkCheck' times out and calls 'webServerLink_Lost_Fn()'
 var linkCheck = setTimeout(webServerLink_Lost_Fn, linkCheckTimer);
 
-// jwc: every 'heartbeat_TimerMax_Now_Global' (1sec), 'heartbeat_Request_Fn()' called
-var heartbeat_Request_SetInterval_TaskId_Global = setInterval(heartbeat_Request_Fn, heartbeat_TimerMax_Now_Global);
+// jwc: every '_serverHeartbeat_Req_Interval_Total_Msec' (1sec), 'heartbeat_Request_Fn()' called
+var heartbeat_Request_SetInterval_TaskId_Global = setInterval(heartbeat_Request_Fn, _serverHeartbeat_Req_Interval_Total_Msec);
+
+var servo_Cam_01_Pan_ControlsUsed_Bool = false;
+var servo_Cam_02_Tilt_ControlsUsed_Bool = false;
+var servo_Arm_03_ControlsUsed_Bool = false;
 
 getSensors.onreadystatechange = updateHUD;
 
@@ -126,8 +140,8 @@ function updateHUD(e) {
     //    For a complete list go to the Http Messages Reference    
 	if (getSensors.readyState == 4 && getSensors.status == 200) {
         _ping_RoundTrip_End_mSec_Int = Date.now();    
-        _ping_RoundTrip_Total_mSec_Int = _ping_RoundTrip_End_mSec_Int - _ping_RoundTrip_Start_mSec_Int;
-        console.log('*** _ping_RoundTrip_Total_mSec_Int: ' + _ping_RoundTrip_Total_mSec_Int);
+        _ping_RoundTrip_Total_Msec_Int = _ping_RoundTrip_End_mSec_Int - _ping_RoundTrip_Start_mSec_Int;
+        console.log('*** _ping_RoundTrip_Total_Msec_Int: ' + _ping_RoundTrip_Total_Msec_Int);
 
         var response = JSON.parse(getSensors.responseText);
         video = response.v;
@@ -138,52 +152,61 @@ function updateHUD(e) {
         // status  = "*** HUD: Primary ***";
         status  = "";
 
-        status += "<br>BatteryUps_Volts_Input_V ..(3.8 min): ";
-        status += response.bvi;
-        status += "<br>BatteryUps_Volts_Output_V .(5.0 avg): ";
-        status += response.bvo;
-        status += "<br>BatteryUps_Volts_Battery_V (3.1-4.3): ";
-        status += response.bvb;
-        
-        status += "<br>";
-        status += "<br>Motor-L: ";
-        status += response.l;
-        status += "<br>Motor-R: ";
-        status += response.r;
+        status += "<br>_ping_RoundTrip_Total_Msec_Int: ";
+        status += _ping_RoundTrip_Total_Msec_Int;
 
         status += "<br>";
-        status += "<br>BatteryUps_Temp_C ( 60max): ";
-        status += response.btc;
-        status += "<br>BatteryUps_Temp_F (140max): ";
-        status += response.btf;
+        status += "<br>_serverHeartbeat_Req_Interval_BASE_MSEC: ";
+        status += _serverHeartbeat_Req_Interval_BASE_MSEC;
+        status += "<br>_serverHeartbeat_Req_Interval_INCDECMAX_MSEC: ";
+        status += _serverHeartbeat_Req_Interval_INCDECMAX_MSEC;
+        status += "<br>_serverHeartbeat_Req_Interval_IncDecMax_Factor_Msec: ";
+        status += response.hf;
+        status += "<br>";
+        status += "<br>* Insure following > Network:Time (RTT) *";
+        status += "<br>_serverHeartbeat_Req_Interval_Total_Msec: ";
+        status += _serverHeartbeat_Req_Interval_Total_Msec;
+
+        status += "<br>";
+        status += "<br>Web-Link .: online";    
+        status += "<br>Video-Link: ";
+        if (framerate > 0) {
+		    status += (Math.ceil(1000 / framerate) + " FPS");
+	    } else {
+        	status += video;
+        }
 
         
         // jwc o sensors = "*** Sensors ***<br>Digital 1: ";
         // sensors = "*** HUD: Secondary ***<br>Digital 1: ";
         sensors  = "";
+        sensors += "<br>_batteryUps_Input_V ..(3.8 min): ";
+        sensors += response.bvi;
+        sensors += "<br>_batteryUps_Output_V .(5.0 avg): ";
+        sensors += response.bvo;
+        sensors += "<br>_batteryUps_Battery_V (3.1-4.3): ";
+        sensors += response.bvb;
+        
+        sensors += "<br>";
+        sensors += "<br>Motor-L: ";
+        sensors += response.l;
+        sensors += "<br>Motor-R: ";
+        sensors += response.r;
+
         sensors += "<br>Cam_Servo_02_Tilt_Degrees: ";
         sensors += response.s2;
         sensors += "<br>Cam_Servo_01_Pan_Degrees : ";
         sensors += response.s1;
 
-        sensors += "<br>";
         sensors += "<br>Arm_Servo_03_Degrees: ";
         sensors += response.s3;
 
         sensors += "<br>";
-        sensors += "<br>Ping_RoundTrip_Total_mSec_Int: ";
-        sensors += _ping_RoundTrip_Total_mSec_Int;
-        sensors += "<br>Heartbeat_Freq_Mod: ";
-        sensors += response.hf;
+        sensors += "<br>_batteryUps_Temp_C ( 60max): ";
+        sensors += response.btc;
+        sensors += "<br>_batteryUps_Temp_F (140max): ";
+        sensors += response.btf;
 
-        sensors += "<br>";
-        sensors += "<br>Web-Link .: online";    
-        sensors += "<br>Video-Link: ";
-        if (framerate > 0) {
-		    sensors += (Math.ceil(1000 / framerate) + " FPS");
-	    } else {
-        	sensors += video;
-        }
 
         sensors += "<br>";
         sensors += "<br>Arm_Servo_04_Degrees: ";
@@ -220,11 +243,33 @@ function updateHUD(e) {
 
         score  = "";
         score += "<br>_timer_Mission_Countdown_Sec: ";
-        score += response.tmc
+        score += response.tmc;
+        score += "<br>_timer_Mission_Expired_Bool: ";
+        score += response.tme;
         score += "<br>_timer_Mission_Reserves_Sec_Int: ";
-        score += response.tmr
-        score += "<br>Score_Targeted_Dict: ";
+        score += response.tmr;
+        score += "<br>";
+        score += "<br>_timer_Mission_Recharge_Sec_Int: ";
+        score += response.tmres;
+        score += "<br>_timer_Mission_Recharge_THRESHOLD_DEC: ";
+        score += response.tmreth;        
+        score += "<br>_timer_Mission_Now_Sec: ";
+        score += response.tmn;
+        score += "<br>_timer_Mission_Recharge_Timestamp_Int: ";
+        score += response.tmreti;
+        
+        score += "<br>";
+        score += "<br>score_Targeted_Dict: ";
         score += response.sc;
+        score += "<br>score_Targeted_WeightedToVideoCenter_Dict: ";
+        score += response.sctw;
+        score += "<br>";
+        score += "<br>score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict: ";
+        score += response.sctwtc1;
+        score += "<br>score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict: ";
+        score += response.sctwtc2;
+        score += "<br>score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict: ";
+        score += response.sctwtc3;
 
         document.getElementById("status").innerHTML = status;
         document.getElementById("sensors").innerHTML = sensors;
@@ -238,14 +283,39 @@ function updateHUD(e) {
         $('#rmtrim-val').html(response.rt);
 
         $('#heartbeat_Freq_Mod_Id').html(response.hf);
-
-        if((heartbeat_TimerMax_Default_GLOBAL + (parseInt(response.hf)*heartbeat_TimerMax_IncDec_Max)) !== heartbeat_TimerMax_Now_Global){
-            heartbeat_TimerMax_Now_Global = heartbeat_TimerMax_Default_GLOBAL + (parseInt(response.hf)*heartbeat_TimerMax_IncDec_Max)
+        if((_serverHeartbeat_Req_Interval_BASE_MSEC + (parseInt(response.hf)*_serverHeartbeat_Req_Interval_INCDECMAX_MSEC)) !== _serverHeartbeat_Req_Interval_Total_Msec){
+            _serverHeartbeat_Req_Interval_Total_Msec = _serverHeartbeat_Req_Interval_BASE_MSEC + (parseInt(response.hf)*_serverHeartbeat_Req_Interval_INCDECMAX_MSEC)
             clearTimeout( heartbeat_Request_SetInterval_TaskId_Global)
-            heartbeat_Request_SetInterval_TaskId_Global = setInterval(heartbeat_Request_Fn, heartbeat_TimerMax_Now_Global);
-			console.log('*** *** heartbeat_TimerMax_Now_Global:' + heartbeat_TimerMax_Now_Global + ' | heartbeat_TimerMax_Mod: ' + response.hf);
+            heartbeat_Request_SetInterval_TaskId_Global = setInterval(heartbeat_Request_Fn, _serverHeartbeat_Req_Interval_Total_Msec);
+			console.log('*** *** _serverHeartbeat_Req_Interval_Total_Msec:' + _serverHeartbeat_Req_Interval_Total_Msec + ' | heartbeat_TimerMax_Mod: ' + response.hf);
         }
 
+        // Provide auto-feedback for any remote-player's activity on any controls (not used by local-player)
+        if(!servo_Cam_01_Pan_ControlsUsed_Bool){
+            if(response.s1 !== parseInt($('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val())){
+                $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val(parseInt(response.s1));
+                $('#servo_Cam_01_Pan_Degrees_FrontEnd_Response_Id').html(response.s1);
+                ///jwc n console.log('*** *** !servo_Cam_01_Pan_ControlsUsed_Bool: ' + response.s1 + '>>' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val());
+                ///jwc y console.log('*** *** !servo_Cam_01_Pan_ControlsUsed_Bool: ' + parseInt(response.s1) + '>>' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val());
+                console.log('*** *** !servo_Cam_01_Pan_ControlsUsed_Bool: ' + response.s1 + '>>' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val());
+            }
+        }
+
+        if(!servo_Cam_02_Tilt_ControlsUsed_Bool){
+            if(response.s2 !== parseInt($('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val())){
+                $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val(parseInt(response.s2));
+                $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id').html(response.s2);
+                console.log('*** *** !servo_Cam_02_Tilt_ControlsUsed_Bool: ' + response.s2 + '>>' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val());
+            }
+        }
+
+        if(!servo_Arm_03_ControlsUsed_Bool){
+            if(response.s3 !== parseInt($('#servo_Arm_03_Degrees_FrontEnd_Id').val())){
+                $('#servo_Arm_03_Degrees_FrontEnd_Id').val(parseInt(response.s3));
+                $('#servo_Arm_03_Degrees_FrontEnd_Response_Id').html(response.s3);
+                console.log('*** *** !servo_Arm_03_ControlsUsed_Bool: ' + response.s3 + '>>' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val());
+            }
+        }
 
         ////jwc y  $('#speed-input-val').html(response.l);
         ////jwc y  $('#heading-input-val').html(response.l);
@@ -282,7 +352,8 @@ function toggle_hud() {
 }
 function button_status(button, status) {
 	if (status) {
-		document.getElementById(button).style.opacity = '0.5';
+		// document.getElementById(button).style.opacity = '0.5';
+		document.getElementById(button).style.opacity = '0.75';
 	} else {
 		document.getElementById(button).style.opacity = '1';
 	}
@@ -316,8 +387,39 @@ function activate_Ipad_Tap_Button_Fn(button, status) {
 	}
 }
 
-function timer_Mission_Reset_Fn(pad) {
-    var url_Str = "/timer_Mission_Reset_Fn";
+function timer_Mission_Refresh_Fn(pad) {
+    servo_Cam_01_Pan_ControlsUsed_Bool = false;
+    servo_Cam_02_Tilt_ControlsUsed_Bool = false;
+    servo_Arm_03_ControlsUsed_Bool = false;
+    
+    timer_Mission_Refresh_Opacity_Bool = !timer_Mission_Refresh_Opacity_Bool;
+    button_status('timer_Mission_Refresh_Id', timer_Mission_Refresh_Opacity_Bool)
+
+    var url_Str = "/timer_Mission_Refresh_Fn";
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
+}
+function trigger_Client_01_Fn(pad) {    
+    trigger_Client_01_Opacity_Bool = !trigger_Client_01_Opacity_Bool;
+    button_status('trigger_Client_01_Id', trigger_Client_01_Opacity_Bool)
+
+    var url_Str = "/trigger_Client_01_Fn";
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
+}
+function trigger_Client_02_Fn(pad) {
+    trigger_Client_02_Opacity_Bool = !trigger_Client_02_Opacity_Bool;
+    button_status('trigger_Client_02_Id', trigger_Client_02_Opacity_Bool)
+
+    var url_Str = "/trigger_Client_02_Fn";
+    httpRequest_Cl_Ob.open("GET", url_Str, true);
+    httpRequest_Cl_Ob.send(null);
+}
+function trigger_Client_03_Fn(pad) {
+    trigger_Client_03_Opacity_Bool = !trigger_Client_03_Opacity_Bool;
+    button_status('trigger_Client_03_Id', trigger_Client_03_Opacity_Bool)
+
+    var url_Str = "/trigger_Client_03_Fn";
     httpRequest_Cl_Ob.open("GET", url_Str, true);
     httpRequest_Cl_Ob.send(null);
 }

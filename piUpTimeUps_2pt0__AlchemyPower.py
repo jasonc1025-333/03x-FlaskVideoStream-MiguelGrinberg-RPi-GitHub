@@ -203,21 +203,21 @@ ch_3_Multiplier_INT_GLOBAL = 1 # Multiplier for Channel 3 - V for Temperature at
 ##jwc o replace by PiUpTimeUpsef batteryUps_Read_Fn(config_In):
 ##jwc o replace by PiUpTimeUps   global batteryUps_ClObj_Global
 ##jwc o replace by PiUpTimeUps
-##jwc o replace by PiUpTimeUps   config_In.batteryUps_Volts_Input_V = batteryUps_ClObj_Global.voltage()
-##jwc o replace by PiUpTimeUps   ##jwc y print("*** DEBUG: batteryUps_Volts_Input_V: %.3f V" % config_In.batteryUps_Volts_Input_V)
-##jwc o replace by PiUpTimeUps   print(f"*** DEBUG: batteryUps_Volts_Input_V: {config_In.batteryUps_Volts_Input_V:.2f} V", end='')
+##jwc o replace by PiUpTimeUps   config_In._batteryUps_Input_V = batteryUps_ClObj_Global.voltage()
+##jwc o replace by PiUpTimeUps   ##jwc y print("*** DEBUG: _batteryUps_Input_V: %.3f V" % config_In._batteryUps_Input_V)
+##jwc o replace by PiUpTimeUps   print(f"*** DEBUG: _batteryUps_Input_V: {config_In._batteryUps_Input_V:.2f} V", end='')
 ##jwc o replace by PiUpTimeUps   try:
-##jwc o replace by PiUpTimeUps       config_In.batteryUps_Volts_Output_V = batteryUps_ClObj_Global.shunt_voltage()
-##jwc o replace by PiUpTimeUps       ##jwc y print("*** DEBUG: batteryUps_Volts_Output_V: %.3f mV" % config_In.batteryUps_Volts_Output_V)
-##jwc o replace by PiUpTimeUps       print(f" // batteryUps_Volts_Output_V: {config_In.batteryUps_Volts_Output_V:.2f} mV", end='')
+##jwc o replace by PiUpTimeUps       config_In._batteryUps_Output_V = batteryUps_ClObj_Global.shunt_voltage()
+##jwc o replace by PiUpTimeUps       ##jwc y print("*** DEBUG: _batteryUps_Output_V: %.3f mV" % config_In._batteryUps_Output_V)
+##jwc o replace by PiUpTimeUps       print(f" // _batteryUps_Output_V: {config_In._batteryUps_Output_V:.2f} mV", end='')
 ##jwc o replace by PiUpTimeUps
-##jwc o replace by PiUpTimeUps       config_In.batteryUps_Temp_C = batteryUps_ClObj_Global.current()
-##jwc o replace by PiUpTimeUps       ##jwc y print("*** DEBUG: batteryUps_Temp_C: %.3f mA" % config_In.batteryUps_Temp_C)
-##jwc o replace by PiUpTimeUps       print(f" // batteryUps_Temp_C: {config_In.batteryUps_Temp_C:.2f} mA", end='')
+##jwc o replace by PiUpTimeUps       config_In._batteryUps_Temp_C = batteryUps_ClObj_Global.current()
+##jwc o replace by PiUpTimeUps       ##jwc y print("*** DEBUG: _batteryUps_Temp_C: %.3f mA" % config_In._batteryUps_Temp_C)
+##jwc o replace by PiUpTimeUps       print(f" // _batteryUps_Temp_C: {config_In._batteryUps_Temp_C:.2f} mA", end='')
 ##jwc o replace by PiUpTimeUps
-##jwc o replace by PiUpTimeUps       config_In.batteryUps_Temp_F = batteryUps_ClObj_Global.power()
-##jwc o replace by PiUpTimeUps       ##jwc y print("*** DEBUG: batteryUps_Temp_F: %.3f mW" % config_In.batteryUps_Temp_F)
-##jwc o replace by PiUpTimeUps       print(f" // batteryUps_Temp_F: {config_In.batteryUps_Temp_F:.2f} mW)")
+##jwc o replace by PiUpTimeUps       config_In._batteryUps_Temp_F = batteryUps_ClObj_Global.power()
+##jwc o replace by PiUpTimeUps       ##jwc y print("*** DEBUG: _batteryUps_Temp_F: %.3f mW" % config_In._batteryUps_Temp_F)
+##jwc o replace by PiUpTimeUps       print(f" // _batteryUps_Temp_F: {config_In._batteryUps_Temp_F:.2f} mW)")
 ##jwc o replace by PiUpTimeUps   except DeviceRangeError as e:
 ##jwc o replace by PiUpTimeUps       print(e)
 
@@ -233,7 +233,7 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 	##jwc o while (True):
 	# Read Channel 0 - Input Voltage - max 5.5V.
 	volts_In = ch_0_Multiplier_INT_GLOBAL*get_Reading_Fn(address_I2c_Hex_Global,channel_0_BIT_GLOBAL)
-	config_In.batteryUps_Volts_Input_V = volts_In
+	config_In._batteryUps_Input_V = volts_In
 	#	if (volts_In < volts_Input_Min_DEC_GLOBAL):
 	#		volts_In = 0
 	# Sleep between each reading. Sleep time is in the subroutine. Use this to slow down readings further. 
@@ -242,11 +242,11 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 
 	# Read Channel 1 - Battery V
 	volts_Battery = ch_1_Multiplier_INT_GLOBAL*get_Reading_Fn(address_I2c_Hex_Global, channel_1_BIT_GLOBAL) + 0.2
-	config_In.batteryUps_Volts_Battery_V = volts_Battery
+	config_In._batteryUps_Battery_V = volts_Battery
 
 	# Read Channel 2 - Output V
 	volts_Out = ch_1_Multiplier_INT_GLOBAL*get_Reading_Fn(address_I2c_Hex_Global, channel_2_BIT_GLOBAL)
-	config_In.batteryUps_Volts_Output_V = volts_Out
+	config_In._batteryUps_Output_V = volts_Out
 
 	# Read Channel 3 - Temperature.
 	temperature_ViaVolts = ch_3_Multiplier_INT_GLOBAL*get_Reading_Fn(address_I2c_Hex_Global, channel_3_BIT_GLOBAL)
@@ -255,11 +255,11 @@ def get_VoltageAndTemp_Status_Fn(config_In):
 	#	temperature_InCelcius_Dec = (4.0 - temperature_ViaVolts) / 0.0432 # Temperature in C calculated.
 	# Use the below line for Pi-UpTime UPS 2.0
 	temperature_InCelcius_Dec = (4.236 - temperature_ViaVolts) / 0.0408 # Temperature in C calculated.
-	config_In.batteryUps_Temp_C = temperature_InCelcius_Dec
+	config_In._batteryUps_Temp_C = temperature_InCelcius_Dec
 
 	# Line below computes Temperature in F from C
 	temperature_InFahrenheit_Dec = temperature_InCelcius_Dec * 1.8 + 32.0  # Temperature in F
-	config_In.batteryUps_Temp_F = temperature_InFahrenheit_Dec
+	config_In._batteryUps_Temp_F = temperature_InFahrenheit_Dec
 
 	# Temperature is measured by measuring the V across the NTC. We assume a linear behavior in the use range.
 	# According to Murata data sheet, the measurement of temperature is determined as below.

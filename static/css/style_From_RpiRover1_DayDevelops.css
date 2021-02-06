@@ -63,15 +63,27 @@ body, html {
 	/*jwc o  height:25%; */
 	/* height:10%; */
 	/* height:7.5%; */
-	height:15%;
+	/* height:15%; */
+	height:7.5%;
 	/* padding-top:10px */
 	padding-top:50px  /* Needed for Linux */
+}
+#middle-row-02 {
+	/*jwc o  height:25%; */
+	/* height:10%; */
+	/* height:7.5%; */
+	/* jwc y height:15%; */
+	/* height:7.5%; */
+	/* padding-top:10px; */
+	/* padding-top:50px; */ /* Needed for Linux */
+	margin-top:3.25rem;
+	/* padding-top:5px; */
 }
 #bottom-row {
 	/*jwc o  height:25%; */
 	height:25%;
 	/*jwc o padding-top:10px */
-	padding-top:50px
+	/*jwc y padding-top:50px */
 }
 #dcMotors_FwdOrRev_Power_FrontEnd_Id, 
 #dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id, 
@@ -127,11 +139,53 @@ body, html {
 	position:relative;
 	/* top:5px; */
 }
+
+.button {
+	background-color: red;
+	color: white;
+	border: none;
+	border-radius: 7px;
+	box-shadow: 0 5px #999;
+	display: inline-block;
+	padding: 10px;
+	font-size: 16px;
+	cursor: pointer;
+	text-align: center;
+	outline: none;
+ }
+ /* .button:hover {
+	background-color: blue;
+ } */
+ .button:active {
+	background-color: orange;
+	/* box-shadow: 0 50px gray; */
+	box-shadow: 0 5px gray;
+	transform: translateY(2px);
+ }
+
 #activate_Ipad_Tap_Id {
 	/* jwc o padding: 1.5rem 4.0rem; */
+
+    background-color:purple;
+	border-color:purple;
+	/* height: 3rem; */
+	height: 5rem;
+    /* Don't want full-width, since gets covered in iPad: width: -webkit-fill-available;	 */
 }
-#timer_Mission_Reset_Id {
-	margin-top:0.5rem
+#timer_Mission_Refresh_Id {
+	margin-top:0.5rem;
+    background-color:green;
+	border-color:green;
+	/* height: 3rem; */
+	height: 5rem;
+    /* Don't want full-width, since gets covered in iPad: width: -webkit-fill-available;	 */
+}
+#trigger_Client_01_Id, #trigger_Client_02_Id, #trigger_Client_03_Id {
+	width: -webkit-fill-available;
+	height: 5rem;
+	margin-top:0.5rem;
+    /* background-color:red;
+    border-color:red;	 */
 }
 
 #cam-text, #heartbeat_Freq_Mod_Id {

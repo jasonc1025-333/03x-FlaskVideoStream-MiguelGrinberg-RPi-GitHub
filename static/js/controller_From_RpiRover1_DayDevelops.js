@@ -300,7 +300,8 @@ async function updateMotorSpeeds_ForTurn_ForBurst_Fn() {
 
 function servo_Cam_01_Pan_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_01_Pan_Degrees_FrontEnd_Fn?servo_Cam_01_Pan_Degrees_FrontEnd_Id=' + $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
-    httpRequest_Cl_Ob.open('GET', url_Str, true);
+	if(!servo_Cam_01_Pan_ControlsUsed_Bool){servo_Cam_01_Pan_ControlsUsed_Bool = true;}
+	httpRequest_Cl_Ob.open('GET', url_Str, true);
     httpRequest_Cl_Ob.send(null);
 	document.getElementById("servo_Cam_01_Pan_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Cam_01_Pan_Degrees_FrontEnd_Id').val();
 	console.log('*** url: ' + url_Str)
@@ -308,6 +309,7 @@ function servo_Cam_01_Pan_Degrees_FrontEnd_Fn() {
 
 function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Cam_02_Tilt_Degrees_FrontEnd_Fn?servo_Cam_02_Tilt_Degrees_FrontEnd_Id=' + $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
+	if(!servo_Cam_02_Tilt_ControlsUsed_Bool){servo_Cam_02_Tilt_ControlsUsed_Bool = true;}
     httpRequest_Cl_Ob.open('GET', url_Str, true);
     httpRequest_Cl_Ob.send(null);
 	document.getElementById("servo_Cam_02_Tilt_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Cam_02_Tilt_Degrees_FrontEnd_Id').val();
@@ -316,6 +318,7 @@ function servo_Cam_02_Tilt_Degrees_FrontEnd_Fn() {
 
 function servo_Arm_03_Degrees_FrontEnd_Fn() {
 	var url_Str = '/servo_Arm_03_Degrees_FrontEnd_Fn?servo_Arm_03_Degrees_FrontEnd_Id=' + $('#servo_Arm_03_Degrees_FrontEnd_Id').val();
+	if(!servo_Arm_03_ControlsUsed_Bool){servo_Arm_03_ControlsUsed_Bool = true}
     httpRequest_Cl_Ob.open('GET', url_Str, true);
     httpRequest_Cl_Ob.send(null);
 	document.getElementById("servo_Arm_03_Degrees_FrontEnd_Response_Id").innerHTML = $('#servo_Arm_03_Degrees_FrontEnd_Id').val();

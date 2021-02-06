@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G DVO-System</title>
+    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G DSOT-System</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <link rel='stylesheet' href='static/css/style_From_RpiRover1_DayDevelops.css'>
@@ -13,7 +13,7 @@
   </head>
   <body>
     <!-- jwc o  <h1>Video Streaming Demonstration</h1> -->
-    <h1>RoboQuest V-Lab Web-Portal: RQ-CX-G DVO-System</h1>
+    <h1>RoboQuest V-Lab Web-Portal: RQ-CX-G DSOT-System</h1>
     <!-- <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1> -->
     <!-- jwc y  <img src="{{ url_for('video_feed') }}"> -->
 
@@ -24,7 +24,6 @@
     <div id="mainscreen">
 
       <div class='row' id='top-row'>
-
         <!-- col-4: max-width: 33.33% > -->
         <div class='col-4' >
             <!-- cam -->
@@ -44,8 +43,8 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01' class='sliderTapForIpadFix_Not_CssCl visible_CssCl'>Driver(Wheel-Motors)</h2>
-          <h2 id='col-header-01' class='sliderTapForIpadFix_CssCl visible_Not_CssCl'>Driver(Wheel-Motors)[iPad]</h2>
+          <h2 id='col-header-01' class='sliderTapForIpadFix_Not_CssCl visible_CssCl'>Driver-XY(Wheel-Motors)</h2>
+          <h2 id='col-header-01' class='sliderTapForIpadFix_CssCl visible_Not_CssCl'>Driver-XY(Wheel-Motors)[iPad]</h2>
 
           <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
           <!--jwc yo  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'> -->
@@ -70,7 +69,7 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='turn-col'>
-          <h2 id='col-header-01'>Viewer(Cam-Servos)</h2>
+          <h2 id='col-header-01'>Scanner-XY(Cam-Servos)</h2>
           
           <!-- servo_Cam_02_Tilt_Degrees_FrontEnd_Id slider -->
           <input id='servo_Cam_02_Tilt_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Cam_02_Tilt_Degrees_FrontEnd_Fn()'>
@@ -80,7 +79,7 @@
 
         <!-- col-2: max-width: 16.67% > -->
         <div class='col-2' id='speed-col'>
-          <h2 id='col-header-01'>Operator(Arm-Servos)</h2>
+          <h2 id='col-header-01'>Operator-Y(ActionArm-Servos)</h2>
 
           <!-- servo_Arm_03_Degrees_FrontEnd_Id slider -->
           <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'> -->
@@ -93,7 +92,9 @@
       <div class='row' id='middle-row'>
         <!-- col-4: max-width: 33.33% > -->
         <div class='col-4 text-center' >
-          <h3 id='col-header-01'>AI Video Detect</h3>
+          <!-- jwc will not fit for iPad: <h3 id='col-header-01'>AI/AR Video Analyzer (AAVA) System</h3> -->
+          <button class='btn btn-danger' id='timer_Mission_Refresh_Id' onclick='timer_Mission_Refresh_Fn()'>Mission Refresh</button>
+          <span id='col-header-01'>AI/AR Scan Analyzer (AASA) System</span>
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
@@ -120,27 +121,52 @@
           <!--jwc o <button class='btn btn-lg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>HALT ALL</button> -->
           <!-- jwc y <button class='btn btn-lg btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>Slider-Tap for iPad</button> -->
           <button class='btn btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>iPad Driver-Tap</button>
-          <button class='btn btn-danger' id='timer_Mission_Reset_Id' onclick='timer_Mission_Reset_Fn()'>Mission Reset</button>
         </div>
-
       </div>
 
+      <div class='row' id='middle-row-02'>
+        <!-- col-3: max-width: 25.00% > -->
+        <!-- <div class='col-4'> -->
+          <!-- <button class='btn btn-danger' id='trigger_Client_01_Id' onclick='trigger_Client_01_Fn()'>Trigger-01</button> -->
+        <!-- </div> -->
+        <!-- col-3: max-width: 25.00% > -->
+        <!-- <div class='col-4'> -->
+          <!-- <button class='btn btn-danger' id='trigger_Client_02_Id' onclick='trigger_Client_02_Fn()'>Trigger-02</button> -->
+        <!-- </div> -->
+        <!-- col-3: max-width: 25.00% > -->
+        <!-- <div class='col-4'>
+          <button class='btn btn-danger' id='trigger_Client_03_Id' onclick='trigger_Client_03_Fn()'>Trigger-03</button>
+        </div> -->
+
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-4'>
+          <button class='button' id='trigger_Client_01_Id' onclick='trigger_Client_01_Fn()'>Trigger-01</button>
+        </div>
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-4'>
+          <button class='button' id='trigger_Client_02_Id' onclick='trigger_Client_02_Fn()'>Trigger-02</button>
+        </div>        
+        <!-- col-3: max-width: 25.00% > -->
+        <div class='col-4'>
+          <button class='button' id='trigger_Client_03_Id' onclick='trigger_Client_03_Fn()'>Trigger-03</button>
+        </div>
+      </div>
 
       <div class='row' id='bottom-row'>
         <!-- col-4: max-width: 33.33% > -->
         <!-- <div class='col-4 text-center'> -->
         <div class='col-4'>
-          <h2 id='col-header-01'>Primary I/O</h2>
+          <h2 id='col-header-01'>Network Status</h2>
           <div id="status"></div>
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01'>Secondary I/O</h2>
+          <h2 id='col-header-01'>Robotics Status</h2>
           <div id="sensors"></div>
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01'>Score</h2>
+          <h2 id='col-header-01'>Mission Critical Data</h2>
           <div id="score"></div>          
         </div>
         <!-- col-2: max-width: 16.67% > -->
@@ -155,13 +181,13 @@
             <i id='heartbeat_Freq_Mod_Inc_Id' class='d-inline fas fa-angle-right fa-3x' onclick="heartbeat_Freq_Mod_IncDec_Fn({'incdec':'+1'})"></i>
 
             <!-- left motor trim -->
-          <h3 id='col-header-01'>iPad-Tap</h3>
+          <h3 id='col-header-01'>--</h3>
           <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
           <p id='lmtrim-val' class='text-center'>0</p>
           <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
 
           <!-- right motor trim -->
-          <h3 id='col-header-01'>Motor-Trim-R</h3>
+          <h3 id='col-header-01'>--</h3>
           <i id='rmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
           <p id='rmtrim-val' class='text-center'>0</p>
           <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
@@ -172,8 +198,7 @@
             <span id='cam-text'>-</span>
             <i id='cam-right' class='d-inline fas fa-angle-right fa-3x' onclick="turnCam({'direction':'R'})"></i>   -->
         </div>
-
-       </div>
+      </div>
 
     </div>
 

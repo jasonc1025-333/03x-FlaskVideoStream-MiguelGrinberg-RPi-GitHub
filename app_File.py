@@ -49,21 +49,21 @@ from gevent.pywsgi import WSGIServer
 ##jwc replace w/ PiUpTimeUps: def batteryUps_Read_Fn(config_In):
 ##jwc replace w/ PiUpTimeUps:     global batteryUps_ClObj_Global
 ##jwc replace w/ PiUpTimeUps: 
-##jwc replace w/ PiUpTimeUps:     config_In.batteryUps_Volts_Input_V = batteryUps_ClObj_Global.voltage()
-##jwc replace w/ PiUpTimeUps:     ##jwc y print("*** DEBUG: batteryUps_Volts_Input_V: %.3f V" % config_In.batteryUps_Volts_Input_V)
-##jwc replace w/ PiUpTimeUps:     print(f"*** DEBUG: batteryUps_Volts_Input_V: {config_In.batteryUps_Volts_Input_V:.2f} V", end='')
+##jwc replace w/ PiUpTimeUps:     config_In._batteryUps_Input_V = batteryUps_ClObj_Global.voltage()
+##jwc replace w/ PiUpTimeUps:     ##jwc y print("*** DEBUG: _batteryUps_Input_V: %.3f V" % config_In._batteryUps_Input_V)
+##jwc replace w/ PiUpTimeUps:     print(f"*** DEBUG: _batteryUps_Input_V: {config_In._batteryUps_Input_V:.2f} V", end='')
 ##jwc replace w/ PiUpTimeUps:     try:
-##jwc replace w/ PiUpTimeUps:         config_In.batteryUps_Volts_Output_V = batteryUps_ClObj_Global.shunt_voltage()
-##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: batteryUps_Volts_Output_V: %.3f mV" % config_In.batteryUps_Volts_Output_V)
-##jwc replace w/ PiUpTimeUps:         print(f" // batteryUps_Volts_Output_V: {config_In.batteryUps_Volts_Output_V:.2f} mV", end='')
+##jwc replace w/ PiUpTimeUps:         config_In._batteryUps_Output_V = batteryUps_ClObj_Global.shunt_voltage()
+##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: _batteryUps_Output_V: %.3f mV" % config_In._batteryUps_Output_V)
+##jwc replace w/ PiUpTimeUps:         print(f" // _batteryUps_Output_V: {config_In._batteryUps_Output_V:.2f} mV", end='')
 ##jwc replace w/ PiUpTimeUps: 
-##jwc replace w/ PiUpTimeUps:         config_In.batteryUps_Temp_C = batteryUps_ClObj_Global.current()
-##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: batteryUps_Temp_C: %.3f mA" % config_In.batteryUps_Temp_C)
-##jwc replace w/ PiUpTimeUps:         print(f" // batteryUps_Temp_C: {config_In.batteryUps_Temp_C:.2f} mA", end='')
+##jwc replace w/ PiUpTimeUps:         config_In._batteryUps_Temp_C = batteryUps_ClObj_Global.current()
+##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: _batteryUps_Temp_C: %.3f mA" % config_In._batteryUps_Temp_C)
+##jwc replace w/ PiUpTimeUps:         print(f" // _batteryUps_Temp_C: {config_In._batteryUps_Temp_C:.2f} mA", end='')
 ##jwc replace w/ PiUpTimeUps: 
-##jwc replace w/ PiUpTimeUps:         config_In.batteryUps_Temp_F = batteryUps_ClObj_Global.power()
-##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: batteryUps_Temp_F: %.3f mW" % config_In.batteryUps_Temp_F)
-##jwc replace w/ PiUpTimeUps:         print(f" // batteryUps_Temp_F: {config_In.batteryUps_Temp_F:.2f} mW)")
+##jwc replace w/ PiUpTimeUps:         config_In._batteryUps_Temp_F = batteryUps_ClObj_Global.power()
+##jwc replace w/ PiUpTimeUps:         ##jwc y print("*** DEBUG: _batteryUps_Temp_F: %.3f mW" % config_In._batteryUps_Temp_F)
+##jwc replace w/ PiUpTimeUps:         print(f" // _batteryUps_Temp_F: {config_In._batteryUps_Temp_F:.2f} mW)")
 ##jwc replace w/ PiUpTimeUps:     except DeviceRangeError as e:
 ##jwc replace w/ PiUpTimeUps:         print(e)
 
@@ -262,6 +262,11 @@ outputFrame = None
 lock = threading.Lock()
 
 score_Targeted_Dict = defaultdict(int)
+##jwc y score_Targeted_ClosenessToVideoCenter_Dict = defaultdict(int)
+score_Targeted_WeightedToVideoCenter_Dict = defaultdict(int)
+score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict = defaultdict(int)
+score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict = defaultdict(int)
+score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict = defaultdict(int)
 
 ##jwc o # initialize a flask object
 ##jwc o app_Cl_Ob = Flask(__name__)
@@ -362,7 +367,7 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         ##jwc n video_Height = camera_Cl.__getattribute__(cv2.CAP_PROP_FRAME_HEIGHT)  # float
         video_Center_X = int(video_Width/2)
         video_Center_Y = int(video_Height/2)
-        video_Crosshair_SideLength = 200
+        video_Crosshair_RadiusLength = 200
         
         crosshairs_Line_Thickness = 8
         target_Line_thickness = 4
@@ -394,8 +399,8 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
             target_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
             target_Color_BGR_Tuple_Activated = (0, 255, 255)
             target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
-            cv2.putText(frame, 'Cam: Non-Active', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-            cv2.putText(frame, 'Arm: Set to Max_180', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Cam: Non-Active', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Arm: Set to Max_180', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
         else:
             # * Arm in Standby/Neutral/Safety: Max_180 Position, Thus Cam Active: In viewer mode: Green
             #
@@ -404,8 +409,8 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
             target_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
             target_Color_BGR_Tuple_Activated = (0, 0, 255)
             target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
-            cv2.putText(frame, 'Cam: Active', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(frame, 'Arm: Max_180', (video_Center_X - video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Cam: Active', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Arm: Max_180', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
 
         # * Draw Crosshairs
         # ** Draw Crosshairs after AI Image Detection
@@ -413,9 +418,9 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         ##jwc n cv2.rectangle(frame, ((video_Width/2)-50, (video_Height/2)-50), ((video_Width/2)+50, (video_Height/2)+50), (0, 255, 0), 2)
         ##jwc y cv2.rectangle(frame, (50, 50), (100, 100), (0, 0, 255), 2)
         ##jwc y cv2.rectangle(frame, (int(video_Width/2)-50, int(video_Height/2)-50), (int(video_Width/2)+50, int(video_Height/2)+50), (0, 255, 0), 2)
-        ##jwc y cv2.rectangle(frame, (video_Center_X - video_Crosshair_SideLength, video_Center_Y - video_Crosshair_SideLength), (video_Center_X + video_Crosshair_SideLength, video_Center_Y + video_Crosshair_SideLength), (0, 255, 0), 2)
-        ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, (0, 255, 0), 2)
-        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, crosshairs_Color_BGR_Tuple_ActivatedNot, crosshairs_Line_Thickness)
+        ##jwc y cv2.rectangle(frame, (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y - video_Crosshair_RadiusLength), (video_Center_X + video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength), (0, 255, 0), 2)
+        ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, (0, 255, 0), 2)
+        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_ActivatedNot, crosshairs_Line_Thickness)
 
         # verify *at least* one ArUco marker was detected
         if len(corners) > 0:
@@ -443,13 +448,21 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                 cv2.circle(frame, (cX, cY), 10, (255, 0, 0), -1)
                 print("*** *** *** DEBUG: cX: " + str(cX) + " cY: " + str(cY))
 
-                if math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ) <= video_Crosshair_SideLength:
+                target_DistanceToVideoCenter_Int = int(math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ))
+                target_ScoreWeightedToVideoCenter_Int = video_Crosshair_RadiusLength - target_DistanceToVideoCenter_Int
 
-                    ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 4)
-                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, crosshairs_Color_BGR_Tuple_Activated, crosshairs_Line_Thickness)
+                ##jwc o if math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ) <= video_Crosshair_RadiusLength:
+                if target_DistanceToVideoCenter_Int <= video_Crosshair_RadiusLength:
 
+                    ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, color_BGR_Tuple, 4)
+                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_Activated, crosshairs_Line_Thickness)
+
+                    # Initialize/Reset for either Friendly or Enemy Targets
+                    ##NOT RESET HERE, DO CONDITIONALLY AT SENDING: config_Global_File._timer_Mission_Recharge_Sec_Int = 0
                     # Friendly Targets
                     #   Appears that Aruco Markers more reliable recognition on inner-part of arm (vs. outer-part of arm)
+                    #   Also, white flat margin very important.  Any curvature on marker interferes recognition.
+                    #   Only allow recharge if not waiting for last non-zero recharge to be sent to clients
                     if(markerID == 0 or markerID ==1):
                         # ASAP, Override Enemy-Borders with Friendly-Borders
                         cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
@@ -459,14 +472,26 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
 
                         timer_Mission_Countdown_Expired_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - config_Global_File._timer_Mission_Countdown_Sec
                         # Recharge Threshold starts at significant-amount of secs
-                        if(timer_Mission_Countdown_Expired_Sec > int(0.10 * config_Global_File._timer_Mission_Duration_MAX_SEC)):
-                            config_Global_File._timer_Mission_Reserves_Sec_Int -= timer_Mission_Countdown_Expired_Sec
+                        #   Due to multiple-requests/threads and asynchronous, 'config_Global_File._timer_Mission_Countdown_Sec' may not be updated in time to prvent
+                        #   \ double-dipping invalidly.  Thus best to update it asap, to prevent such timing loophole.
+                        ##jwc y if(timer_Mission_Countdown_Expired_Sec > int(0.10 * config_Global_File._timer_Mission_Duration_MAX_SEC)):
+                        if(timer_Mission_Countdown_Expired_Sec > int(config_Global_File._timer_Mission_Recharge_THRESHOLD_DEC * config_Global_File._timer_Mission_Duration_MAX_SEC)):
+                            config_Global_File._timer_Mission_Recharge_Sec_Int = timer_Mission_Countdown_Expired_Sec
+
+                            # Do following asap to prevent multi-threading racing conflict
+                            #
                             ##jwc n config_Global_File._timer_Mission_Countdown_Sec += timer_Mission_Countdown_Expired_Sec
-                            config_Global_File._timer_Mission_Start_Sec += timer_Mission_Countdown_Expired_Sec
+                            config_Global_File._timer_Mission_Start_Sec += config_Global_File._timer_Mission_Recharge_Sec_Int
+                            config_Global_File._timer_Mission_Countdown_Sec = calculate__timer_Mission_Countdown_Sec__Fn( config_Global_File._timer_Mission_Duration_MAX_SEC, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec)
+
+                            config_Global_File._timer_Mission_Reserves_Sec_Int -= config_Global_File._timer_Mission_Recharge_Sec_Int
+
                             ##jwc y cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-                            cv2.putText(frame, 'Recharge: ' + str(timer_Mission_Countdown_Expired_Sec), (topLeft[0], topLeft[1] - 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                            cv2.putText(frame, 'Recharge: ' + str(config_Global_File._timer_Mission_Recharge_Sec_Int), (topLeft[0], topLeft[1] - 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                            
+                            config_Global_File._timer_Mission_Recharge_Timestamp_Int = config_Global_File._timer_Mission_Now_Sec
                             print("*** *** *** ***")
-                            print("*** *** *** *** DEBUG: Recharge:  ", timer_Mission_Countdown_Expired_Sec, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
+                            print("*** *** *** *** DEBUG: Recharge:  ", config_Global_File._timer_Mission_Recharge_Sec_Int, config_Global_File._timer_Mission_Recharge_Timestamp_Int, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
                             print("*** *** *** ***")
                     # Enemy Targets
                     else:
@@ -480,8 +505,26 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                         # Enemy Targets
                         if(config_Global_File.servo_03_Degrees == 180):
                             score_Targeted_Dict[str(markerID)] += 1
-                            print("*** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
-                                   
+                            ##jwc y score_Targeted_ClosenessToVideoCenter_Dict[str(target_DistanceToVideoCenter_Int)] += 1
+                            score_Targeted_WeightedToVideoCenter_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                            print("*** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
+                            print("*** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_Dict= " + str(score_Targeted_WeightedToVideoCenter_Dict))
+                        
+                        if(config_Global_File._trigger_Client_Req_01_Bool):
+                            score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                            config_Global_File._trigger_Client_Req_01_Bool = False
+                            print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict))
+
+                        if(config_Global_File._trigger_Client_Req_02_Bool):
+                            score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                            config_Global_File._trigger_Client_Req_02_Bool = False
+                            print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict))
+
+                        if(config_Global_File._trigger_Client_Req_03_Bool):
+                            score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                            config_Global_File._trigger_Client_Req_03_Bool = False
+                            print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict))
+
                 else:
                     ##jwc y color_BGR_Tuple = (0, target_Line_thickness55, 0)
                     # draw the bounding box of the ArUCo detection
@@ -490,8 +533,8 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
                     cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
                     cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
     
-                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, color_BGR_Tuple, 2)
-                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_SideLength, crosshairs_Color_BGR_Tuple_ActivatedNot, 4)
+                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, color_BGR_Tuple, 2)
+                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_ActivatedNot, 4)
    
                 # draw the ArUco marker ID on the frame
                 # * Maker ID: Red Color
@@ -503,6 +546,12 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
 
         ##jwc o 2.1 # show the output frame
         ##jwc o 2.1 cv2.imshow("Frame", frame)
+
+        # Reset _trigger_Client
+        #   End of Cpu-Cycle, so clear flags to false (esp. when true, yet nothing to process)
+        config_Global_File._trigger_Client_Req_01_Bool = False
+        config_Global_File._trigger_Client_Req_02_Bool = False
+        config_Global_File._trigger_Client_Req_03_Bool = False
 
         # * Borrowed from 'detect_Motions_ARCHIVED_Fn()'
         #
@@ -632,6 +681,8 @@ def video_feed():
     # type (mime type)
     return Response(generate(),	mimetype = "multipart/x-mixed-replace; boundary=frame")
 
+# General functions for internal-server use only
+#
 
 # Immobilizes sytem (chocks on) after 'timeout' seconds 
 def watchdog_timer():
@@ -796,7 +847,13 @@ def emergencyStop_Off_Fn():
     brakes_off()
     io_Driver_File.light_red_off()
 
+def calculate__timer_Mission_Countdown_Sec__Fn(timer_Duration_MAX_IN, timer_Start_In, timer_Now_In):
+    return timer_Duration_MAX_IN - (timer_Now_In - timer_Start_In)
 
+
+
+# Functions for clients to access server
+#
 """ jwc y
 # URL for motor control - format: /motor?l=[speed]&r=[speed]
 @app_Cl_Ob.route('/motor')
@@ -1031,16 +1088,57 @@ def heartbeat_Freq_IncDec_Fn():
         print("*** *** *** *** DEBUG: heartbeat_Freq_Mod_IncDec_Fn(): config_Global_File.heartbeat_freq >= 0: Valid"  )
     return 'ok'
 
-@app_Cl_Ob.route('/timer_Mission_Reset_Fn')
-def timer_Mission_Reset_Fn():
+@app_Cl_Ob.route('/timer_Mission_Refresh_Fn')
+def timer_Mission_Refresh_Fn():
     ##jwc o  incdec = request.args.get('incdec')
 
     config_Global_File._timer_Mission_Start_Sec = int(time.time())
     config_Global_File._timer_Mission_Now_Sec = config_Global_File._timer_Mission_Start_Sec
     config_Global_File._timer_Mission_Countdown_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC
+    config_Global_File._timer_Mission_Expired_Bool = False
     config_Global_File._timer_Mission_Reserves_Sec_Int = config_Global_File._timer_Mission_Reserves_SEC_MAX_INT
+    config_Global_File._timer_Mission_Recharge_Sec_Int = 0
+    config_Global_File._timer_Mission_Recharge_Timestamp_Int = 0
 
-    print("*** *** DEBUG: timer_Mission_Reset_Fn: ", config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
+    # Clear scores
+    score_Targeted_Dict.clear()
+    ##jwc y score_Targeted_ClosenessToVideoCenter_Dict.clear()
+    score_Targeted_WeightedToVideoCenter_Dict.clear()
+    score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict.clear()
+    score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict.clear()
+    score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict.clear()
+
+    print("*** *** DEBUG: timer_Mission_Refresh_Fn: ", config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
+    
+    return 'ok'
+
+@app_Cl_Ob.route('/trigger_Client_01_Fn')
+def trigger_Client_01_Fn():
+    ##jwc o  incdec = request.args.get('incdec')
+
+    config_Global_File._trigger_Client_Req_01_Bool = True
+
+    print("*** *** DEBUG: trigger_Client_01_Fn: ", config_Global_File._trigger_Client_Req_01_Bool)
+    
+    return 'ok'
+
+@app_Cl_Ob.route('/trigger_Client_02_Fn')
+def trigger_Client_02_Fn():
+    ##jwc o  incdec = request.args.get('incdec')
+
+    config_Global_File._trigger_Client_Req_02_Bool = True
+
+    print("*** *** DEBUG: trigger_Client_02_Fn: ", config_Global_File._trigger_Client_Req_02_Bool)
+    
+    return 'ok'
+
+@app_Cl_Ob.route('/trigger_Client_03_Fn')
+def trigger_Client_03_Fn():
+    ##jwc o  incdec = request.args.get('incdec')
+
+    config_Global_File._trigger_Client_Req_03_Bool = True
+
+    print("*** *** DEBUG: trigger_Client_03_Fn: ", config_Global_File._trigger_Client_Req_03_Bool)
     
     return 'ok'
 
@@ -1113,22 +1211,38 @@ def heartbeat():
     ##jwc o output['a4'] = io_Driver_File.analog_four_read()
 
     output['sc'] = str( score_Targeted_Dict )
+    ##jwc y output['sctc'] = str( score_Targeted_ClosenessToVideoCenter_Dict )
+    output['sctw'] = str( score_Targeted_WeightedToVideoCenter_Dict )
+    output['sctwtc1'] = str( score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict )
+    output['sctwtc2'] = str( score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict )
+    output['sctwtc3'] = str( score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict )
 
     ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( config_Global_File )
     ##jwc n  get_VoltageAndTemp_Status_Fn( config_Global_File )
     piUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( config_Global_File )
-    output['bvi'] = f'{config_Global_File.batteryUps_Volts_Input_V:.2f}'
-    output['bvo'] = f'{config_Global_File.batteryUps_Volts_Output_V:.2f}'
-    output['bvb'] = f'{config_Global_File.batteryUps_Volts_Battery_V:.2f}'
-    output['btc'] = f'{config_Global_File.batteryUps_Temp_C:5.2f}C'
-    output['btf'] = f'{config_Global_File.batteryUps_Temp_F:5.2f}F'
+    output['bvi'] = f'{config_Global_File._batteryUps_Input_V:.2f}'
+    output['bvo'] = f'{config_Global_File._batteryUps_Output_V:.2f}'
+    output['bvb'] = f'{config_Global_File._batteryUps_Battery_V:.2f}'
+    output['btc'] = f'{config_Global_File._batteryUps_Temp_C:5.2f}C'
+    output['btf'] = f'{config_Global_File._batteryUps_Temp_F:5.2f}F'
     
     config_Global_File._timer_Mission_Now_Sec = int(time.time())
-    config_Global_File._timer_Mission_Countdown_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - (config_Global_File._timer_Mission_Now_Sec - config_Global_File._timer_Mission_Start_Sec)
+    ##jwc y config_Global_File._timer_Mission_Countdown_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - (config_Global_File._timer_Mission_Now_Sec - config_Global_File._timer_Mission_Start_Sec)
+    config_Global_File._timer_Mission_Countdown_Sec = calculate__timer_Mission_Countdown_Sec__Fn( config_Global_File._timer_Mission_Duration_MAX_SEC, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec)
     if(config_Global_File._timer_Mission_Countdown_Sec < 0):
         config_Global_File._timer_Mission_Countdown_Sec = 0
+        config_Global_File._timer_Mission_Expired_Bool = True
     output['tmc'] = config_Global_File._timer_Mission_Countdown_Sec
+    output['tme'] = config_Global_File._timer_Mission_Expired_Bool
     output['tmr'] = config_Global_File._timer_Mission_Reserves_Sec_Int
+    output['tmres'] = config_Global_File._timer_Mission_Recharge_Sec_Int
+    output['tmreth'] = config_Global_File._timer_Mission_Recharge_THRESHOLD_DEC
+    output['tmn'] = config_Global_File._timer_Mission_Now_Sec       
+    output['tmreti'] = config_Global_File._timer_Mission_Recharge_Timestamp_Int
+
+    ##jwc n if(config_Global_File._timer_Mission_Recharge_Sec_Int > 0):
+        ##jwc n # Reset only upon the above condition
+        ##jwc n config_Global_File._timer_Mission_Recharge_Sec_Int = 0
     print("*** *** *** DEBUG: timer_Mission: ", config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Countdown_Sec)
 
     return json.dumps(output)

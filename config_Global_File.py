@@ -56,16 +56,24 @@ temp = 0
 # * BatteryUps: GeekPi/52pi.com: EP-0118
 # https://wiki.52pi.com/index.php/UPS_(With_RTC_%26_Coulometer)_For_Raspberry_Pi_SKU:_EP-0118
 #
-batteryUps_Volts_Input_V = 0
-batteryUps_Volts_Output_V = 0
-batteryUps_Volts_Battery_V = 0
-batteryUps_Temp_C = 0
-batteryUps_Temp_F = 0
+_batteryUps_Input_V = 0
+_batteryUps_Output_V = 0
+_batteryUps_Battery_V = 0
+_batteryUps_Temp_C = 0
+_batteryUps_Temp_F = 0
 
 # * Timer
 _timer_Mission_Start_Sec = 0
 _timer_Mission_Now_Sec = 0
 _timer_Mission_Countdown_Sec = 0
+_timer_Mission_Expired_Bool = True
 _timer_Mission_Duration_MAX_SEC = 100
 _timer_Mission_Reserves_Sec_Int = 0
 _timer_Mission_Reserves_SEC_MAX_INT = 300
+_timer_Mission_Recharge_Sec_Int = 0
+_timer_Mission_Recharge_THRESHOLD_DEC = 0.10
+_timer_Mission_Recharge_Timestamp_Int = 0
+
+_trigger_Client_Req_01_Bool = False
+_trigger_Client_Req_02_Bool = False
+_trigger_Client_Req_03_Bool = False
