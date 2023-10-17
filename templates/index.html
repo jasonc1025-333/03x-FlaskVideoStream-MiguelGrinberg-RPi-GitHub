@@ -34,7 +34,9 @@
                 <!--jwc y  <img style="transform:rotate(0deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
                 <!-- reduce to minimize lag <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
                 <!-- try landscape: <img style="transform:rotate(180deg); height:50%; width:50%;" src="{{ url_for('video_feed') }}"> -->
-                <img style="transform:rotate(180deg); height:50%; width:100%;" src="{{ url_for('video_feed') }}">
+                <!-- not bad but some signficant lag, so restore previous: img style="transform:rotate(180deg); height:50%; width:100%;" src="{{ url_for('video_feed') }}"-->
+                <!-- TYJ 3 sec lag being not bad -->
+                <img style="transform:rotate(180deg); height:25%; width:50%;" src="{{ url_for('video_feed') }}">
 
                 <!--jwc <canvas' seems to corrupt 'img' <canvas>
                   <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
