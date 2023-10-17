@@ -76,7 +76,9 @@ body, html {
 	/* height:7.5%; */
 	/* padding-top:10px; */
 	/* padding-top:50px; */ /* Needed for Linux */
-	margin-top:3.25rem;
+	/* margin-top:3.25rem; */
+	/* jwc not enough for small laptop: margin-top:4.0rem; */
+	margin-top:6.0rem;
 	/* padding-top:5px; */
 }
 #bottom-row {

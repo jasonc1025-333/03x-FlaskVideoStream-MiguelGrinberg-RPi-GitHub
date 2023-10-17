@@ -279,65 +279,6 @@ videoStream_Cl_Ob = VideoStream(src=0).start()
 time.sleep(2.0)
 
 
-def detect_Motions_ARCHIVED_Fn(frameCount):
-    # grab global references to the video stream, output frame, and
-    # lock variables
-    global videoStream_Cl_Ob, outputFrame, lock
-
-    # initialize the motion detector and the total number of frames
-    # read thus far
-    motionDetect_Cl_Ob = singleMotionDetector_Cl(accumWeight=0.1)
-    total = 0
-
-    # loop over frames from the video stream
-    while True:
-        # read the next frame from the video stream, resize it,
-        # convert the frame to grayscale, and blur it
-        frame = videoStream_Cl_Ob.read()
-        frame = imutils.resize(frame, width=400)
-        # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
-        ##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (7, 7), 0)
-        
-        # jwc Frame is originally right-side up, yet timestamp-print is upside down
-        #     So, flip upside down before timestamp-print, then re-flip after
-        frame = imutils.rotate(frame, 180)
-
-        # grab the current timestamp and draw it on the frame
-        timestamp = datetime.datetime.now()
-        # cv2.putText(frame, timestamp.strftime(
-        # 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-        # 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-        # jwc Frame is originally right-side up, yet timestamp-print is upside down
-        #     So, flip upside down before timestamp-print, then re-flip after
-        frame = imutils.rotate(frame, 180)
-
-        # if the total number of frames has reached a sufficient
-        # number to construct a reasonable background model, then
-        # continue to process the frame
-        if total > frameCount:
-            # detect motion in the image
-            motion = motionDetect_Cl_Ob.detect(gray)
-
-            # cehck to see if motion was found in the frame
-            if motion is not None:
-                # unpack the tuple and draw the box surrounding the
-                # "motion area" on the output frame
-                (thresh, (minX, minY, maxX, maxY)) = motion
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
-        
-        # update the background model and increment the total number
-        # of frames read thus far
-        motionDetect_Cl_Ob.update(gray)
-        total += 1
-
-        # acquire the lock, set the output frame, and release the
-        # lock
-        with lock:
-            outputFrame = frame.copy()
-
 ## jwc 2.1
 ##
 
@@ -360,6 +301,9 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         # convert the frame to grayscale, and blur it
         frame = videoStream_Cl_Ob.read()
         ##jwc o frame = imutils.resize(frame, width=400)
+        ##jwc yn though nice size, may be causing lag thus reduce: frame = imutils.resize(frame, width=1000)
+        ##jwc too small: frame = imutils.resize(frame, width=400)
+        ##jwc too small: frame = imutils.resize(frame, width=750)
         frame = imutils.resize(frame, width=1000)
 
         video_Height, video_Width = frame.shape[:2]  # float
@@ -368,190 +312,242 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         video_Center_X = int(video_Width/2)
         video_Center_Y = int(video_Height/2)
         video_Crosshair_RadiusLength = 200
+        target_NormalizedSimpler_Factor_Int = 10
         
         crosshairs_Line_Thickness = 8
         target_Line_thickness = 4
 
-        print("*** *** DEBUG: video_Width: " + str(video_Width) + " video_Height: " + str(video_Height) + " video_Center_X: " + str(video_Center_X) + " video_Center_Y: " + str(video_Center_Y))
+        ##jwc y 2021-0521 reduce server load: 
+        if (config_Global_File._debug_Print_On):
+            print("*** *** DEBUG: video_Width: " + str(video_Width) + " video_Height: " + str(video_Height) + " video_Center_X: " + str(video_Center_X) + " video_Center_Y: " + str(video_Center_Y))
 
         # jwc Frame is originally right-side up, yet timestamp-print is upside down
         #     So, flip upside down before timestamp-print, then re-flip after
         frame = imutils.rotate(frame, 180)
 
-        # * Detect ArUco Markers: Adrian Rosebrock
+        # Conditionally Deactivate to Reduce Cpu/Net Lag
         #
-
-        # detect ArUco markers in the input frame
-        (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters=arucoParams)
-
-        # * Setup Context-Based Color-Scheme
-        # * Color = (B,G,R)
-        #
-        if (config_Global_File.servo_03_Degrees < 180):
-            # * Arm not in Standby/Neutral/Safety: Max_180 Position, Thus Cam Inactive: Not in viewer mode: Black >> Grey
+        if (config_Global_File._camAi_On): 
+            # * Detect ArUco Markers: Adrian Rosebrock
             #
-            ##jwc:  crosshairs_Color_BGR_Tuple_ActivatedNot = (255, 255, 255)
-            ##jwc:  crosshairs_Color_BGR_Tuple_Activated = (255, 255, 255)
-            ##jwc:  target_Color_BGR_Tuple_ActivatedNot = (255, 255, 255)
-            ##jwc;  target_Color_BGR_Tuple_Activated = (255, 255, 255)
-            crosshairs_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
-            crosshairs_Color_BGR_Tuple_Activated = (0, 255, 255)
-            target_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
-            target_Color_BGR_Tuple_Activated = (0, 255, 255)
-            target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
-            cv2.putText(frame, 'Cam: Non-Active', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-            cv2.putText(frame, 'Arm: Set to Max_180', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-        else:
-            # * Arm in Standby/Neutral/Safety: Max_180 Position, Thus Cam Active: In viewer mode: Green
+
+            # detect ArUco markers in the input frame
+            (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters=arucoParams)
+
+            # * Setup Context-Based Color-Scheme
+            # * Color = (B,G,R)
             #
-            crosshairs_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
-            crosshairs_Color_BGR_Tuple_Activated = (0, 0, 255)
-            target_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
-            target_Color_BGR_Tuple_Activated = (0, 0, 255)
-            target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
-            cv2.putText(frame, 'Cam: Active', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(frame, 'Arm: Max_180', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+            if (config_Global_File.servo_03_Degrees < 180):
+                # * Arm not in Standby/Neutral/Safety: Max_180 Position, Thus Cam Inactive: Not in viewer mode: Black >> Grey
+                #
+                ##jwc:  crosshairs_Color_BGR_Tuple_ActivatedNot = (255, 255, 255)
+                ##jwc:  crosshairs_Color_BGR_Tuple_Activated = (255, 255, 255)
+                ##jwc:  target_Color_BGR_Tuple_ActivatedNot = (255, 255, 255)
+                ##jwc;  target_Color_BGR_Tuple_Activated = (255, 255, 255)
+                crosshairs_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
+                crosshairs_Color_BGR_Tuple_Activated = (0, 255, 255)
+                target_Color_BGR_Tuple_ActivatedNot = (0, 255, 255)
+                target_Color_BGR_Tuple_Activated = (0, 255, 255)
+                target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
+                cv2.putText(frame, 'Cam: Non-Active', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame, 'Arm: Set to Max_180', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+            else:
+                # * Arm in Standby/Neutral/Safety: Max_180 Position, Thus Cam Active: In viewer mode: Green
+                #
+                crosshairs_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
+                crosshairs_Color_BGR_Tuple_Activated = (0, 0, 255)
+                target_Color_BGR_Tuple_ActivatedNot = (0, 255, 0)
+                target_Color_BGR_Tuple_Activated = (0, 0, 255)
+                target_Color_BGR_Tuple_Activated_Friendly = (255, 0, 0)  # Blue irregardless of Arm-Position
+                cv2.putText(frame, 'Cam: Active', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+                cv2.putText(frame, 'Arm: Max_180', (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength + 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
 
-        # * Draw Crosshairs
-        # ** Draw Crosshairs after AI Image Detection
-        ##jwc o cv2.rectangle(frame, (minX, minY), (maxX, maxY), (255, 255, 255), 2)
-        ##jwc n cv2.rectangle(frame, ((video_Width/2)-50, (video_Height/2)-50), ((video_Width/2)+50, (video_Height/2)+50), (0, 255, 0), 2)
-        ##jwc y cv2.rectangle(frame, (50, 50), (100, 100), (0, 0, 255), 2)
-        ##jwc y cv2.rectangle(frame, (int(video_Width/2)-50, int(video_Height/2)-50), (int(video_Width/2)+50, int(video_Height/2)+50), (0, 255, 0), 2)
-        ##jwc y cv2.rectangle(frame, (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y - video_Crosshair_RadiusLength), (video_Center_X + video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength), (0, 255, 0), 2)
-        ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, (0, 255, 0), 2)
-        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_ActivatedNot, crosshairs_Line_Thickness)
+            # * Draw Crosshairs
+            # ** Draw Crosshairs after AI Image Detection
+            ##jwc o cv2.rectangle(frame, (minX, minY), (maxX, maxY), (255, 255, 255), 2)
+            ##jwc n cv2.rectangle(frame, ((video_Width/2)-50, (video_Height/2)-50), ((video_Width/2)+50, (video_Height/2)+50), (0, 255, 0), 2)
+            ##jwc y cv2.rectangle(frame, (50, 50), (100, 100), (0, 0, 255), 2)
+            ##jwc y cv2.rectangle(frame, (int(video_Width/2)-50, int(video_Height/2)-50), (int(video_Width/2)+50, int(video_Height/2)+50), (0, 255, 0), 2)
+            ##jwc y cv2.rectangle(frame, (video_Center_X - video_Crosshair_RadiusLength, video_Center_Y - video_Crosshair_RadiusLength), (video_Center_X + video_Crosshair_RadiusLength, video_Center_Y + video_Crosshair_RadiusLength), (0, 255, 0), 2)
+            ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, (0, 255, 0), 2)
+            cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_ActivatedNot, crosshairs_Line_Thickness)
 
-        # verify *at least* one ArUco marker was detected
-        if len(corners) > 0:
-            # flatten the ArUco IDs list
-            ids = ids.flatten()
-    
-            # loop over the detected ArUCo corners
-            for (markerCorner, markerID) in zip(corners, ids):
-                # extract the marker corners (which are always returned
-                # in top-left, top-right, bottom-right, and bottom-left
-                # order)
-                corners = markerCorner.reshape((4, 2))
-                (topLeft, topRight, bottomRight, bottomLeft) = corners
-    
-                # convert each of the (x, y)-coordinate pairs to integers
-                topRight = (int(topRight[0]), int(topRight[1]))
-                bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
-                bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
-                topLeft = (int(topLeft[0]), int(topLeft[1]))
-    
-                # compute and draw the center (x, y)-coordinates of the ArUco marker
-                cX = int((topLeft[0] + bottomRight[0]) / 2.0)
-                cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-                ##jwc o cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
-                cv2.circle(frame, (cX, cY), 10, (255, 0, 0), -1)
-                print("*** *** *** DEBUG: cX: " + str(cX) + " cY: " + str(cY))
+            # verify *at least* one ArUco marker was detected
+            if len(corners) > 0:
+                # flatten the ArUco IDs list
+                ids = ids.flatten()
 
-                target_DistanceToVideoCenter_Int = int(math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ))
-                target_ScoreWeightedToVideoCenter_Int = video_Crosshair_RadiusLength - target_DistanceToVideoCenter_Int
+                # loop over the detected ArUCo corners
+                for (markerCorner, markerID) in zip(corners, ids):
+                    # extract the marker corners (which are always returned
+                    # in top-left, top-right, bottom-right, and bottom-left
+                    # order)
+                    corners = markerCorner.reshape((4, 2))
+                    (topLeft, topRight, bottomRight, bottomLeft) = corners
 
-                ##jwc o if math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ) <= video_Crosshair_RadiusLength:
-                if target_DistanceToVideoCenter_Int <= video_Crosshair_RadiusLength:
+                    # convert each of the (x, y)-coordinate pairs to integers
+                    topRight = (int(topRight[0]), int(topRight[1]))
+                    bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+                    bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+                    topLeft = (int(topLeft[0]), int(topLeft[1]))
 
-                    ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, color_BGR_Tuple, 4)
-                    cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_Activated, crosshairs_Line_Thickness)
+                    # compute and draw the center (x, y)-coordinates of the ArUco marker
+                    cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+                    cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+                    ##jwc o cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
+                    cv2.circle(frame, (cX, cY), 10, (255, 0, 0), -1)
+                    print("*** *** *** DEBUG: cX: " + str(cX) + " cY: " + str(cY))
 
-                    # Initialize/Reset for either Friendly or Enemy Targets
-                    ##NOT RESET HERE, DO CONDITIONALLY AT SENDING: config_Global_File._timer_Mission_Recharge_Sec_Int = 0
-                    # Friendly Targets
-                    #   Appears that Aruco Markers more reliable recognition on inner-part of arm (vs. outer-part of arm)
-                    #   Also, white flat margin very important.  Any curvature on marker interferes recognition.
-                    #   Only allow recharge if not waiting for last non-zero recharge to be sent to clients
-                    if(markerID == 0 or markerID ==1):
-                        # ASAP, Override Enemy-Borders with Friendly-Borders
-                        cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
-                        cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
-                        cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
-                        cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                    target_DistanceToVideoCenter_Int = int(math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ))
+                    target_ScoreWeightedToVideoCenter_Int = video_Crosshair_RadiusLength - target_DistanceToVideoCenter_Int
+                    # Round accurately to tenth-decimal, using 'int()' but not 'round()'
+                    target_ScoreWeightedToVideoCenter_NormalizedSimpler_Int = int(((target_ScoreWeightedToVideoCenter_Int/video_Crosshair_RadiusLength)*target_NormalizedSimpler_Factor_Int)*10)/10
 
-                        timer_Mission_Countdown_Expired_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - config_Global_File._timer_Mission_Countdown_Sec
-                        # Recharge Threshold starts at significant-amount of secs
-                        #   Due to multiple-requests/threads and asynchronous, 'config_Global_File._timer_Mission_Countdown_Sec' may not be updated in time to prvent
-                        #   \ double-dipping invalidly.  Thus best to update it asap, to prevent such timing loophole.
-                        ##jwc y if(timer_Mission_Countdown_Expired_Sec > int(0.10 * config_Global_File._timer_Mission_Duration_MAX_SEC)):
-                        if(timer_Mission_Countdown_Expired_Sec > int(config_Global_File._timer_Mission_Recharge_THRESHOLD_DEC * config_Global_File._timer_Mission_Duration_MAX_SEC)):
-                            config_Global_File._timer_Mission_Recharge_Sec_Int = timer_Mission_Countdown_Expired_Sec
+                    ##jwc o if math.sqrt( (cX - video_Center_X)**2 + (cY - video_Center_Y)**2 ) <= video_Crosshair_RadiusLength:
+                    if target_DistanceToVideoCenter_Int <= video_Crosshair_RadiusLength:
+                    
+                        ##jwc y cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, color_BGR_Tuple, 4)
+                        cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_Activated, crosshairs_Line_Thickness)
 
-                            # Do following asap to prevent multi-threading racing conflict
-                            #
-                            ##jwc n config_Global_File._timer_Mission_Countdown_Sec += timer_Mission_Countdown_Expired_Sec
-                            config_Global_File._timer_Mission_Start_Sec += config_Global_File._timer_Mission_Recharge_Sec_Int
-                            config_Global_File._timer_Mission_Countdown_Sec = calculate__timer_Mission_Countdown_Sec__Fn( config_Global_File._timer_Mission_Duration_MAX_SEC, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec)
+                        # Initialize/Reset for either Friendly or Enemy Targets
+                        ##NOT RESET HERE, DO CONDITIONALLY AT SENDING: config_Global_File._timer_Mission_Recharge_Sec_Int = 0
+                        # Friendly Targets
+                        #   Appears that Aruco Markers more reliable recognition on inner-part of arm (vs. outer-part of arm)
+                        #   Also, white flat margin very important.  Any curvature on marker interferes recognition.
+                        #   Only allow recharge if not waiting for last non-zero recharge to be sent to clients
+                        if(markerID == 0 or markerID ==1):
+                            # ASAP, Override Enemy-Borders with Friendly-Borders
+                            cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                            cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                            cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
+                            cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_Activated_Friendly, target_Line_thickness)
 
-                            config_Global_File._timer_Mission_Reserves_Sec_Int -= config_Global_File._timer_Mission_Recharge_Sec_Int
+                            timer_Mission_Countdown_Expired_Sec = config_Global_File._timer_Mission_Duration_MAX_SEC - config_Global_File._timer_Mission_Countdown_Sec
+                            # Recharge Threshold starts at significant-amount of secs
+                            #   Due to multiple-requests/threads and asynchronous, 'config_Global_File._timer_Mission_Countdown_Sec' may not be updated in time to prvent
+                            #   \ double-dipping invalidly.  Thus best to update it asap, to prevent such timing loophole.
+                            ##jwc y if(timer_Mission_Countdown_Expired_Sec > int(0.10 * config_Global_File._timer_Mission_Duration_MAX_SEC)):
+                            if(timer_Mission_Countdown_Expired_Sec > int(config_Global_File._timer_Mission_Recharge_THRESHOLD_DEC * config_Global_File._timer_Mission_Duration_MAX_SEC)):
+                                config_Global_File._timer_Mission_Recharge_Sec_Int = timer_Mission_Countdown_Expired_Sec
 
-                            ##jwc y cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-                            cv2.putText(frame, 'Recharge: ' + str(config_Global_File._timer_Mission_Recharge_Sec_Int), (topLeft[0], topLeft[1] - 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-                            
-                            config_Global_File._timer_Mission_Recharge_Timestamp_Int = config_Global_File._timer_Mission_Now_Sec
-                            print("*** *** *** ***")
-                            print("*** *** *** *** DEBUG: Recharge:  ", config_Global_File._timer_Mission_Recharge_Sec_Int, config_Global_File._timer_Mission_Recharge_Timestamp_Int, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
-                            print("*** *** *** ***")
-                    # Enemy Targets
-                    else:
-                        ##jwc y color_BGR_Tuple = (0, 0, 255)
-                        # draw the bounding box of the ArUCo detection
-                        cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated, target_Line_thickness)
-                        cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_Activated, target_Line_thickness)
-                        cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_Activated, target_Line_thickness)
-                        cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_Activated, target_Line_thickness)
-        
+                                # Do following asap to prevent multi-threading racing conflict
+                                #
+                                ##jwc n config_Global_File._timer_Mission_Countdown_Sec += timer_Mission_Countdown_Expired_Sec
+                                config_Global_File._timer_Mission_Start_Sec += config_Global_File._timer_Mission_Recharge_Sec_Int
+                                config_Global_File._timer_Mission_Countdown_Sec = calculate__timer_Mission_Countdown_Sec__Fn( config_Global_File._timer_Mission_Duration_MAX_SEC, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Now_Sec)
+
+                                config_Global_File._timer_Mission_Reserves_Sec_Int -= config_Global_File._timer_Mission_Recharge_Sec_Int
+
+                                ##jwc y cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                                cv2.putText(frame, 'Recharge: ' + str(config_Global_File._timer_Mission_Recharge_Sec_Int), (topLeft[0], topLeft[1] - 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+
+                                config_Global_File._timer_Mission_Recharge_Timestamp_Int = config_Global_File._timer_Mission_Now_Sec
+                                print("*** *** *** ***")
+                                print("*** *** *** *** DEBUG: Recharge:  ", config_Global_File._timer_Mission_Recharge_Sec_Int, config_Global_File._timer_Mission_Recharge_Timestamp_Int, config_Global_File._timer_Mission_Countdown_Sec, config_Global_File._timer_Mission_Reserves_Sec_Int)
+                                print("*** *** *** ***")
                         # Enemy Targets
-                        if(config_Global_File.servo_03_Degrees == 180):
-                            score_Targeted_Dict[str(markerID)] += 1
-                            ##jwc y score_Targeted_ClosenessToVideoCenter_Dict[str(target_DistanceToVideoCenter_Int)] += 1
-                            score_Targeted_WeightedToVideoCenter_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
-                            print("*** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
-                            print("*** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_Dict= " + str(score_Targeted_WeightedToVideoCenter_Dict))
-                        
-                        if(config_Global_File._trigger_Client_Req_01_Bool):
-                            score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
-                            config_Global_File._trigger_Client_Req_01_Bool = False
-                            print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict))
+                        else:
+                            ##jwc y color_BGR_Tuple = (0, 0, 255)
+                            # draw the bounding box of the ArUCo detection
+                            cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+                            cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+                            cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_Activated, target_Line_thickness)
+                            cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_Activated, target_Line_thickness)
 
-                        if(config_Global_File._trigger_Client_Req_02_Bool):
-                            score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
-                            config_Global_File._trigger_Client_Req_02_Bool = False
-                            print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict))
+                            # Enemy Targets
+                            if(config_Global_File.servo_03_Degrees == 180):
+                                score_Targeted_Dict[str(markerID)] += 1
+                                ##jwc y score_Targeted_ClosenessToVideoCenter_Dict[str(target_DistanceToVideoCenter_Int)] += 1
+                                ##jwc y score_Targeted_WeightedToVideoCenter_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                                score_Targeted_WeightedToVideoCenter_Dict[str(target_ScoreWeightedToVideoCenter_NormalizedSimpler_Int)] += 1
 
-                        if(config_Global_File._trigger_Client_Req_03_Bool):
-                            score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
-                            config_Global_File._trigger_Client_Req_03_Bool = False
-                            print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict))
+                                score_Sum_Dec = 0
+                                score_Qty_Int = 0
+                                for key, value in score_Targeted_WeightedToVideoCenter_Dict.items():
+                                    score_Sum_Dec += float(key) * value
+                                    score_Qty_Int += value
+                                config_Global_File._scanner_Client_AvgScore_Dec = (int((score_Sum_Dec / score_Qty_Int) * 10))/10
 
-                else:
-                    ##jwc y color_BGR_Tuple = (0, target_Line_thickness55, 0)
-                    # draw the bounding box of the ArUCo detection
-                    cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
-                    cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
-                    cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
-                    cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
-    
-                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, color_BGR_Tuple, 2)
-                    ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_ActivatedNot, 4)
-   
-                # draw the ArUco marker ID on the frame
-                # * Maker ID: Red Color
-                ##jwc o cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
-                # * LineTypes: Recommended: LINE_AA = 8-connected line
-                cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-                print("*** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: markerID=" + str(markerID) + " markerID%10=" + str(markerID % 10))
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_Dict= " + str(score_Targeted_Dict))
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_Dict= " + str(score_Targeted_WeightedToVideoCenter_Dict))
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: ", score_Sum_Dec, score_Qty_Int, config_Global_File._scanner_Client_AvgScore_Dec)
 
-        ##jwc o 2.1 # show the output frame
-        ##jwc o 2.1 cv2.imshow("Frame", frame)
+                            if(config_Global_File._trigger_Client_Req_01_Bool):
+                                ## jwc y score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                                score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict[str(target_ScoreWeightedToVideoCenter_NormalizedSimpler_Int)] += 1
+                                config_Global_File._trigger_Client_Req_01_Bool = False
 
-        # Reset _trigger_Client
-        #   End of Cpu-Cycle, so clear flags to false (esp. when true, yet nothing to process)
-        config_Global_File._trigger_Client_Req_01_Bool = False
-        config_Global_File._trigger_Client_Req_02_Bool = False
-        config_Global_File._trigger_Client_Req_03_Bool = False
+                                score_Sum_Dec = 0
+                                score_Qty_Int = 0
+                                for key, value in score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict.items():
+                                    score_Sum_Dec += float(key) * value
+                                    score_Qty_Int += value
+                                config_Global_File._trigger_Client_01_AvgScorePerTrigger_Dec = (int((score_Sum_Dec / score_Qty_Int) * 10))/10
+
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict))
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: ", score_Sum_Dec, score_Qty_Int, config_Global_File._trigger_Client_01_AvgScorePerTrigger_Dec)
+
+                            if(config_Global_File._trigger_Client_Req_02_Bool):
+                                ##jwc y score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                                score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict[str(target_ScoreWeightedToVideoCenter_NormalizedSimpler_Int)] += 1
+                                config_Global_File._trigger_Client_Req_02_Bool = False
+
+                                score_Sum_Dec = 0
+                                score_Qty_Int = 0
+                                for key, value in score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict.items():
+                                    score_Sum_Dec += float(key) * value
+                                    score_Qty_Int += value
+                                config_Global_File._trigger_Client_02_AvgScorePerTrigger_Dec = (int((score_Sum_Dec / score_Qty_Int) * 10))/10
+
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict))
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: ", score_Sum_Dec, score_Qty_Int, config_Global_File._trigger_Client_02_AvgScorePerTrigger_Dec)
+
+                            if(config_Global_File._trigger_Client_Req_03_Bool):
+                                ##jwc y score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict[str(target_ScoreWeightedToVideoCenter_Int)] += 1
+                                score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict[str(target_ScoreWeightedToVideoCenter_NormalizedSimpler_Int)] += 1
+                                config_Global_File._trigger_Client_Req_03_Bool = False
+
+                                score_Sum_Dec = 0
+                                score_Qty_Int = 0
+                                for key, value in score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict.items():
+                                    score_Sum_Dec += float(key) * value
+                                    score_Qty_Int += value
+                                config_Global_File._trigger_Client_03_AvgScorePerTrigger_Dec = (int((score_Sum_Dec / score_Qty_Int) * 10))/10
+
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict= " + str(score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict))
+                                print("*** *** *** *** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: ", score_Sum_Dec, score_Qty_Int, config_Global_File._trigger_Client_03_AvgScorePerTrigger_Dec)
+
+                    else:
+                        ##jwc y color_BGR_Tuple = (0, target_Line_thickness55, 0)
+                        # draw the bounding box of the ArUCo detection
+                        cv2.line(frame, topLeft, topRight, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+                        cv2.line(frame, topRight, bottomRight, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+                        cv2.line(frame, bottomRight, bottomLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+                        cv2.line(frame, bottomLeft, topLeft, target_Color_BGR_Tuple_ActivatedNot, target_Line_thickness)
+
+                        ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, color_BGR_Tuple, 2)
+                        ##jwc ? cv2.circle(frame, (video_Center_X, video_Center_Y), video_Crosshair_RadiusLength, crosshairs_Color_BGR_Tuple_ActivatedNot, 4)
+
+                    # draw the ArUco marker ID on the frame
+                    # * Maker ID: Red Color
+                    ##jwc o cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    # https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
+                    # * LineTypes: Recommended: LINE_AA = 8-connected line
+                    cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
+                    print("*** DEBUG: /detect_Motions_And_ArucoMarkers_Fn: markerID=" + str(markerID) + " markerID%10=" + str(markerID % 10))
+
+            ##jwc o 2.1 # show the output frame
+            ##jwc o 2.1 cv2.imshow("Frame", frame)
+
+            # Reset _trigger_Client
+            #   End of Cpu-Cycle, so clear flags to false (esp. when true, yet nothing to process)
+            config_Global_File._trigger_Client_Req_01_Bool = False
+            config_Global_File._trigger_Client_Req_02_Bool = False
+            config_Global_File._trigger_Client_Req_03_Bool = False
+
+            #
+            # End: if (config_Global_File._camAi_On): 
+
 
         # * Borrowed from 'detect_Motions_ARCHIVED_Fn()'
         #
@@ -575,32 +571,39 @@ def detect_Motions_And_ArucoMarkers_Fn(frameCount):
         # * https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
         # * LineTypes: Recommended: LINE_AA = 8-connected line
         ##jwc o cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+        ##jwc y cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv2.LINE_AA)
+        ##jwc yy cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 4, cv2.LINE_AA)  ## Yellow: Bigger Size since too fuzzy)
+        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 4, cv2.LINE_AA)  ## Yellow: Bigger Size since too fuzzy)
 
         ##jwc m # jwc Frame is originally right-side up, yet timestamp-print is upside down
         ##jwc m #     So, flip upside down before timestamp-print, then re-flip after
         ##jwc m frame = imutils.rotate(frame, 180)
 
-        # if the total number of frames has reached a sufficient
-        # number to construct a reasonable background model, then
-        # continue to process the frame
-        if total > frameCount:
-            # detect motion in the image
-            motion = motionDetect_Cl_Ob.detect(gray)
+        if (config_Global_File._camAi_On): 
 
-            # check to see if motion was found in the frame
-            if motion is not None:
-                # unpack the tuple and draw the box surrounding the 
-                # "motion area" on the output frame
-                # ** Use Less-Strong Yellow Color
-                (thresh, (minX, minY, maxX, maxY)) = motion
-                ##jwc y cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 255, 255), 2)
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (127, 127, 127), 2)
-        
-        # update the background model and increment the total number
-        # of frames read thus far
-        motionDetect_Cl_Ob.update(gray)
-        total += 1
+            # if the total number of frames has reached a sufficient
+            # number to construct a reasonable background model, then
+            # continue to process the frame
+            if total > frameCount:
+                # detect motion in the image
+                motion = motionDetect_Cl_Ob.detect(gray)
+
+                # check to see if motion was found in the frame
+                if motion is not None:
+                    # unpack the tuple and draw the box surrounding the 
+                    # "motion area" on the output frame
+                    # ** Use Less-Strong Yellow Color
+                    (thresh, (minX, minY, maxX, maxY)) = motion
+                    ##jwc y cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 255, 255), 2)
+                    cv2.rectangle(frame, (minX, minY), (maxX, maxY), (127, 127, 127), 2)
+
+            # update the background model and increment the total number
+            # of frames read thus far
+            motionDetect_Cl_Ob.update(gray)
+            total += 1
+
+            #
+            # End: if (config_Global_File._camAi_On): 
 
         # jwc Frame is originally right-side up, yet timestamp-print is upside down
         #     So, flip upside down before timestamp-print, then re-flip after
@@ -1210,16 +1213,23 @@ def heartbeat():
     ##jwc o output['a3'] = io_Driver_File.analog_three_read()
     ##jwc o output['a4'] = io_Driver_File.analog_four_read()
 
-    output['sc'] = str( score_Targeted_Dict )
+    output['st'] = str( score_Targeted_Dict )
     ##jwc y output['sctc'] = str( score_Targeted_ClosenessToVideoCenter_Dict )
-    output['sctw'] = str( score_Targeted_WeightedToVideoCenter_Dict )
+    output['stw'] = str( score_Targeted_WeightedToVideoCenter_Dict )
+
+    output['scas'] = str( config_Global_File._scanner_Client_AvgScore_Dec )
+
+    output['tc1as'] = str( config_Global_File._trigger_Client_01_AvgScorePerTrigger_Dec)
+    output['tc2as'] = str( config_Global_File._trigger_Client_02_AvgScorePerTrigger_Dec)
+    output['tc3as'] = str( config_Global_File._trigger_Client_03_AvgScorePerTrigger_Dec)
+    
     output['sctwtc1'] = str( score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict )
     output['sctwtc2'] = str( score_Targeted_WeightedToVideoCenter_TriggerClient_02_Dict )
     output['sctwtc3'] = str( score_Targeted_WeightedToVideoCenter_TriggerClient_03_Dict )
 
     ## jwc replace w/ PiUpTimeUps: batteryUps_Read_Fn( config_Global_File )
     ##jwc n  get_VoltageAndTemp_Status_Fn( config_Global_File )
-    piUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( config_Global_File )
+    ###jwc y not use anymore, using standard battery pack: piUpTimeUps_2pt0__AlchemyPower.get_VoltageAndTemp_Status_Fn( config_Global_File )
     output['bvi'] = f'{config_Global_File._batteryUps_Input_V:.2f}'
     output['bvo'] = f'{config_Global_File._batteryUps_Output_V:.2f}'
     output['bvb'] = f'{config_Global_File._batteryUps_Battery_V:.2f}'
@@ -1243,7 +1253,10 @@ def heartbeat():
     ##jwc n if(config_Global_File._timer_Mission_Recharge_Sec_Int > 0):
         ##jwc n # Reset only upon the above condition
         ##jwc n config_Global_File._timer_Mission_Recharge_Sec_Int = 0
-    print("*** *** *** DEBUG: timer_Mission: ", config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Countdown_Sec)
+    
+    ##jwc y 2021-0521 reduce server load: 
+    if (config_Global_File._debug_Print_On):
+        print("*** *** *** DEBUG: timer_Mission: ", config_Global_File._timer_Mission_Now_Sec, config_Global_File._timer_Mission_Start_Sec, config_Global_File._timer_Mission_Countdown_Sec)
 
     return json.dumps(output)
 
@@ -1358,6 +1371,12 @@ if __name__ == '__main__':
     # * Threads default = 4, issue w/ 2,3rd browser
     ##jwc n not any better, seems worst: serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https', threads=6 )
     ## from 6 to 100
+    ##jwc y switch to 80 for VCS-firewall: serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https', threads=100 )
+    ##jwc n bind error: serve( app_Cl_Ob, host='0.0.0.0', port=80, url_scheme='https', threads=100 )
+    ##jwc n stuck at 'starting video stream...': serve( app_Cl_Ob, host='0.0.0.0', port=80, url_scheme='http', threads=100 )
+    ##jwc y serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https', threads=100 )
+    ##jwc n bind error: serve( app_Cl_Ob, host='0.0.0.0', port=80, url_scheme='http', threads=100 )
+    ##jwc n bind error: serve( app_Cl_Ob, host='0.0.0.0', port=443, url_scheme='https', threads=100 )
     serve( app_Cl_Ob, host='0.0.0.0', port=5000, url_scheme='https', threads=100 )
 
     # * Gevent
@@ -1369,3 +1388,67 @@ if __name__ == '__main__':
 #
 # release the video stream pointer
 videoStream_Cl_Ob.stop()
+
+
+#
+# Obsolete Code
+#
+
+def detect_Motions_ARCHIVED_Fn(frameCount):
+    # grab global references to the video stream, output frame, and
+    # lock variables
+    global videoStream_Cl_Ob, outputFrame, lock
+
+    # initialize the motion detector and the total number of frames
+    # read thus far
+    motionDetect_Cl_Ob = singleMotionDetector_Cl(accumWeight=0.1)
+    total = 0
+
+    # loop over frames from the video stream
+    while True:
+        # read the next frame from the video stream, resize it,
+        # convert the frame to grayscale, and blur it
+        frame = videoStream_Cl_Ob.read()
+        frame = imutils.resize(frame, width=400)
+        # jwc rotate 180-degrees to flip image, since cam is wrongly upside-down
+        ##jwc not work as time stamp upside down:  frame = imutils.rotate(frame, 180)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (7, 7), 0)
+        
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        frame = imutils.rotate(frame, 180)
+
+        # grab the current timestamp and draw it on the frame
+        timestamp = datetime.datetime.now()
+        # cv2.putText(frame, timestamp.strftime(
+        # 	"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+        # 	cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        # jwc Frame is originally right-side up, yet timestamp-print is upside down
+        #     So, flip upside down before timestamp-print, then re-flip after
+        frame = imutils.rotate(frame, 180)
+
+        # if the total number of frames has reached a sufficient
+        # number to construct a reasonable background model, then
+        # continue to process the frame
+        if total > frameCount:
+            # detect motion in the image
+            motion = motionDetect_Cl_Ob.detect(gray)
+
+            # cehck to see if motion was found in the frame
+            if motion is not None:
+                # unpack the tuple and draw the box surrounding the
+                # "motion area" on the output frame
+                (thresh, (minX, minY, maxX, maxY)) = motion
+                cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
+        
+        # update the background model and increment the total number
+        # of frames read thus far
+        motionDetect_Cl_Ob.update(gray)
+        total += 1
+
+        # acquire the lock, set the output frame, and release the
+        # lock
+        with lock:
+            outputFrame = frame.copy()

@@ -260,9 +260,21 @@ function updateHUD(e) {
         
         score += "<br>";
         score += "<br>score_Targeted_Dict: ";
-        score += response.sc;
+        score += response.st;
         score += "<br>score_Targeted_WeightedToVideoCenter_Dict: ";
-        score += response.sctw;
+        score += response.stw;
+
+        score += "<br>";
+        score += "<br>config_Global_File._scanner_Client_AvgScore_Dec: ";
+        score += response.scas;
+
+        score += "<br>config_Global_File._trigger_Client_01_AvgScorePerTrigger_Dec: ";
+        score += response.tc1as;
+        score += "<br>config_Global_File._trigger_Client_02_AvgScorePerTrigger_Dec: ";
+        score += response.tc2as;
+        score += "<br>config_Global_File._trigger_Client_03_AvgScorePerTrigger_Dec: ";
+        score += response.tc3as;
+
         score += "<br>";
         score += "<br>score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict: ";
         score += response.sctwtc1;
