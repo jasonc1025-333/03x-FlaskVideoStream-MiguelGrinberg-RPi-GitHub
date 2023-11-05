@@ -228,3 +228,6 @@
     .visible_Not_CssCl {
         display: none;
     }
+    .active_Not_CssCl {
+        color: dimgray;
+    }

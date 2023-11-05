@@ -260,9 +260,21 @@ function updateHUD(e) {
         
         score += "<br>";
         score += "<br>score_Targeted_Dict: ";
-        score += response.sc;
+        score += response.st;
         score += "<br>score_Targeted_WeightedToVideoCenter_Dict: ";
-        score += response.sctw;
+        score += response.stw;
+
+        score += "<br>";
+        score += "<br>config_Global_File._scanner_Client_AvgScore_Dec: ";
+        score += response.scas;
+
+        score += "<br>config_Global_File._trigger_Client_01_AvgScorePerTrigger_Dec: ";
+        score += response.tc1as;
+        score += "<br>config_Global_File._trigger_Client_02_AvgScorePerTrigger_Dec: ";
+        score += response.tc2as;
+        score += "<br>config_Global_File._trigger_Client_03_AvgScorePerTrigger_Dec: ";
+        score += response.tc3as;
+
         score += "<br>";
         score += "<br>score_Targeted_WeightedToVideoCenter_TriggerClient_01_Dict: ";
         score += response.sctwtc1;
@@ -279,8 +291,8 @@ function updateHUD(e) {
         // button_status('red', response.c);
         // button_status('green', response.g);
 
-        $('#lmtrim-val').html(response.lt);
-        $('#rmtrim-val').html(response.rt);
+        $('#networkThrottleDelay_FactorOfOneCpuCycle_20msec-val').html(response.lt);
+        $('#unusedUiVal-val').html(response.rt);
 
         $('#heartbeat_Freq_Mod_Id').html(response.hf);
         if((_serverHeartbeat_Req_Interval_BASE_MSEC + (parseInt(response.hf)*_serverHeartbeat_Req_Interval_INCDECMAX_MSEC)) !== _serverHeartbeat_Req_Interval_Total_Msec){
@@ -406,6 +418,11 @@ function trigger_Client_01_Fn(pad) {
     var url_Str = "/trigger_Client_01_Fn";
     httpRequest_Cl_Ob.open("GET", url_Str, true);
     httpRequest_Cl_Ob.send(null);
+	
+    ///jwc n await sleep2(50);
+    sleep2(50);
+
+	console.log('*** url: ' + url_Str)
 }
 function trigger_Client_02_Fn(pad) {
     trigger_Client_02_Opacity_Bool = !trigger_Client_02_Opacity_Bool;
@@ -414,6 +431,7 @@ function trigger_Client_02_Fn(pad) {
     var url_Str = "/trigger_Client_02_Fn";
     httpRequest_Cl_Ob.open("GET", url_Str, true);
     httpRequest_Cl_Ob.send(null);
+	console.log('*** url: ' + url_Str)
 }
 function trigger_Client_03_Fn(pad) {
     trigger_Client_03_Opacity_Bool = !trigger_Client_03_Opacity_Bool;
@@ -422,6 +440,7 @@ function trigger_Client_03_Fn(pad) {
     var url_Str = "/trigger_Client_03_Fn";
     httpRequest_Cl_Ob.open("GET", url_Str, true);
     httpRequest_Cl_Ob.send(null);
+	console.log('*** url: ' + url_Str)
 }
 
 function reset_doubleclick() {
@@ -453,7 +472,7 @@ function motor_r(rspeed) {
     set_motor();
 }
 function set_motor() {
-    var motor_url = "/motor?l=" + newSpeedL.toString() + '&r=' + newSpeedR.toString();
+    var motor_url = "/motor_for_straight?l=" + newSpeedL.toString() + '&r=' + newSpeedR.toString();
     httpRequest_Cl_Ob.open("GET", motor_url, true);
     httpRequest_Cl_Ob.send(null);
     var oldId = "l" + actSpeedL.toString();

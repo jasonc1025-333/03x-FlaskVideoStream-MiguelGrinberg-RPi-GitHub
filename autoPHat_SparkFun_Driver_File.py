@@ -46,6 +46,40 @@ import qwiic_scmd
 
 import pi_servo_hat
 
+# to communicate/command micro:bit via USB-Serial
+#
+
+import serial  ## to communicate/command micro:bit
+
+# Open the serial port for sending at speed 115200 bits/second
+###jwc undo: device = serial.Serial('/dev/ttyACM0', 115200)
+###jwc y microBit_Serial_Obj = serial.Serial('/dev/ttyACM0', 115200)
+###jwc y microBit_Serial_Obj = serial.Serial('/dev/ttyACM1', 115200)
+###jwc debug y cd: microBit_Serial_Obj = serial.Serial('/dev/ttyAMA0', 115200)
+microBit_Serial_Obj = serial.Serial('/dev/ttyACM0', 115200)
+
+# Write string to serial port, and terminate with a line feed character
+##jwc y serialString_Tx = "22\n"
+##jwc y serialString_Tx = "Hello Jesus :)\n"
+##jwc y serialString_Tx = ":)\n"
+##jwc ? buffer overload: rpi_Microbit_1CharMsg_Forward_Str = "forward\n"
+##jwc ? buffer overload: rpi_Microbit_1CharMsg_Backward_Str = "backward\n"
+##jwc ? rpi_Microbit_1CharMsg_Forward_Str = "fo\n"
+##jwc ? rpi_Microbit_1CharMsg_Backward_Str = "ba\n"
+rpi_Microbit_1CharMsg_Forward_Str = "f\n"
+rpi_Microbit_1CharMsg_Backward_Str = "b\n"
+rpi_Microbit_1CharMsg_Left_Str = "l\n"
+rpi_Microbit_1CharMsg_Right_Str = "r\n"
+##jwc y rpi_Microbit_1CharMsg_Stop_Str = "s\n"
+rpi_Microbit_1CharMsg_Stop_Str = "s:\n"
+rpi_Microbit_1CharMsg_ForwardLeft_Str = "8\n"
+rpi_Microbit_1CharMsg_ForwardRight_Str = "9\n"
+rpi_Microbit_1CharMsg_ArmForward_Down_Str = "d\n"
+rpi_Microbit_1CharMsg_ArmBackward_Up_Str = "u\n"
+rpi_Microbit_1CharMsg_Gear1_Str = "1\n"
+rpi_Microbit_1CharMsg_Gear2_Str = "2\n"
+
+
 def init():
     # DC Motors
     #
@@ -93,11 +127,59 @@ def init():
     time.sleep(1)
 
 
+def go_Tilt_Motor_XDotY_UxSlider_Fn(speed_L_In, speed_R_In):
+    ##jwc yn inconsistent rx, maybe too long header?: rpiToMicrobitMsgStr = "ti_mo_xy:{0:03.0f}.{1:03.0f}\n".format(speed_L_In, speed_R_In)
+    rpiToMicrobitMsgStr = "xy:{0:03.0f}.{1:03.0f}\n".format(speed_L_In, speed_R_In)
+    microBit_Serial_Obj.write(rpiToMicrobitMsgStr.encode())
+    print("*** *** *** DEBUG: go_Tilt_Motor_XDotY_UxSlider_Fn: " + rpiToMicrobitMsgStr)
+
+def go_Tilt_Motor_Y_UxSlider_Fn(speed_In):
+    ##jwc yn inconsistent rx, maybe too long header?: rpiToMicrobitMsgStr = "ti_mo_xy:{0:03.0f}.{1:03.0f}\n".format(speed_L_In, speed_R_In)
+    rpiToMicrobitMsgStr = "y:{0:03.0f}\n".format(speed_In)
+    microBit_Serial_Obj.write(rpiToMicrobitMsgStr.encode())
+    print("*** *** *** DEBUG: go_Tilt_Motor_Y_UxSlider_Fn: " + rpiToMicrobitMsgStr)
+
+def go_Tilt_Motor_X_UxSlider_Fn(speed_In):
+    ##jwc yn inconsistent rx, maybe too long header?: rpiToMicrobitMsgStr = "ti_mo_xy:{0:03.0f}.{1:03.0f}\n".format(speed_L_In, speed_R_In)
+    rpiToMicrobitMsgStr = "x:{0:03.0f}\n".format(speed_In)
+    microBit_Serial_Obj.write(rpiToMicrobitMsgStr.encode())
+    print("*** *** *** DEBUG: go_Tilt_Motor_X_UxSlider_Fn: " + rpiToMicrobitMsgStr)
+
+def go_Forward_UxButton_Fn(speed_In):
+    ##jwc y 2021-0519 UsbSerial to micro:bit: myMotor.set_drive(L_MTR,FWD,speed_In)
+    ##jwc y 2021-0519 UsbSerial to micro:bit: myMotor.set_drive(R_MTR,FWD,speed_In)
+    microBit_Serial_Obj.write(rpi_Microbit_1CharMsg_Forward_Str.encode())
+    print("*** *** *** DEBUG: go_Forward_UxButton_Fn: " + rpi_Microbit_1CharMsg_Forward_Str)
+
+def go_Backward_UxButton_Fn(speed_In):
+    ##jwc y 2021-0519 UsbSerial to micro:bit: myMotor.set_drive(L_MTR,FWD,speed_In)
+    ##jwc y 2021-0519 UsbSerial to micro:bit: myMotor.set_drive(R_MTR,FWD,speed_In)
+    microBit_Serial_Obj.write(rpi_Microbit_1CharMsg_Backward_Str.encode())
+    print("*** *** *** DEBUG: go_Backward_UxButton_Fn: " + rpi_Microbit_1CharMsg_Backward_Str)
+
+def go_Left_UxButton_Fn(speed_In):
+    microBit_Serial_Obj.write(rpi_Microbit_1CharMsg_Left_Str.encode())
+    print("*** *** *** DEBUG: go_Left_UxButton_Fn: " + rpi_Microbit_1CharMsg_Left_Str)
+
+def go_Right_UxButton_Fn(speed_In):
+    microBit_Serial_Obj.write(rpi_Microbit_1CharMsg_Right_Str.encode())
+    print("*** *** *** DEBUG: go_Right_UxButton_Fn: " + rpi_Microbit_1CharMsg_Right_Str)
+
+def go_Stop_UxButton_Fn(speed_In):
+    microBit_Serial_Obj.write(rpi_Microbit_1CharMsg_Stop_Str.encode())
+    print("*** *** *** DEBUG: go_Stop_UxButton_Fn: " + rpi_Microbit_1CharMsg_Stop_Str)
+
+
 def motorLeft_Fn(speed_In):
     myMotor.set_drive(L_MTR,FWD,speed_In)
 
 def motorRight_Fn(speed_In):
     myMotor.set_drive(R_MTR,FWD,speed_In)
+    
+def motorStop_Fn(speed_In):
+    myMotor.set_drive(L_MTR,FWD,speed_In)
+    myMotor.set_drive(R_MTR,FWD,speed_In)
+
 
 def servo_Cam_01_Pan_Fn(degrees_In):
     servos_Cam.move_servo_position(servo_Cam_01_Pan_ChannelNum, degrees_In, 180)

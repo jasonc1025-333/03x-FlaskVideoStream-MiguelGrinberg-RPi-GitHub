@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>RoboQuest V-Lab Web-Portal: RQ-CX-G DSOT-System</title>
+    <title>RoboQuest V-Lab Web-Portal: RQ-X-G DCOT-System</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <link rel='stylesheet' href='static/css/style_From_RpiRover1_DayDevelops.css'>
@@ -13,7 +13,7 @@
   </head>
   <body>
     <!-- jwc o  <h1>Video Streaming Demonstration</h1> -->
-    <h1>RoboQuest V-Lab Web-Portal: RQ-CX-G DSOT-System</h1>
+    <h1>RoboQuest V-Lab Web-Portal: RQ-X-G DCOT-System</h1>
     <!-- <h1>(Click Anywhere on HUD-Section for Quick-Stop.  Double-click for Dual-Motor Control.)</h1> -->
     <!-- jwc y  <img src="{{ url_for('video_feed') }}"> -->
 
@@ -32,6 +32,9 @@
                 <!--AAA TYJ this works :)+-->
                 <!--jwc o <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
                 <!--jwc y  <img style="transform:rotate(0deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
+                <!-- reduce to minimize lag <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}"> -->
+                <!-- try landscape: <img style="transform:rotate(180deg); height:50%; width:50%;" src="{{ url_for('video_feed') }}"> -->
+                <!-- jwc y 2021-00527-1840 faster lan, so could restore orig dimension: <img style="transform:rotate(180deg); height:50%; width:100%;" src="{{ url_for('video_feed') }}"> -->
                 <img style="transform:rotate(180deg); height:100%; width:100%;" src="{{ url_for('video_feed') }}">
 
                 <!--jwc <canvas' seems to corrupt 'img' <canvas>
@@ -43,24 +46,27 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
+          <!-- VitalNote: slider can cause possibly buffer-overrun esp. during click-drag, no delay inbetween, spam serial and cause micro:bit's serial to freeze/crash and needs to be reset.Thus use buttons instead, safer. -->
           <h2 id='col-header-01' class='sliderTapForIpadFix_Not_CssCl visible_CssCl'>Driver-XY(Wheel-Motors)</h2>
           <h2 id='col-header-01' class='sliderTapForIpadFix_CssCl visible_Not_CssCl'>Driver-XY(Wheel-Motors)[iPad]</h2>
 
           <!-- dcMotors_FwdOrRev_Power_FrontEnd_Id slider -->
-          <!--jwc yo  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'> -->
-          <!--jwc y TYJ allows ipad to touch once for pulse, may use button instead. <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()';'> -->
-          <!--jwc m TYJ <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'> -->
-          <!--jwc not wokr on ipad <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'; sleep(3000); onchange='this.value=0; updateMotorSpeeds_Fn();'> -->
-          <!--jwc y works on ipad on safari TYJ  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'; onchange='this.value=0;'> -->
-          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='sleep(100); this.value=0; updateMotorSpeeds_Fn();'> -->
-          <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onselect='updateMotorSpeeds_Fn()'> -->
-          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' ondragenter='updateMotorSpeeds_Fn()'> -->
-          <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onmousedown='updateMotorSpeeds_Fn()'> -->
-          <!-- y <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()'> -->
-          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_Fn()' onchange='this.value=0; updateMotorSpeeds_Fn();'>
+          <!--jwc yo  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()' onchange='this.value=0; updateMotorSpeeds_ForStraight_Fn();'> -->
+          <!--jwc y TYJ allows ipad to touch once for pulse, may use button instead. <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()';'> -->
+          <!--jwc m TYJ <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()'> -->
+          <!--jwc not wokr on ipad <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()'; sleep(3000); onchange='this.value=0; updateMotorSpeeds_ForStraight_Fn();'> -->
+          <!--jwc y works on ipad on safari TYJ  <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()'; onchange='this.value=0;'> -->
+          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()' onchange='sleep(100); this.value=0; updateMotorSpeeds_ForStraight_Fn();'> -->
+          <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onselect='updateMotorSpeeds_ForStraight_Fn()'> -->
+          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' ondragenter='updateMotorSpeeds_ForStraight_Fn()'> -->
+          <!-- m <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' onmousedown='updateMotorSpeeds_ForStraight_Fn()'> -->
+          <!-- y <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()'> -->
+          <!-- y remove 'on-change' to min net lag and prevent crash server w/ overload messages: <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()' onchange='this.value=0; updateMotorSpeeds_ForStraight_Fn();'> -->
+          <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()' updateMotorSpeeds_ForStraight_Fn();'>
+          <!-- <input id='dcMotors_FwdOrRev_Power_FrontEnd_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_Fn()' onchange='this.value=0; updateMotorSpeeds_ForStraight_Fn();'> -->
 
-          <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'> -->
-          <input id='dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_CssCl sliderTapForIpadFix_CssCl visible_Not_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'>
+          <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_ForIpad_Fn()'> -->
+          <input id='dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_Id' class='dcMotors_FwdOrRev_Power_FrontEnd_SliderTapForIpadFix_CssCl sliderTapForIpadFix_CssCl visible_Not_CssCl' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_ForIpad_Fn()'>
 
           <p id='speed-input-val' class='text-center'>0</p>
 
@@ -69,7 +75,9 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='turn-col'>
-          <h2 id='col-header-01'>Scanner-XY(Cam-Servos)</h2>
+          <!-- <h2 id='col-header-01'>Scanner-XY(Cam-Servos)</h2> -->
+          <!-- y <h2 id='col-header-01'>Camer-XY(Cam-Servos)</h2> -->
+          <h2 id='col-header-01' class='active_Not_CssCl'>Camer-XY(Cam-Servos)</h2>
           
           <!-- servo_Cam_02_Tilt_Degrees_FrontEnd_Id slider -->
           <input id='servo_Cam_02_Tilt_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Cam_02_Tilt_Degrees_FrontEnd_Fn()'>
@@ -79,10 +87,12 @@
 
         <!-- col-2: max-width: 16.67% > -->
         <div class='col-2' id='speed-col'>
-          <h2 id='col-header-01'>Operator-Y(ActionArm-Servos)</h2>
+          <!-- <h2 id='col-header-01'>Operator-Y(ActionArm-Servos)</h2> -->
+          <!-- y <h2 id='col-header-01'>Oper-Y(ActionArm-Servos)</h2> -->
+          <h2 id='col-header-01' class='active_Not_CssCl'>Oper-Y(ActionArm-Servos)</h2>
 
           <!-- servo_Arm_03_Degrees_FrontEnd_Id slider -->
-          <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForBurst_Fn()'> -->
+          <!-- <jwc y test: input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForStraight_ForIpad_Fn()'> -->
           <input id='servo_Arm_03_Degrees_FrontEnd_Id' type='range' orient='vertical' min='0' max='180' value='90' step='1' oninput='servo_Arm_03_Degrees_FrontEnd_Fn()'>
           <p id='servo_Arm_03_Degrees_FrontEnd_Response_Id' class='text-center'>0</p>
 
@@ -94,16 +104,17 @@
         <div class='col-4 text-center' >
           <!-- jwc will not fit for iPad: <h3 id='col-header-01'>AI/AR Video Analyzer (AAVA) System</h3> -->
           <button class='btn btn-danger' id='timer_Mission_Refresh_Id' onclick='timer_Mission_Refresh_Fn()'>Mission Refresh</button>
-          <span id='col-header-01'>AI/AR Scan Analyzer (AASA) System</span>
+          <button class='btn btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>iPad Driver-Tap</button>
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
 
           <!-- dcMotors_Turn_Power_FrontEnd_Id slider -->
           <!--jwc yo <input id='dcMotors_Turn_Power_FrontEnd_Id' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'> -->
-          <input id='dcMotors_Turn_Power_FrontEnd_Id' class='dcMotors_Turn_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'>
+          <!--jwc y remove 'on-change' to min net lag and prevent crash server w/ overload messages: <input id='dcMotors_Turn_Power_FrontEnd_Id' class='dcMotors_Turn_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' onchange='this.value=0; updateMotorSpeeds_ForTurn_Fn();'> -->
+          <input id='dcMotors_Turn_Power_FrontEnd_Id' class='dcMotors_Turn_Power_FrontEnd_CssCl sliderTapForIpadFix_Not_CssCl visible_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_Fn()' updateMotorSpeeds_ForTurn_Fn();'>
           
-          <input id='dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id' class='dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_CssCl sliderTapForIpadFix_CssCl visible_Not_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_ForBurst_Fn()'>
+          <input id='dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_Id' class='dcMotors_Turn_Power_FrontEnd_SliderTapForIpadFix_CssCl sliderTapForIpadFix_CssCl visible_Not_CssCl' type='range' min='-100' max='100' value='0' step='1' oninput='updateMotorSpeeds_ForTurn_ForIpad_Fn()'>
           
           <p id='heading-input-val' class='text-center heading-input-value'>0</p>
 
@@ -120,7 +131,6 @@
         <div class='col-2'>
           <!--jwc o <button class='btn btn-lg btn-danger' id='power-off-btn' onclick='updateMotorSpeeds_ForHalt_Fn()'>HALT ALL</button> -->
           <!-- jwc y <button class='btn btn-lg btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>Slider-Tap for iPad</button> -->
-          <button class='btn btn-danger' id='activate_Ipad_Tap_Id' onclick='activate_Ipad_Tap_Fn()'>iPad Driver-Tap</button>
         </div>
       </div>
 
@@ -140,15 +150,18 @@
 
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-4'>
-          <button class='button' id='trigger_Client_01_Id' onclick='trigger_Client_01_Fn()'>Trigger-01</button>
+          <!-- y button class='button' id='trigger_Client_01_Id' onclick='trigger_Client_01_Fn()'>Trigger-01</button> -->
+          <button class='button active_Not_CssCl' id='trigger_Client_01_Id' onclick='trigger_Client_01_Fn()'>Trigger-01</button>
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-4'>
-          <button class='button' id='trigger_Client_02_Id' onclick='trigger_Client_02_Fn()'>Trigger-02</button>
+          <!-- y <button class='button' id='trigger_Client_02_Id' onclick='trigger_Client_02_Fn()'>Trigger-02</button> -->
+          <button class='button active_Not_CssCl' id='trigger_Client_02_Id' onclick='trigger_Client_02_Fn()'>Trigger-02</button>
         </div>        
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-4'>
-          <button class='button' id='trigger_Client_03_Id' onclick='trigger_Client_03_Fn()'>Trigger-03</button>
+          <!-- y <button class='button' id='trigger_Client_03_Id' onclick='trigger_Client_03_Fn()'>Trigger-03</button> -->
+          <button class='button active_Not_CssCl' id='trigger_Client_03_Id' onclick='trigger_Client_03_Fn()'>Trigger-03</button>
         </div>
       </div>
 
@@ -156,8 +169,9 @@
         <!-- col-4: max-width: 33.33% > -->
         <!-- <div class='col-4 text-center'> -->
         <div class='col-4'>
-          <h2 id='col-header-01'>Network Status</h2>
-          <div id="status"></div>
+          <h2 id='col-header-01'>AI/AR Scan Analyzer (AASA)</h2>
+          <!--jwc y  <span id='col-header-01'>AI/AR Scan Analyzer (AASA) System</span> -->
+          <div id="score"></div>          
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
@@ -166,8 +180,9 @@
         </div>
         <!-- col-3: max-width: 25.00% > -->
         <div class='col-3' id='speed-col'>
-          <h2 id='col-header-01'>Mission Critical Data</h2>
-          <div id="score"></div>          
+          <h2 id='col-header-01'>Network Status</h2>
+          <!--jwc y  <h2 id='col-header-01'>Mission Critical Data</h2> -->
+          <div id="status"></div>
         </div>
         <!-- col-2: max-width: 16.67% > -->
         <!-- <div class='col-2 p-0'> -->
@@ -180,17 +195,17 @@
             <span id='heartbeat_Freq_Mod_Id'>-</span>
             <i id='heartbeat_Freq_Mod_Inc_Id' class='d-inline fas fa-angle-right fa-3x' onclick="heartbeat_Freq_Mod_IncDec_Fn({'incdec':'+1'})"></i>
 
-            <!-- left motor trim -->
-          <h3 id='col-header-01'>--</h3>
-          <i id='lmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
-          <p id='lmtrim-val' class='text-center'>0</p>
-          <i id='lmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
+            <!-- networkThrottleDelay_FactorOfOneCpuCycle_20msec -->
+          <h3 id='col-header-01'>NetworkDelay-Of20ms</h3>
+          <i id='networkThrottleDelay_FactorOfOneCpuCycle_20msec-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':1,'R':0})"></i>
+          <p id='networkThrottleDelay_FactorOfOneCpuCycle_20msec-val' class='text-center'>0</p>
+          <i id='networkThrottleDelay_FactorOfOneCpuCycle_20msec-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':-1,'R':0})"></i>
 
-          <!-- right motor trim -->
-          <h3 id='col-header-01'>--</h3>
-          <i id='rmtrim-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
-          <p id='rmtrim-val' class='text-center'>0</p>
-          <i id='rmtrim-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
+          <!-- unusedUiVal -->
+          <h3 id='col-header-01'>Unused</h3>
+          <i id='unusedUiVal-up' class='text-center d-block fas fa-angle-up fa-3x' onclick="changeTrim({'L':0,'R':1})"></i>
+          <p id='unusedUiVal-val' class='text-center'>0</p>
+          <i id='unusedUiVal-down' class='text-center d-block fas fa-angle-down fa-3x' onclick="changeTrim({'L':0,'R':-1})"></i>
 
           <!-- Reserved -->
           <!--jwc o  <h3 id='col-header-01'>Reserved</h2>

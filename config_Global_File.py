@@ -77,3 +77,15 @@ _timer_Mission_Recharge_Timestamp_Int = 0
 _trigger_Client_Req_01_Bool = False
 _trigger_Client_Req_02_Bool = False
 _trigger_Client_Req_03_Bool = False
+
+_scanner_Client_AvgScore_Dec = 0.0
+
+_trigger_Client_01_AvgScorePerTrigger_Dec = 0.0
+_trigger_Client_02_AvgScorePerTrigger_Dec = 0.0
+_trigger_Client_03_AvgScorePerTrigger_Dec = 0.0
+
+_debug_Print_On = False
+# Useful to attempt reduce Cpu/Net Lag by Setting to False
+_camAi_On = True
+_rq_Rpx_G_Bool = False
+_rq_Mbx_G_Bool = True
